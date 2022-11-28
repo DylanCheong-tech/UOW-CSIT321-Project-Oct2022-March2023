@@ -1,7 +1,7 @@
 # UOW-CSIT321-Project-Oct2022-March2023
 
 UOW Bachelor of Computer Science - CSIT 321 Project. <br />
-This is the Final Year Project for the students in their final year study. The project title is Homomorphic Encryption and its application to e-voting. 
+This is the Final Year Project for the students in their final year study. The project title is Homomorphic Encryption and its application to e-voting system. 
 
 # Project Status
 The software project development is still in progress. 
@@ -19,8 +19,6 @@ For more information regarding our software project, kindly refer to our [projec
 
 # Architecture 
 To be able simulate the real world scenarios with our software product, we have decided to utilize the virtual machines to simulate the end-to-end voting process, from creating the voting event, voter cast the option, to publishing the vote result. We acquired the Oracle VM  VirtualBox as a platform to manage virtual machines. <br />
-For the most part, we proposed the system architecture as follow:
-
 
 # Installation
 To be able run the e-voting web application, you will only need a browser as a client side to access the server services. For hosting and running the server codes you may need some  dependencies and installations. <br />
