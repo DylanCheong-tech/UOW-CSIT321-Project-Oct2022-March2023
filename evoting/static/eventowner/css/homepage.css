@@ -1,2 +1,135 @@
 /* homepage.css */
 
+div#content_pane {
+    display: flex;
+    flex-direction: row;
+}
+
+/* left pane stying */
+
+div#content_pane>div#left_pane {
+    width: 20vw;
+    display: flex;
+    flex-flow: column;
+}
+
+div#content_pane>div#left_pane span#logo {
+    background-color: #ECECEC;
+    height: 10vh;
+}
+
+div#content_pane>div#left_pane span#side_menu_bar {
+    background-color: #000000;
+    height: 88vh;
+}
+
+div#content_pane>div#left_pane span#side_menu_bar * {
+    color: white;
+}
+
+div#content_pane>div#left_pane span#side_menu_bar span.menu_item {
+    padding: 4vh 3vw 4vh 3vw;
+}
+
+div#content_pane>div#left_pane span#side_menu_bar span.last_item {
+    margin-bottom: auto;
+}
+
+div#content_pane>div#left_pane span#side_menu_bar span.logout_section {
+    align-items: center;
+}
+
+div#content_pane>div#left_pane span#side_menu_bar span.logout_section button {
+    cursor: pointer;
+    background-color: #3F54BE;
+    border: none;
+    border-radius: 1em;
+    color: #FFFFFF;
+    padding: 1.2vh 2.5vw 1.2vh 2.5vw;
+    margin: 2vh 0 5vh 0;
+}
+
+div#content_pane>div#left_pane span:not(#logo) {
+    display: flex;
+    flex-direction: column;
+    /* margin-left: 1.5vw; */
+}
+
+/* right pane styling */
+
+div#content_pane>div#right_pane {
+    width: 80vw;
+    padding: 0 2vw 0 2vw;
+    background-color: #F5F5F5;
+}
+
+div#content_pane>div#right_pane div#header {
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+div#content_pane>div#right_pane div#content {
+    display: grid;
+    grid-template-columns: repeat(2, 50%);
+}
+
+div#content_pane>div#right_pane div#content div#summary {
+    display: flex;
+    flex-flow: column;
+    border-radius: 10px;
+    background-color: #FFFFFF;
+    padding: 0 1.5vw 0 1.5vw;
+    margin-right: 2vw;
+}
+
+div#content_pane>div#right_pane div#content div#miscellaneous span#links{
+    display: grid;
+    grid-template-columns: repeat(2, 50%);
+    row-gap: 2vh;
+    border-radius: 10px;
+    background-color: #FFFFFF;
+    padding: 0 1.5vw 0 1.5vw;
+    margin-right: 2vw;
+}
+
+div#content_pane>div#right_pane div#content div#miscellaneous span#links h2 {
+    grid-column: span 2;
+}
+
+div#content_pane>div#right_pane div#content div#vote_events {
+    grid-column: span 2;
+    display: flex;
+    flex-flow: column;
+    border-radius: 10px;
+    background-color: #FFFFFF;
+    padding: 0 1.5vw 0 1.5vw;
+    margin-top: 2vh;
+}
+
+div#content_pane>div#right_pane div#content div#vote_events>span {
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+div#content_pane>div#right_pane div#content div#vote_events table {
+    border-collapse: collapse;
+}
+
+div#content_pane>div#right_pane div#content div#vote_events table td, div#content_pane>div#right_pane div#content div#vote_events table th {
+    border: 1px solid #000000;
+}
+
+div#content_pane>div#right_pane div#content div#vote_events table td.buttons_col {
+    display: grid;
+    grid-template-columns: repeat(2, 50%);
+    justify-items: center;
+    row-gap: 1vh;
+}
+
+div#content_pane>div#right_pane div#content div#vote_events table td.buttons_col button {
+    width: 5vw;
+}

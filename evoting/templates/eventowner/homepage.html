@@ -3,17 +3,148 @@
 <!DOCTYPE html>
 <html lang="en">
 {% load static %}
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home Page</title>
 
+    <script src="{% static 'eventowner/js/homepage.js' %}"></script>
     <link rel="stylesheet" href="{% static 'eventowner/css/homepage.css' %}" />
 </head>
 
 <body>
-    <h1>Home page</h1>
+    <div id="content_pane">
+        <div id="left_pane">
+            <span id="logo">
+                logo here
+            </span>
+            <span id="side_menu_bar">
+                <span class="menu_item">Overview</span>
+                <span class="menu_item">Ongoing Vote Events</span>
+                <span class="menu_item">Completed Vote Events</span>
+                <span class="menu_item last_item">FAQ</span>
+
+                <span class="logout_section">
+                    <span>sampleemail@gmail.com</span>
+                    <form action="/evoting/eventowner/logout" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" onclick="logout()">Log out</button>
+                    </form>
+                </span>
+            </span>
+        </div>
+
+        <div id="right_pane">
+            <div id="header">
+                <h1>Overview</h1>
+                <span>
+                    <span>Welcome, John Doe</span>
+                </span>
+            </div>
+
+            <div id="content">
+                <div id="summary">
+                    <h2>Summary</h2>
+                    Total Vote Events : 3 <br />
+                    Ongoing Vote Events : 2 <br />
+                    Completed Vote Events : 1 <br />
+                </div>
+
+                <div id="miscellaneous">
+                    <span id="links">
+                        <h2>Miscellaneous</h2>
+                        <a>Terms Of Services</a>
+                        <a>Support</a>
+                        <a>Privacy Policy</a>
+                        <a>About</a>
+                    </span>
+
+                    <span id="annotation">&copy; evoting.com 2022</span>
+                </div>
+
+
+                <div id="vote_events">
+                    <span>
+                        <h2>Your Vote Events</h2>
+                        <button type="button">Create New Vote Event</button>
+                        <input type="text" placeholder="Search" />
+                        <select>
+                            <option>Seq No.</option>
+                        </select>
+                    </span>
+
+                    <table>
+                        <tr>
+                            <th>Seq No</th>
+                            <th>Name</th>
+                            <th>Date Created</th>
+                            <th>Status</th>
+                            <th>Time Period</th>
+                            <th>Actions</th>
+                        </tr>
+
+                        <tr>
+                            <td>sample text</td>
+                            <td>sample text</td>
+                            <td>sample text</td>
+                            <td>sample text</td>
+                            <td>sample text</td>
+                            <td class="buttons_col">
+                                <button type="button">View</button>
+                                <button type="button">Delete</button>
+                                <button type="button">Modify</button>
+                                <button type="button">confirm</button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>sample text</td>
+                            <td>sample text</td>
+                            <td>sample text</td>
+                            <td>sample text</td>
+                            <td>sample text</td>
+                            <td class="buttons_col">
+                                <button type="button">View</button>
+                                <button type="button">Delete</button>
+                                <button type="button">Modify</button>
+                                <button type="button">confirm</button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>sample text</td>
+                            <td>sample text</td>
+                            <td>sample text</td>
+                            <td>sample text</td>
+                            <td>sample text</td>
+                            <td class="buttons_col">
+                                <button type="button">View</button>
+                                <button type="button">Delete</button>
+                                <button type="button">Modify</button>
+                                <button type="button">confirm</button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>sample text</td>
+                            <td>sample text</td>
+                            <td>sample text</td>
+                            <td>sample text</td>
+                            <td>sample text</td>
+                            <td class="buttons_col">
+                                <button type="button">View</button>
+                                <button type="button">Delete</button>
+                                <button type="button">Modify</button>
+                                <button type="button">confirm</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

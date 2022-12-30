@@ -37,7 +37,7 @@ class EventOwnerCreateAccountView(View):
                 if otp_from_db.otp != data['otp']:
                     error_message = "OTP value incorrect !"
                     status_flag = False
-                else :
+                else:
                     new_account = UserAccount(
                         email=data['email'],
                         password=data['password'],
@@ -45,13 +45,13 @@ class EventOwnerCreateAccountView(View):
                         lastName=data['lastname'],
                         gender=data['gender'].upper(),
                     )
-                    
+
                     new_account.save()
 
             except OTPManagement.DoesNotExist:
                 error_message = "No OTP generated !"
                 status_flag = False
-            
+
         else:
             status_flag = False
 
@@ -104,3 +104,9 @@ class EventOwnerHomePage(View):
     def get(self, request):
         # render the static page
         return render(request, "eventowner/homepage.html", {})
+
+
+class EventOwnerLogout(View):
+    def post(self, request):
+        # redirect back to the login page
+        return redirect("/evoting/eventowner/login")
