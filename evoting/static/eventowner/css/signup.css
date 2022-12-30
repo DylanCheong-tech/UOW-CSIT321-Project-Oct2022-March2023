@@ -9,19 +9,26 @@ div#content_pane>div {
     width: 50vw;
 }
 
-div#content_pane div#left_pane, div#content_pane div#left_pane form {
+div#content_pane div#left_pane {
     display: flex;
     flex-flow: column;
     align-items: center;
     justify-content: center;
 }
 
+div#content_pane div#left_pane form {
+    display: grid;
+    grid-template-columns: repeat(2, 40%);
+    column-gap: 5vw;
+    justify-items: center;
+}
+
 div#content_pane div#left_pane form * {
     margin: 1vh 0 1vh 0;
 }
 
-div#content_pane div#left_pane form span.field{
-    width: 20vw;
+div#content_pane div#left_pane form span.field {
+    width: 90%;
     padding: 0 2vw 0 2vw;
     background-color: #D9DCF0;
     border-radius: 50px;
@@ -29,21 +36,49 @@ div#content_pane div#left_pane form span.field{
     flex-flow: column;
 }
 
+div#content_pane div#left_pane form span.email_field {
+    display: grid;
+    grid-template-columns: 65% 35%;
+    width: 105%;
+    padding: 0 0 0 2vw;
+}
+
+div#content_pane div#left_pane form span.last_field {
+    grid-column: span 2;
+    width: 45%;
+}
+
+div#content_pane div#left_pane form span.email_field button {
+    cursor: pointer;
+    grid-row: 1 / span 2;
+    grid-column: 2;
+    background-color: #D9DCF0;
+    color: #000000;
+    border: 1px solid #000000;
+    border-radius: 50px;
+    height: 100%;
+    margin: 0;
+    text-align: center;
+    font-size: .7em;
+}
+
 div#content_pane div#left_pane form span.field label {
     font-size: .8em;
     margin-bottom: 0;
 }
 
-div#content_pane div#left_pane form span.field input{
+div#content_pane div#left_pane form span.field input, div#content_pane div#left_pane form span.field select {
     background-color: transparent;
     border: none;
 }
 
-div#content_pane div#left_pane form span.field input:focus {
+div#content_pane div#left_pane form span.field input:focus, div#content_pane div#left_pane form span.field select:focus {
     outline: none;
 }
 
-div#content_pane div#left_pane form button {
+div#content_pane div#left_pane form button[type=submit] {
+    grid-column: span 2;
+    cursor: pointer;
     background-color: #3F54BE;
     border: none;
     border-radius: 20px;

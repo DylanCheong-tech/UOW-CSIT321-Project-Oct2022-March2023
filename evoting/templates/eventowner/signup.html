@@ -10,6 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
 
+    <script src="{% static 'eventowner/js/signup.js' %}"></script>
     <link rel="stylesheet" href="{% static 'eventowner/css/signup.css' %}" />
 </head>
 
@@ -17,26 +18,49 @@
     <div id="content_pane">
         <div id="left_pane">
             <h1>Sign up</h1>
+            <p>{{ status }}</p>
             <form action="/evoting/eventowner/createaccount" method="POST">
                 {% csrf_token %}
                 <span class="field">
-                    <label>Username</label>
-                    <input type="text" name="username" />
+                    <label>First Name</label>
+                    <input type="text" name="firstname" />
                 </span>
                 <span class="field">
+                    <label>Last Name</label>
+                    <input type="text" name="lastname" />
+                </span>
+                <span class="field email_field">
                     <label>Email</label>
                     <input type="text" name="email" />
+                    <button type="button" onclick="requestOTP()">Get OTP</button>
+                </span>
+                <span class="field">
+                    <label>Gender</label>
+                    <select name="gender">
+                        <option selected disabled>--- Gender ---</option>
+                        <option value="M">Male</option>
+                        <option value="F">Female</option>
+                        <option value="O">Other</option>
+                    </select>
                 </span>
                 <span class="field">
                     <label>Password</label>
-                    <input type="text" name="password" />
+                    <input type="password" name="password" />
+                </span>
+                <span class="field">
+                    <label>Re-Enter Password</label>
+                    <input type="password" name="repeat_password" />
+                </span>
+                <span class="field last_field">
+                    <label>OTP</label>
+                    <input type="text" name="otp" />
                 </span>
 
                 <button type="submit">Sign Up</button>
             </form>
 
             <span id="annotation">
-                Have an account ? <a href="">Sign in</a>
+                Have an account ? <a href="/evoting/eventowner/login">Login</a>
             </span>
         </div>
 

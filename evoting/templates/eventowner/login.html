@@ -10,14 +10,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Owner Login</title>
 
-    <link rel="stylesheet" href="{% static 'eventowner/css/signup.css' %}" />
+    <link rel="stylesheet" href="{% static 'eventowner/css/login.css' %}" />
 </head>
 
 <body>
     <div id="content_pane">
         <div id="left_pane">
             <h1>Login</h1>
-            <form action="" method="POST">
+            <p>{{ status }}</p>
+            <form action="/evoting/eventowner/login" method="POST">
                 {% csrf_token %}
                 <span class="field">
                     <label>Email</label>
@@ -25,11 +26,15 @@
                 </span>
                 <span class="field">
                     <label>Password</label>
-                    <input type="text" name="password" />
+                    <input type="password" name="password" />
                 </span>
 
                 <button type="submit">Sign In</button>
             </form>
+
+            <span id="annotation">
+                Don't have an account ? <a href="/evoting/eventowner/createaccount">Sign Up</a>
+            </span>
         </div>
 
         <div id="right_pane">

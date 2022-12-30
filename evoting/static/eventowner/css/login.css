@@ -1,0 +1,59 @@
+/* login.css */
+
+div#content_pane {
+    display: flex;
+    flex-flow: row;
+}
+
+div#content_pane>div {
+    width: 50vw;
+}
+
+div#content_pane div#left_pane, div#content_pane div#left_pane form {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+}
+
+div#content_pane div#left_pane form * {
+    margin: 1vh 0 1vh 0;
+}
+
+div#content_pane div#left_pane form span.field {
+    width: 20vw;
+    padding: 0 2vw 0 2vw;
+    background-color: #D9DCF0;
+    border-radius: 50px;
+    display: flex;
+    flex-flow: column;
+}
+
+div#content_pane div#left_pane form span.field label {
+    font-size: .8em;
+    margin-bottom: 0;
+}
+
+div#content_pane div#left_pane form span.field input {
+    background-color: transparent;
+    border: none;
+}
+
+div#content_pane div#left_pane form span.field input:focus {
+    outline: none;
+}
+
+div#content_pane div#left_pane form button {
+    cursor: pointer;
+    background-color: #3F54BE;
+    border: none;
+    border-radius: 20px;
+    color: #FFFFFF;
+    padding: 1.2vh 2.5vw 1.2vh 2.5vw;
+}
+
+div#content_pane div#left_pane span#annotation {
+    font-size: .9em;
+    margin-top: 10vh;
+    width: 80%;
+}
