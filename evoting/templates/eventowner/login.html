@@ -1,0 +1,41 @@
+<!-- login.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Owner Login</title>
+
+    <link rel="stylesheet" href="{% static 'eventowner/css/signup.css' %}" />
+</head>
+
+<body>
+    <div id="content_pane">
+        <div id="left_pane">
+            <h1>Login</h1>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <span class="field">
+                    <label>Email</label>
+                    <input type="text" name="email" />
+                </span>
+                <span class="field">
+                    <label>Password</label>
+                    <input type="text" name="password" />
+                </span>
+
+                <button type="submit">Sign In</button>
+            </form>
+        </div>
+
+        <div id="right_pane">
+            <img src="{% static 'eventowner/img/sample1.png' %}" />
+        </div>
+    </div>
+</body>
+
+</html>
