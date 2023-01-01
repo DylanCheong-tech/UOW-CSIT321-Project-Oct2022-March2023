@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views import View
 from django.utils import timezone
+from django.contrib import auth
 
 # Form imports
 from .forms.eventowner import SignupForm
@@ -29,32 +30,42 @@ class EventOwnerCreateAccountView(View):
         if form.is_valid():
             # access the form data
             data = form.cleaned_data
-            if (data['password'] != data['repeat_password']):
-                error_message = "Password not match !"
-                status_flag = False
 
-            try:
-                # check otp value
-                otp_from_db = OTPManagement.objects.get(email=data['email'])
-                expireAt = otp_from_db.expireAt
-                if otp_from_db.otp != data['otp'] or timezone.localtime() > timezone.localtime(expireAt):
-                    error_message = "OTP value invalid !"
+            # check if the account is registered here 
+            count = UserAccount.objects.filter(email=data['email']).count()
+            if (count > 0):
+                error_message = "User Account Existed !"
+                status_flag = False
+            else: 
+                if (data['password'] != data['repeat_password']):
+                    error_message = "Password not match !"
                     status_flag = False
 
-                else:
-                    new_account = UserAccount(
-                        email=data['email'],
-                        password=Hasher(str(data['password']).encode('utf-8')).messageDigest(),
-                        firstName=data['firstname'],
-                        lastName=data['lastname'],
-                        gender=data['gender'].upper(),
-                    )
+                try:
+                    # check otp value
+                    otp_from_db = OTPManagement.objects.get(email=data['email'])
+                    expireAt = otp_from_db.expireAt
+                    if otp_from_db.otp != data['otp'] or timezone.localtime() > timezone.localtime(expireAt):
+                        error_message = "OTP value invalid !"
+                        status_flag = False
 
-                    new_account.save()
+                    else:
+                        new_account = UserAccount(
+                            email=data['email'],
+                            password=Hasher(str(data['password']).encode('utf-8')).messageDigest(),
+                            firstName=data['firstname'],
+                            lastName=data['lastname'],
+                            gender=data['gender'].upper(),
+                        )
 
-            except OTPManagement.DoesNotExist:
-                error_message = "No OTP generated !"
-                status_flag = False
+                        new_account.save()
+                        user = auth.models.User(username=data['email'])
+                        user.set_password(Hasher(str(data['password']).encode('utf-8')).messageDigest())
+                        user.save()
+
+                except OTPManagement.DoesNotExist:
+                    error_message = "No OTP generated !"
+                    status_flag = False
 
         else:
             status_flag = False
@@ -88,14 +99,13 @@ class EventOwnerLogin(View):
 
         if form.is_valid():
             data = form.cleaned_data
+            user = auth.authenticate(username=data["email"], password=data["password"])
 
-            try:
-                user_from_db = UserAccount.objects.get(email=data['email'])
-
-                if user_from_db.password != data['password']:
-                    status_flag = False
-            except UserAccount.DoesNotExist:
+            if user is not None and user.is_active:
+                auth.login(request, user)
+            else:
                 status_flag = False
+
         else:
             status_flag = False
 
@@ -103,11 +113,15 @@ class EventOwnerLogin(View):
             # redirect to home page if success
             return redirect("/evoting/eventowner/homepage")
         else:
-            return render(request, "eventowner/login.html", {"status": error_message})
+            return render(request, "eventowner/login.html", {"status": error_message, "form": form})
 
 
 class EventOwnerHomePage(View):
     def get(self, request):
+        # check authentication 
+        if not request.user.is_authenticated:
+            return redirect("/evoting/eventowner/login")
+
         # render the static page
         return render(request, "eventowner/homepage.html", {})
 
@@ -115,4 +129,5 @@ class EventOwnerHomePage(View):
 class EventOwnerLogout(View):
     def post(self, request):
         # redirect back to the login page
+        auth.logout(request)
         return redirect("/evoting/eventowner/login")

@@ -27,11 +27,11 @@
                 {% csrf_token %}
                 <span class="field">
                     <label>Email</label>
-                    <input type="text" name="email" required />
+                    <input type="text" name="email" value="{{ form.email.value }}" required />
                 </span>
                 <span class="field">
                     <label>Password</label>
-                    <input id="password_input" type="password" name="password" required />
+                    <input id="password_input" type="password" name="password" value="{{ form.email.value }}" required />
                 </span>
 
                 <button type="submit">Sign In</button>
