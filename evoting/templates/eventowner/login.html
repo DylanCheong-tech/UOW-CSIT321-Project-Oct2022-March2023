@@ -10,6 +10,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Owner Login</title>
 
+    <!-- jsHashes library CDN -->
+    <script src="https://cdn.rawgit.com/h2non/jsHashes/master/hashes.js"></script>
+
+    <script src="{% static 'eventowner/js/login.js' %}"></script>
+
     <link rel="stylesheet" href="{% static 'eventowner/css/login.css' %}" />
 </head>
 
@@ -18,15 +23,15 @@
         <div id="left_pane">
             <h1>Login</h1>
             <p>{{ status }}</p>
-            <form action="/evoting/eventowner/login" method="POST">
+            <form action="/evoting/eventowner/login" method="POST" onsubmit="submit_login()">
                 {% csrf_token %}
                 <span class="field">
                     <label>Email</label>
-                    <input type="text" name="email" />
+                    <input type="text" name="email" required />
                 </span>
                 <span class="field">
                     <label>Password</label>
-                    <input type="password" name="password" />
+                    <input id="password_input" type="password" name="password" required />
                 </span>
 
                 <button type="submit">Sign In</button>

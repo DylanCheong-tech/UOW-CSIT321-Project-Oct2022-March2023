@@ -22,7 +22,7 @@ class OTPGenerator:
         otp_record.otp = otp
         otp_record.expireAt = timezone.localtime() + timezone.timedelta(minutes=5)
         email_sender = EmailSender(self.email)
-        email_sender.sendOTP(otp)
+        # email_sender.sendOTP(otp)
         otp_record.save()
         
         return otp

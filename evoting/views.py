@@ -13,7 +13,7 @@ from .models import OTPManagement
 
 # Helper module imports
 from .helpers.otpGenerator import OTPGenerator
-
+from .helpers.hasher import Hasher
 
 class EventOwnerCreateAccountView(View):
     def get(self, request):
@@ -39,10 +39,11 @@ class EventOwnerCreateAccountView(View):
                 if otp_from_db.otp != data['otp'] or timezone.localtime() > timezone.localtime(expireAt):
                     error_message = "OTP value invalid !"
                     status_flag = False
+
                 else:
                     new_account = UserAccount(
                         email=data['email'],
-                        password=data['password'],
+                        password=Hasher(str(data['password']).encode('utf-8')).messageDigest(),
                         firstName=data['firstname'],
                         lastName=data['lastname'],
                         gender=data['gender'].upper(),

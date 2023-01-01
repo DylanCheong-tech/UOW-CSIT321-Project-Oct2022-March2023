@@ -7,7 +7,7 @@ from django.utils import timezone
 class UserAccount(models.Model):
     id = models.BigAutoField(primary_key=True, db_column="accountID")
     email = models.EmailField()
-    password = models.CharField(max_length=22)
+    password = models.CharField(max_length=32)
     firstName = models.CharField(max_length=50)
     lastName = models.CharField(max_length=50)
     gender = models.CharField(max_length=1)
