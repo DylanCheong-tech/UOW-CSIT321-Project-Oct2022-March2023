@@ -5,7 +5,7 @@ from django.utils import timezone
 
 
 class UserAccount(models.Model):
-    accountID = models.BigAutoField(primary_key=True, default=1)
+    id = models.BigAutoField(primary_key=True, db_column="accountID")
     email = models.EmailField()
     password = models.CharField(max_length=22)
     firstName = models.CharField(max_length=50)
@@ -14,7 +14,7 @@ class UserAccount(models.Model):
     createdAt = models.DateTimeField(default=timezone.localtime)
 
     def __str__(self):
-        return self.accountID
+        return self.id
 
 
 class OTPManagement(models.Model):
