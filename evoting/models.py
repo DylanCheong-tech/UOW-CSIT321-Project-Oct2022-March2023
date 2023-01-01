@@ -11,7 +11,7 @@ class UserAccount(models.Model):
     firstName = models.CharField(max_length=50)
     lastName = models.CharField(max_length=50)
     gender = models.CharField(max_length=1)
-    createdAt = models.DateTimeField(default=timezone.now())
+    createdAt = models.DateTimeField(default=timezone.localtime)
 
     def __str__(self):
         return self.accountID
@@ -20,7 +20,7 @@ class UserAccount(models.Model):
 class OTPManagement(models.Model):
     email = models.EmailField()
     otp = models.IntegerField(default=000000)
-    expireAt = models.DateTimeField(default=timezone.now() + timezone.timedelta(minutes=5))
+    expireAt = models.DateTimeField()
 
     def __str__(self):
         return self.email

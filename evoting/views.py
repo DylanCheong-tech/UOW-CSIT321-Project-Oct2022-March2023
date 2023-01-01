@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views import View
+from django.utils import timezone
 
 # Form imports
 from .forms.eventowner import SignupForm
@@ -34,8 +35,9 @@ class EventOwnerCreateAccountView(View):
             try:
                 # check otp value
                 otp_from_db = OTPManagement.objects.get(email=data['email'])
-                if otp_from_db.otp != data['otp']:
-                    error_message = "OTP value incorrect !"
+                expireAt = otp_from_db.expireAt
+                if otp_from_db.otp != data['otp'] or timezone.localtime() > timezone.localtime(expireAt):
+                    error_message = "OTP value invalid !"
                     status_flag = False
                 else:
                     new_account = UserAccount(
@@ -59,7 +61,7 @@ class EventOwnerCreateAccountView(View):
             # redirect to login page if success
             return redirect("/evoting/eventowner/login")
         else:
-            return render(request, "eventowner/signup.html", {"status": error_message})
+            return render(request, "eventowner/signup.html", {"status": error_message, "form": form})
 
 
 class EventOwnerCreateAccountGetOTP(View):

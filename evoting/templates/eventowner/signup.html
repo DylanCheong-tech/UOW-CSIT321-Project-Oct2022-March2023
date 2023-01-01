@@ -23,37 +23,37 @@
                 {% csrf_token %}
                 <span class="field">
                     <label>First Name</label>
-                    <input type="text" name="firstname" />
+                    <input type="text" name="firstname" value="{{form.firstname.value}}" />
                 </span>
                 <span class="field">
                     <label>Last Name</label>
-                    <input type="text" name="lastname" />
+                    <input type="text" name="lastname" value="{{form.lastname.value}}" />
                 </span>
                 <span class="field email_field">
                     <label>Email</label>
-                    <input type="text" name="email" />
+                    <input type="text" name="email" value="{{form.email.value}}" />
                     <button type="button" onclick="requestOTP()">Get OTP</button>
                 </span>
                 <span class="field">
                     <label>Gender</label>
-                    <select name="gender">
+                    <select name="gender" value="{{form.gender.value}}">
                         <option selected disabled>--- Gender ---</option>
-                        <option value="M">Male</option>
-                        <option value="F">Female</option>
-                        <option value="O">Other</option>
+                        <option value="M" {% if form.gender.value == "M" %} selected {% endif %}>Male</option>
+                        <option value="F" {% if form.gender.value == "F" %} selected {% endif %}>Female</option>
+                        <option value="O" {% if form.gender.value == "O" %} selected {% endif %}>Other</option>
                     </select>
                 </span>
                 <span class="field">
                     <label>Password</label>
-                    <input type="password" name="password" />
+                    <input type="password" name="password" value="{{form.password.value}}" />
                 </span>
                 <span class="field">
                     <label>Re-Enter Password</label>
-                    <input type="password" name="repeat_password" />
+                    <input type="password" name="repeat_password" value="{{form.repeat_password.value}}" />
                 </span>
                 <span class="field last_field">
                     <label>OTP</label>
-                    <input type="text" name="otp" />
+                    <input type="text" name="otp" value="{{form.otp.value}}" />
                 </span>
 
                 <button type="submit">Sign Up</button>
