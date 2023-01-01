@@ -4,8 +4,6 @@ import random as rand
 from django.utils import timezone
 from ..models import OTPManagement
 
-from .sendOTPEmail import EmailSender
-
 class OTPGenerator:
     email = ""
 
@@ -21,8 +19,6 @@ class OTPGenerator:
         otp_record, created = OTPManagement.objects.get_or_create(email=self.email)
         otp_record.otp = otp
         otp_record.expireAt = timezone.localtime() + timezone.timedelta(minutes=5)
-        email_sender = EmailSender(self.email)
-        # email_sender.sendOTP(otp)
         otp_record.save()
         
         return otp

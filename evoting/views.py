@@ -13,6 +13,7 @@ from .models import OTPManagement
 
 # Helper module imports
 from .helpers.otpGenerator import OTPGenerator
+from .helpers.sendOTPEmail import EmailSender
 from .helpers.hasher import Hasher
 
 class EventOwnerCreateAccountView(View):
@@ -69,7 +70,9 @@ class EventOwnerCreateAccountGetOTP(View):
     def get(self, request):
         generator = OTPGenerator(request.GET['email'])
         otp = generator.generateOTP()
-        return HttpResponse(otp)
+        email_sender = EmailSender(request.GET['email'])
+        email_sender.sendOTP(otp)
+        return HttpResponse("Requested OTP sent to mailbox")
 
 
 class EventOwnerLogin(View):
