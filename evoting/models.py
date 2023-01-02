@@ -34,6 +34,25 @@ class VoteEvent(models.Model):
     endDate = models.DateField()
     endTime = models.TimeField()
     eventQuestion = models.CharField(max_length=200)
+   
+
+    def __str__(self):
+        return self.id
+
+
+class VoteOption(models.Model):
+    id = models.AutoField(primary_key=True)
     voteOption = models.TextField()
-    voterEmail = models.TextField()
-    
+    seqNo = models.ForeignKey("VoteEvent", on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.id
+
+class VoterEmail(models.Model):
+    id = models.AutoField(primary_key=True)
+    voterEmail = models.EmailField()
+    seqNo = models.ForeignKey("VoteEvent", on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.id
+   

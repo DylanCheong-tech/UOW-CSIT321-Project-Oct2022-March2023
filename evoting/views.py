@@ -15,6 +15,8 @@ from .forms.eventowner import CreateEventForm
 from .models import UserAccount
 from .models import OTPManagement
 from .models import VoteEvent
+from .models import VoteOption
+from .models import VoterEmail
 
 # Helper module imports
 from .helpers.otpGenerator import OTPGenerator
@@ -138,7 +140,7 @@ class EventOwnerLogout(View):
 
 class EventOwnerCreateNewVoteEvent(View):
     def get(self, request):
-        return render(request, "eventowner/createvoteevent.html", {})
+        return render(request, "eventowner/createevent.html", {})
 
     def post(self,request):
         form = CreateEventForm(request.POST)
@@ -149,21 +151,37 @@ class EventOwnerCreateNewVoteEvent(View):
         if form.is_valid:
             data = form.cleaned_data
 
+            eventQuestion = data['eventQuestion']
             new_vote_event = VoteEvent(
-                eventtitle = data['eventTitle'],
+                eventTitle = data['eventTitle'],
                 startDate = data['startDate'],
                 startTime = data['startTime'],
                 endDate = data['endDate'],
                 endTime = data['endTime'],
-                eventQuestion = data['eventQuestion'],
-
-                # https://stackoverflow.com/a/7151813
-
-                voteOption = json.dumps(data['voteOption']),
-                voterEmail = json.dumps(data['voterEmail'])             
+                eventQuestion = data['eventQuestion']
             )
 
             new_vote_event.save()
+
+            event = VoteEvent.objects.get(eventQuestion=eventQuestion)
+            
+            # split by "| " delimiter
+            voteOptionList = data['voteOption'].split("| ")
+            voterEmailList = data['voterEmail'].split("| ")
+
+            for x in voteOptionList:
+                vote_option = VoteOption(
+                    voteOption = x,
+                    seqNo = event.id
+                )
+                vote_option.save()
+            
+            for x in voterEmailList:
+                voter_email = VoterEmail(
+                    voterEmail = x,
+                    seqNo = event.id
+                )
+                voter_email.save()
 
         else:
             status_flag = False
