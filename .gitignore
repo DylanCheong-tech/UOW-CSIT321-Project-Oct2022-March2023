@@ -1,0 +1,7 @@
+# ignore venv
+venv
+venvWindow
+
+# files and directory for Django to ignore
+__pycache__
+*.pyc
