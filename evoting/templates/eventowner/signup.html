@@ -10,6 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
 
+    <script src="{% static 'eventowner/js/signup.js' %}"></script>
     <link rel="stylesheet" href="{% static 'eventowner/css/signup.css' %}" />
 </head>
 
@@ -17,26 +18,49 @@
     <div id="content_pane">
         <div id="left_pane">
             <h1>Sign up</h1>
+            <p>{{ status }}</p>
             <form action="/evoting/eventowner/createaccount" method="POST">
                 {% csrf_token %}
                 <span class="field">
-                    <label>Username</label>
-                    <input type="text" name="username" />
+                    <label>First Name</label>
+                    <input type="text" name="firstname" value="{{form.firstname.value}}" />
                 </span>
                 <span class="field">
+                    <label>Last Name</label>
+                    <input type="text" name="lastname" value="{{form.lastname.value}}" />
+                </span>
+                <span class="field email_field">
                     <label>Email</label>
-                    <input type="text" name="email" />
+                    <input type="text" name="email" value="{{form.email.value}}" />
+                    <button type="button" onclick="requestOTP()">Get OTP</button>
+                </span>
+                <span class="field">
+                    <label>Gender</label>
+                    <select name="gender" value="{{form.gender.value}}">
+                        <option selected disabled>--- Gender ---</option>
+                        <option value="M" {% if form.gender.value == "M" %} selected {% endif %}>Male</option>
+                        <option value="F" {% if form.gender.value == "F" %} selected {% endif %}>Female</option>
+                        <option value="O" {% if form.gender.value == "O" %} selected {% endif %}>Other</option>
+                    </select>
                 </span>
                 <span class="field">
                     <label>Password</label>
-                    <input type="text" name="password" />
+                    <input type="password" name="password" value="{{form.password.value}}" />
+                </span>
+                <span class="field">
+                    <label>Re-Enter Password</label>
+                    <input type="password" name="repeat_password" value="{{form.repeat_password.value}}" />
+                </span>
+                <span class="field last_field">
+                    <label>OTP</label>
+                    <input type="text" name="otp" value="{{form.otp.value}}" />
                 </span>
 
                 <button type="submit">Sign Up</button>
             </form>
 
             <span id="annotation">
-                Have an account ? <a href="">Sign in</a>
+                Have an account ? <a href="/evoting/eventowner/login">Login</a>
             </span>
         </div>
 

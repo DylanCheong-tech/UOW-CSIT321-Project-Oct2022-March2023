@@ -10,26 +10,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Owner Login</title>
 
-    <link rel="stylesheet" href="{% static 'eventowner/css/signup.css' %}" />
+    <!-- jsHashes library CDN -->
+    <script src="https://cdn.rawgit.com/h2non/jsHashes/master/hashes.js"></script>
+
+    <script src="{% static 'eventowner/js/login.js' %}"></script>
+
+    <link rel="stylesheet" href="{% static 'eventowner/css/login.css' %}" />
 </head>
 
 <body>
     <div id="content_pane">
         <div id="left_pane">
             <h1>Login</h1>
-            <form action="" method="POST">
+            <p>{{ status }}</p>
+            <form action="/evoting/eventowner/login" method="POST" onsubmit="submit_login()">
                 {% csrf_token %}
                 <span class="field">
                     <label>Email</label>
-                    <input type="text" name="email" />
+                    <input type="text" name="email" value="{{ form.email.value }}" required />
                 </span>
                 <span class="field">
                     <label>Password</label>
-                    <input type="text" name="password" />
+                    <input id="password_input" type="password" name="password" value="{{ form.email.value }}" required />
                 </span>
 
                 <button type="submit">Sign In</button>
             </form>
+
+            <span id="annotation">
+                Don't have an account ? <a href="/evoting/eventowner/createaccount">Sign Up</a>
+            </span>
         </div>
 
         <div id="right_pane">

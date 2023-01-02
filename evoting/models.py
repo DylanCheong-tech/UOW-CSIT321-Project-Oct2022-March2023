@@ -1,15 +1,26 @@
 from django.db import models
+from django.utils import timezone
 
 # Create your models here.
 
+
 class UserAccount(models.Model):
-    accountID = models.DecimalField(decimal_places=0, max_digits=10)
-    email = models.EmailField()
-    password = models.CharField(max_length=22)
+    id = models.BigAutoField(primary_key=True, db_column="accountID")
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=32)
     firstName = models.CharField(max_length=50)
     lastName = models.CharField(max_length=50)
     gender = models.CharField(max_length=1)
-    createdAt = models.DateTimeField()
+    createdAt = models.DateTimeField(default=timezone.localtime)
 
     def __str__(self):
-        return self.accountID
+        return self.id
+
+
+class OTPManagement(models.Model):
+    email = models.EmailField()
+    otp = models.IntegerField(default=000000)
+    expireAt = models.DateTimeField(default=timezone.localtime() + timezone.timedelta(minutes=5))
+
+    def __str__(self):
+        return self.email
