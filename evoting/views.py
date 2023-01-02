@@ -129,7 +129,7 @@ class EventOwnerHomePage(View):
             return redirect("/evoting/eventowner/login")
 
         # render the static page
-        return render(request, "eventowner/homepage.html", {})
+        return render(request, "eventowner/overview.html", {})
 
 
 class EventOwnerLogout(View):
@@ -140,7 +140,12 @@ class EventOwnerLogout(View):
 
 class EventOwnerCreateNewVoteEvent(View):
     def get(self, request):
-        return render(request, "eventowner/createevent.html", {})
+        # check authentication 
+        if not request.user.is_authenticated:
+            return redirect("/evoting/eventowner/login")
+
+        # render the static page
+        return render(request, "eventowner/createvoteevent.html", {})
 
     def post(self,request):
         form = CreateEventForm(request.POST)

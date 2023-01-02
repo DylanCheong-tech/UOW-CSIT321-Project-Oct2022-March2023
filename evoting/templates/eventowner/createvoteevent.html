@@ -1,0 +1,77 @@
+<!-- createvoteevent.html -->
+
+{% extends "eventowner/homepage_base.html" %}
+{% load static %}
+
+{% block tab_title %} Create New Vote Event {% endblock %}
+
+{% block title %} Create New Vote Event {% endblock %}
+
+{% block js_scripts %}
+<script src="{% static 'eventowner/js/createvoteevent.js' %}"></script>
+{% endblock %}
+
+{% block stylesheet_links %}
+<link rel="stylesheet" href="{% static 'eventowner/css/voteevent_form.css' %}" />
+{% endblock %}
+
+
+{% block content %}
+<div id="vote_event_form">
+    <h2>Vote Information</h2>
+    <form action="/evoting/eventowner/createevent" method="POST">
+        <label>Vote Event Name<span class="red_asterisk">*</span></label>
+        <input type="text" name="eventTitle" placeholder="Vote Event Name" required />
+
+        <span class="row_flex_flow">
+            <label>
+                Vote Start Date<span class="red_asterisk">*</span>:
+                <input type="date" name="startDate" required />
+            </label>
+
+            <label>
+                Vote End Date<span class="red_asterisk">*</span>:
+                <input type="date" name="endDate" required />
+            </label>
+        </span>
+
+        <span class="row_flex_flow">
+            <label>
+                Vote Start Time<span class="red_asterisk">*</span>:
+                <input type="time" name="startTime" required />
+
+            </label>
+
+            <label>
+                Vote End Time<span class="red_asterisk">*</span>:
+                <input type="time" name="endTime" required />
+            </label>
+        </span>
+
+
+        <label>Vote Question<span class="red_asterisk">*</span></label>
+        <input type="text" name="eventQuestion" placeholder="Vote Question" />
+
+        <span class="row_flex_flow options_and_file">
+            <span id="vote_options">
+                <label>Vote Options<span class="red_asterisk">*</span></label>
+                <span class="fields">
+                    <input type="text" name="voteOptions" placeholder="Vote Option" />
+                </span>
+                <button type="button" onclick="addOptions()">Add More Options</button>
+            </span>
+
+            <span class="row_flex_flow">
+                <label>Participants<span class="red_asterisk">*</span>:</label>
+                <input type="file" name="endTime" accept=".csv" required />
+            </span>
+        </span>
+
+
+        <span class="row_flex_flow right_align">
+            <button type="button">Cancel</button>
+            <button type="submit">Confirm</button>
+        </span>
+    </form>
+</div>
+{% endblock %}

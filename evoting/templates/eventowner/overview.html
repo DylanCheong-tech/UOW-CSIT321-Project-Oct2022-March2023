@@ -1,0 +1,117 @@
+<!-- overview.html -->
+
+{% extends "eventowner/homepage_base.html" %}
+{% load static %}
+
+{% block tab_title %} Overview {% endblock %}
+
+{% block title %} Overview {% endblock %}
+
+{% block js_scripts %}
+<script src="{% static 'eventowner/js/overview.js' %}"></script>
+{% endblock %}
+
+{% block stylesheet_links %}
+<link rel="stylesheet" href="{% static 'eventowner/css/overview.css' %}" />
+{% endblock %}
+
+
+{% block content %}
+<div id="summary">
+    <h2>Summary</h2>
+    Total Vote Events : 3 <br />
+    Ongoing Vote Events : 2 <br />
+    Completed Vote Events : 1 <br />
+</div>
+
+<div id="miscellaneous">
+    <span id="links">
+        <h2>Miscellaneous</h2>
+        <a>Terms Of Services</a>
+        <a>Support</a>
+        <a>Privacy Policy</a>
+        <a>About</a>
+    </span>
+
+    <span id="annotation">&copy; evoting.com 2022</span>
+</div>
+
+
+<div id="vote_events">
+    <span>
+        <h2>Your Vote Events</h2>
+        <button type="button">Create New Vote Event</button>
+        <input type="text" placeholder="Search" />
+        <select>
+            <option>Seq No.</option>
+        </select>
+    </span>
+
+    <table>
+        <tr>
+            <th>Seq No</th>
+            <th>Name</th>
+            <th>Date Created</th>
+            <th>Status</th>
+            <th>Time Period</th>
+            <th>Actions</th>
+        </tr>
+
+        <tr>
+            <td>sample text</td>
+            <td>sample text</td>
+            <td>sample text</td>
+            <td>sample text</td>
+            <td>sample text</td>
+            <td class="buttons_col">
+                <button type="button">View</button>
+                <button type="button">Delete</button>
+                <button type="button">Modify</button>
+                <button type="button">confirm</button>
+            </td>
+        </tr>
+
+        <tr>
+            <td>sample text</td>
+            <td>sample text</td>
+            <td>sample text</td>
+            <td>sample text</td>
+            <td>sample text</td>
+            <td class="buttons_col">
+                <button type="button">View</button>
+                <button type="button">Delete</button>
+                <button type="button">Modify</button>
+                <button type="button">confirm</button>
+            </td>
+        </tr>
+
+        <tr>
+            <td>sample text</td>
+            <td>sample text</td>
+            <td>sample text</td>
+            <td>sample text</td>
+            <td>sample text</td>
+            <td class="buttons_col">
+                <button type="button">View</button>
+                <button type="button">Delete</button>
+                <button type="button">Modify</button>
+                <button type="button">confirm</button>
+            </td>
+        </tr>
+
+        <tr>
+            <td>sample text</td>
+            <td>sample text</td>
+            <td>sample text</td>
+            <td>sample text</td>
+            <td>sample text</td>
+            <td class="buttons_col">
+                <button type="button">View</button>
+                <button type="button">Delete</button>
+                <button type="button">Modify</button>
+                <button type="button">confirm</button>
+            </td>
+        </tr>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+<!-- homepage_base.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block tab_title %}{% endblock %}</title>
+
+    {% block js_scripts %}{% endblock %}
+
+    <link rel="stylesheet" href="{% static 'eventowner/css/homepage_base.css' %}" />
+    {% block stylesheet_links %}{% endblock %}
+</head>
+
+<body>
+    <div id="content_pane">
+        <div id="left_pane">
+            <span id="logo">
+                logo here
+            </span>
+            <span id="side_menu_bar">
+                <span class="menu_item">Overview</span>
+                <span class="menu_item">Ongoing Vote Events</span>
+                <span class="menu_item">Completed Vote Events</span>
+                <span class="menu_item last_item">FAQ</span>
+
+                <span class="logout_section">
+                    <span>sampleemail@gmail.com</span>
+                    <form action="/evoting/eventowner/logout" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" onclick="logout()">Log out</button>
+                    </form>
+                </span>
+            </span>
+        </div>
+
+        <div id="right_pane">
+            <div id="header">
+                <h1>{% block title %}{% endblock %}</h1>
+                <span>
+                    <span>Welcome, John Doe</span>
+                </span>
+            </div>
+
+            <div id="content">
+                {% block content %} {% endblock %}
+            </div>
+        </div>
+    </div>
+    </div>
+</body>
+
+</html>
