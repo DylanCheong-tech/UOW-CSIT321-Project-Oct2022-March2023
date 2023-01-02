@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from datetime import date
 
 # Create your models here.
 
@@ -24,3 +25,15 @@ class OTPManagement(models.Model):
 
     def __str__(self):
         return self.email
+
+class VoteEvent(models.Model):
+    id = models.BigAutoField(primary_key=True, db_column="seqNo")
+    eventTitle = models.CharField(max_length=200)
+    startDate = models.DateField()
+    startTime = models.TimeField()
+    endDate = models.DateField()
+    endTime = models.TimeField()
+    eventQuestion = models.CharField(max_length=200)
+    voteOption = models.TextField()
+    voterEmail = models.TextField()
+    

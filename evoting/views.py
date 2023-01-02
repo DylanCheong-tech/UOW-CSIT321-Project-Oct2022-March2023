@@ -1,3 +1,5 @@
+import json
+
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views import View
@@ -7,10 +9,12 @@ from django.contrib import auth
 # Form imports
 from .forms.eventowner import SignupForm
 from .forms.eventowner import LoginForm
+from .forms.eventowner import CreateEventForm
 
 # Model imports
 from .models import UserAccount
 from .models import OTPManagement
+from .models import VoteEvent
 
 # Helper module imports
 from .helpers.otpGenerator import OTPGenerator
@@ -131,3 +135,44 @@ class EventOwnerLogout(View):
         # redirect back to the login page
         auth.logout(request)
         return redirect("/evoting/eventowner/login")
+
+class EventOwnerCreateNewVoteEvent(View):
+    def get(self, request):
+        return render(request, "eventowner/createvoteevent.html", {})
+
+    def post(self,request):
+        form = CreateEventForm(request.POST)
+
+        error_message = "Invalid inputs"
+        status_flag = True
+
+        if form.is_valid:
+            data = form.cleaned_data
+
+            new_vote_event = VoteEvent(
+                eventtitle = data['eventTitle'],
+                startDate = data['startDate'],
+                startTime = data['startTime'],
+                endDate = data['endDate'],
+                endTime = data['endTime'],
+                eventQuestion = data['eventQuestion'],
+
+                # https://stackoverflow.com/a/7151813
+
+                voteOption = json.dumps(data['voteOption']),
+                voterEmail = json.dumps(data['voterEmail'])             
+            )
+
+            new_vote_event.save()
+
+        else:
+            status_flag = False
+
+        if status_flag:
+            # redirect to home page if success
+            return redirect("/evoting/eventowner/homepage")
+        else:
+            # createvoteevent.html not created yet
+            return render(request, "eventowner/createvoteevent.html", {"status": error_message, "form": form})
+
+        
