@@ -169,14 +169,16 @@ class EventOwnerCreateNewVoteEvent(View):
 
             new_vote_event.save()
 
-            event = VoteEvent.objects.latest('seqNo').seqNo
+            # https://docs.djangoproject.com/en/4.1/ref/models/instances/#auto-incrementing-primary-keys
 
-            # TODO Needs edit because the additional Vote Options overwrite the previous ones, need to make them append
-            vote_option = VoteOption(
-                voteOption = data['voteOption'],
-                seqNo_id = event
-            )
-            vote_option.save()
+            options_list = data['voteOption'].split("|")
+            print(options_list)
+            for x in options_list:
+                vote_option = VoteOption(
+                    voteOption = x,
+                    seqNo_id = new_vote_event.seqNo
+                )
+                vote_option.save()
       
             decoded_file = data['voterEmail'].read().decode('utf-8').splitlines()
             reader = csv.reader(decoded_file)
@@ -188,7 +190,7 @@ class EventOwnerCreateNewVoteEvent(View):
                 voter_email = VoterEmail(
                     voter = x[0],
                     voterEmail = x[1],
-                    seqNo_id = event
+                    seqNo_id = new_vote_event.seqNo
                 )
                 voter_email.save()
     
@@ -200,7 +202,7 @@ class EventOwnerCreateNewVoteEvent(View):
             # redirect to home page if success
             return redirect("/evoting/eventowner/homepage")
         else:
-            return render(request, "eventowner/createvoteevent.html", {"status": error_message, "form": form})
+            return render(request, "eventowner/createvoteevent.html", {"status": error_message, "form": form, "options" : options_list})
 
 
 

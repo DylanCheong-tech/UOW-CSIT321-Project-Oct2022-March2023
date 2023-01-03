@@ -1,7 +1,7 @@
 // createvoteevent.js
 
 // add option fields
-function addOptions(){
+function addOptions() {
     button_ele = document.querySelector("span#vote_options>button");
     frame_ele = document.getElementById("vote_options");
 
@@ -20,12 +20,27 @@ function addOptions(){
 
     newSpan.appendChild(newOptionField);
     newSpan.appendChild(newRemoveButton);
-    
+
     // append the new element before the button element 
     frame_ele.insertBefore(newSpan, button_ele);
 }
 
 // remove the option fields
-function removeOptions(event){
+function removeOptions(event) {
     event.target.parentElement.remove();
+}
+
+// preprocess the form data before submit 
+function formSubmit(event) {
+    options = document.querySelectorAll("input[name=voteOption]");
+    options_str = ""
+    // concat all the options to be submit 
+    options.forEach((option, index) => {
+        if (index == options.length - 1)
+            options_str += option.value
+        else
+            options_str += option.value + "|"
+    });
+
+    options[options.length - 1].value = options_str
 }
