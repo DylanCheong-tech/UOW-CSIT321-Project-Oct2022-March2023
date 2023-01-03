@@ -12,6 +12,10 @@ class EmailSender:
         self.TEMPLATE_ID = "d-84a1e28f68554373b977e237e634f6bf"
 
     def sendOTP(self, otp):
+        # receiver email must be defined
+        if (self.receiver_email is None or len(self.receiver_email) == 0):
+            return False
+
         # assign your API key to the SendGrid API client
         my_sg = sendgrid.SendGridAPIClient(
             api_key=self.SENDGRID_API_KEY)
@@ -29,3 +33,5 @@ class EmailSender:
         mail.template_id = self.TEMPLATE_ID;
 
         response = my_sg.send(mail)
+
+        return response

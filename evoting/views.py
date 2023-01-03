@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views import View
-from django.utils import timezone
 from django.contrib import auth
 
 # Form imports
@@ -45,14 +44,14 @@ class EventOwnerCreateAccountView(View):
                     # check otp value
                     otp_from_db = OTPManagement.objects.get(email=data['email'])
                     expireAt = otp_from_db.expireAt
-                    if otp_from_db.otp != data['otp'] or timezone.localtime() > timezone.localtime(expireAt):
+                    if otp_from_db.is_expired() or otp_from_db.otp != data['otp']:
                         error_message = "OTP value invalid !"
                         status_flag = False
 
                     else:
                         new_account = UserAccount(
                             email=data['email'],
-                            password=Hasher(str(data['password']).encode('utf-8')).messageDigest(),
+                            password=Hasher(data['password']).messageDigest(),
                             firstName=data['firstname'],
                             lastName=data['lastname'],
                             gender=data['gender'].upper(),
@@ -60,7 +59,7 @@ class EventOwnerCreateAccountView(View):
 
                         new_account.save()
                         user = auth.models.User(username=data['email'])
-                        user.set_password(Hasher(str(data['password']).encode('utf-8')).messageDigest())
+                        user.set_password(Hasher(data['password']).messageDigest())
                         user.save()
 
                 except OTPManagement.DoesNotExist:
