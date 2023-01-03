@@ -152,7 +152,7 @@ class EventOwnerCreateNewVoteEvent(View):
         form = CreateEventForm(request.POST, request.FILES)
 
         error_message = "Invalid inputs"
-        status_flag = False
+        status_flag = True
 
         if form.is_valid():
             data = form.cleaned_data
