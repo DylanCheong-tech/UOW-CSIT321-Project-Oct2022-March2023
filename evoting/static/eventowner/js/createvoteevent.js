@@ -10,7 +10,7 @@ function addOptions(){
 
     newOptionField = document.createElement("input");
     newOptionField.type = "text";
-    newOptionField.name = "voteOptions";
+    newOptionField.name = "voteOption";
     newOptionField.placeholder = "Vote Option";
 
     newRemoveButton = document.createElement("button");

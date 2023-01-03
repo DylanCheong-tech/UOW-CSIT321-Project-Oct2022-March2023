@@ -27,7 +27,7 @@ class OTPManagement(models.Model):
         return self.email
 
 class VoteEvent(models.Model):
-    id = models.BigAutoField(primary_key=True, db_column="seqNo")
+    seqNo = models.AutoField(primary_key=True)
     eventTitle = models.CharField(max_length=200)
     startDate = models.DateField()
     startTime = models.TimeField()
@@ -37,19 +37,18 @@ class VoteEvent(models.Model):
    
 
     def __str__(self):
-        return self.id
+        return self.seqNo
 
+    
 
 class VoteOption(models.Model):
-    id = models.AutoField(primary_key=True)
-    voteOption = models.TextField()
+    voteOption = models.CharField(max_length=100)
     seqNo = models.ForeignKey("VoteEvent", on_delete=models.CASCADE)
 
     def __str__(self):
         return self.id
 
 class VoterEmail(models.Model):
-    id = models.AutoField(primary_key=True)
     voterEmail = models.EmailField()
     seqNo = models.ForeignKey("VoteEvent", on_delete=models.CASCADE)
 

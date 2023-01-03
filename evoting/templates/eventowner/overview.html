@@ -40,7 +40,12 @@
 <div id="vote_events">
     <span>
         <h2>Your Vote Events</h2>
-        <button type="button">Create New Vote Event</button>
+        <span class="createevent_section">
+            <form action="/evoting/eventowner/createevent" method="GET">
+                {% csrf_token %}
+                <button type="submit">Create New Vote Event</button>
+            </form>
+        </span>
         <input type="text" placeholder="Search" />
         <select>
             <option>Seq No.</option>

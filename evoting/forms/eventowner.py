@@ -25,6 +25,6 @@ class CreateEventForm(forms.Form):
     endDate = forms.DateField(label="End Date")
     endTime = forms.TimeField(label="End Time")
     eventQuestion = forms.CharField(label="Event Question")
-    voteOptions = forms.CharField(label="Vote Option")
-    voterEmails = forms.CharField(label="Voter Email")
+    voteOption = forms.CharField(label="Vote Option")
+    voterEmail = forms.FileField(label="Voter Email")
     

@@ -1,4 +1,4 @@
-import json
+import csv
 
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
@@ -138,6 +138,8 @@ class EventOwnerLogout(View):
         auth.logout(request)
         return redirect("/evoting/eventowner/login")
 
+
+
 class EventOwnerCreateNewVoteEvent(View):
     def get(self, request):
         # check authentication 
@@ -148,12 +150,12 @@ class EventOwnerCreateNewVoteEvent(View):
         return render(request, "eventowner/createvoteevent.html", {})
 
     def post(self,request):
-        form = CreateEventForm(request.POST)
+        form = CreateEventForm(request.POST, request.FILES)
 
         error_message = "Invalid inputs"
         status_flag = True
 
-        if form.is_valid:
+        if form.is_valid():
             data = form.cleaned_data
 
             eventQuestion = data['eventQuestion']
@@ -168,34 +170,40 @@ class EventOwnerCreateNewVoteEvent(View):
 
             new_vote_event.save()
 
-            event = VoteEvent.objects.get(eventQuestion=eventQuestion)
-            
-            # split by "| " delimiter
-            voteOptionList = data['voteOption'].split("| ")
-            voterEmailList = data['voterEmail'].split("| ")
+            event = VoteEvent.objects.latest('seqNo').seqNo
 
-            for x in voteOptionList:
-                vote_option = VoteOption(
-                    voteOption = x,
-                    seqNo = event.id
-                )
-                vote_option.save()
+            # TODO Needs edit because the additional Vote Options overwrite the previous ones, need to make them append
+            vote_option = VoteOption(
+                voteOption = data['voteOption'],
+                seqNo_id = event
+            )
+            vote_option.save()
+      
+            decoded_file = data['voterEmail'].read().decode('utf-8').splitlines()
+            reader = csv.reader(decoded_file)
+            for row in reader:
+                print(type(row))
+                emailList = row
             
-            for x in voterEmailList:
+            for x in emailList:
                 voter_email = VoterEmail(
                     voterEmail = x,
-                    seqNo = event.id
+                    seqNo_id = event
                 )
                 voter_email.save()
-
+    
         else:
             status_flag = False
+            print(form.errors.as_data())
 
         if status_flag:
             # redirect to home page if success
             return redirect("/evoting/eventowner/homepage")
         else:
-            # createvoteevent.html not created yet
             return render(request, "eventowner/createvoteevent.html", {"status": error_message, "form": form})
+
+
+
+    
 
         
