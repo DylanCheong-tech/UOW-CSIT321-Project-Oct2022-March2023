@@ -22,6 +22,7 @@ from .models import VoterEmail
 from .helpers.otpGenerator import OTPGenerator
 from .helpers.sendOTPEmail import EmailSender
 from .helpers.hasher import Hasher
+from .helpers.readEmailCSVFile import EmailCSVReader
 
 class EventOwnerCreateAccountView(View):
     def get(self, request):
@@ -148,12 +149,12 @@ class EventOwnerCreateNewVoteEvent(View):
         return render(request, "eventowner/createvoteevent.html", {})
 
     def post(self,request):
-        form = CreateEventForm(request.POST)
+        form = CreateEventForm(request.POST, request.FILES)
 
         error_message = "Invalid inputs"
-        status_flag = True
+        status_flag = False
 
-        if form.is_valid:
+        if form.is_valid():
             data = form.cleaned_data
 
             eventQuestion = data['eventQuestion']
@@ -168,23 +169,23 @@ class EventOwnerCreateNewVoteEvent(View):
 
             new_vote_event.save()
 
-            event = VoteEvent.objects.get(eventQuestion=eventQuestion)
-            
-            # split by "| " delimiter
-            voteOptionList = data['voteOption'].split("| ")
-            voterEmailList = data['voterEmail'].split("| ")
+            # https://docs.djangoproject.com/en/4.1/ref/models/instances/#auto-incrementing-primary-keys
+
+            voteOptionList = request.POST.getlist("voteOptions")
+            voterEmailDict = EmailCSVReader(request.FILES["voterEmails"]).getVoterEmailsDict()
 
             for x in voteOptionList:
                 vote_option = VoteOption(
                     voteOption = x,
-                    seqNo = event.id
+                    seqNo = new_vote_event.id
                 )
                 vote_option.save()
             
-            for x in voterEmailList:
+            for x in voterEmailDict:
                 voter_email = VoterEmail(
-                    voterEmail = x,
-                    seqNo = event.id
+                    voter = x,
+                    voterEmail = voterEmailDict[x],
+                    seqNo = new_vote_event.id
                 )
                 voter_email.save()
 
@@ -196,6 +197,6 @@ class EventOwnerCreateNewVoteEvent(View):
             return redirect("/evoting/eventowner/homepage")
         else:
             # createvoteevent.html not created yet
-            return render(request, "eventowner/createvoteevent.html", {"status": error_message, "form": form})
+            return render(request, "eventowner/createvoteevent.html", {"status": error_message, "form": form, "voteOptions" : request.POST.getlist("voteOptions")})
 
         

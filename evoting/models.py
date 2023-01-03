@@ -34,7 +34,7 @@ class VoteEvent(models.Model):
     endDate = models.DateField()
     endTime = models.TimeField()
     eventQuestion = models.CharField(max_length=200)
-   
+    status = models.CharField(max_length=2, default="PC")
 
     def __str__(self):
         return self.id
@@ -50,6 +50,7 @@ class VoteOption(models.Model):
 
 class VoterEmail(models.Model):
     id = models.AutoField(primary_key=True)
+    voter = models.CharField(max_length=100)
     voterEmail = models.EmailField()
     seqNo = models.ForeignKey("VoteEvent", on_delete=models.CASCADE)
 
