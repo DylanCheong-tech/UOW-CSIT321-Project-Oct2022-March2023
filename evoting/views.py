@@ -22,6 +22,7 @@ from .models import VoterEmail
 from .helpers.otpGenerator import OTPGenerator
 from .helpers.sendOTPEmail import EmailSender
 from .helpers.hasher import Hasher
+from .helpers.readEmailCSVFile import EmailCSVReader
 
 class EventOwnerCreateAccountView(View):
     def get(self, request):
@@ -170,25 +171,23 @@ class EventOwnerCreateNewVoteEvent(View):
 
             new_vote_event.save()
 
-            event = VoteEvent.objects.latest('seqNo').seqNo
+            # https://docs.djangoproject.com/en/4.1/ref/models/instances/#auto-incrementing-primary-keys
 
-            # TODO Needs edit because the additional Vote Options overwrite the previous ones, need to make them append
-            vote_option = VoteOption(
-                voteOption = data['voteOption'],
-                seqNo_id = event
-            )
-            vote_option.save()
-      
-            decoded_file = data['voterEmail'].read().decode('utf-8').splitlines()
-            reader = csv.reader(decoded_file)
-            for row in reader:
-                print(type(row))
-                emailList = row
+            voteOptionList = request.POST.getlist("voteOptions")
+            voterEmailDict = EmailCSVReader(request.FILES["voterEmails"]).getVoterEmailsDict()
+
+            for x in voteOptionList:
+                vote_option = VoteOption(
+                    voteOption = x,
+                    seqNo = new_vote_event.seqNo
+                )
+                vote_option.save()
             
-            for x in emailList:
+            for x in voterEmailDict:
                 voter_email = VoterEmail(
-                    voterEmail = x,
-                    seqNo_id = event
+                    voter = x,
+                    voterEmail = voterEmailDict[x],
+                    seqNo = new_vote_event.seqNo
                 )
                 voter_email.save()
     

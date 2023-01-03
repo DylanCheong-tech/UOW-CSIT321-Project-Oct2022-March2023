@@ -23,49 +23,50 @@
     <form action="/evoting/eventowner/createevent" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <label>Vote Event Name<span class="red_asterisk">*</span></label>
-        <input type="text" name="eventTitle" placeholder="Vote Event Name" required />
+        <input type="text" name="eventTitle" placeholder="Vote Event Name" value="{{ form.eventTitle.value }}"
+            required />
 
         <span class="row_flex_flow">
             <label>
                 Vote Start Date<span class="red_asterisk">*</span>:
-                <input type="date" name="startDate" required />
+                <input type="date" name="startDate" value="{{ form.startDate.value }}" required />
             </label>
 
             <label>
                 Vote End Date<span class="red_asterisk">*</span>:
-                <input type="date" name="endDate" required />
+                <input type="date" name="endDate" value="{{ form.endDate.value }}" required />
             </label>
         </span>
 
         <span class="row_flex_flow">
             <label>
                 Vote Start Time<span class="red_asterisk">*</span>:
-                <input type="time" name="startTime" required />
+                <input type="time" name="startTime" value="{{ form.startTime.value }}" required />
 
             </label>
 
             <label>
                 Vote End Time<span class="red_asterisk">*</span>:
-                <input type="time" name="endTime" required />
+                <input type="time" name="endTime" value="{{ form.endTime.value }}" required />
             </label>
         </span>
 
 
         <label>Vote Question<span class="red_asterisk">*</span></label>
-        <input type="text" name="eventQuestion" placeholder="Vote Question" />
+        <input type="text" name="eventQuestion" placeholder="Vote Question" value="{{ form.eventQuestion.value }}" />
 
         <span class="row_flex_flow options_and_file">
             <span id="vote_options">
                 <label>Vote Options<span class="red_asterisk">*</span></label>
                 <span class="fields">
-                    <input type="text" name="voteOption" placeholder="Vote Option" />
+                    <input type="text" name="voteOptions" placeholder="Vote Option" />
                 </span>
                 <button type="button" onclick="addOptions()">Add More Options</button>
             </span>
 
             <span class="row_flex_flow">
                 <label>Participants<span class="red_asterisk">*</span>:</label>
-                <input type="file" name="voterEmail" accept=".csv" required />
+                <input type="file" name="endTime" accept=".csv" required />
             </span>
         </span>
 
