@@ -158,13 +158,17 @@ class EventOwnerCreateNewVoteEvent(View):
         if form.is_valid():
             data = form.cleaned_data
 
+            # the user must be existed in the database, since user need to logged in to be able to create event
+            current_user = UserAccount.objects.get(email=request.user.username)
+
             new_vote_event = VoteEvent(
                 eventTitle = data['eventTitle'],
                 startDate = data['startDate'],
                 startTime = data['startTime'],
                 endDate = data['endDate'],
                 endTime = data['endTime'],
-                eventQuestion = data['eventQuestion']
+                eventQuestion = data['eventQuestion'],
+                createdBy = current_user.id
             )
 
             new_vote_event.save()
@@ -172,7 +176,6 @@ class EventOwnerCreateNewVoteEvent(View):
             # https://docs.djangoproject.com/en/4.1/ref/models/instances/#auto-incrementing-primary-keys
 
             options_list = data['voteOption'].split("|")
-            print(options_list)
             for x in options_list:
                 if(len(x.strip()) > 0):
                     vote_option = VoteOption(

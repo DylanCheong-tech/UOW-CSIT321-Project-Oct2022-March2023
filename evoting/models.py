@@ -35,6 +35,7 @@ class VoteEvent(models.Model):
     endTime = models.TimeField()
     eventQuestion = models.CharField(max_length=200)
     status = models.CharField(max_length=2, default="PC")
+    createdBy = models.ForeignKey("UserAccount", on_delete=models.CASCADE)
 
     def __str__(self):
         return self.seqNo
