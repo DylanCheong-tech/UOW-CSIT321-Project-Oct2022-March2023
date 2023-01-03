@@ -61,12 +61,12 @@
                 <label>Vote Options<span class="red_asterisk">*</span></label>
                 {% if not voteOptions %}
                     <span class="fields">
-                        <input type="text" name="voteOptions" placeholder="Vote Option" />
+                        <input type="text" name="voteOption" placeholder="Vote Option" />
                     </span>
                 {% else%}
                     {% for item in voteOptions %}
                         <span class="fields">
-                            <input type="text" name="voteOptions" placeholder="Vote Option" value="{{ item }}" />
+                            <input type="text" name="voteOption" placeholder="Vote Option" value="{{ item }}" />
                             <button type="button" onclick="removeOptions(event)">Remove</button>
                         </span>
                     {% endfor %}

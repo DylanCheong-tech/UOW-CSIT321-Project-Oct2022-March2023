@@ -36,10 +36,12 @@ function formSubmit(event) {
     options_str = ""
     // concat all the options to be submit 
     options.forEach((option, index) => {
-        if (index == options.length - 1)
-            options_str += option.value
-        else
-            options_str += option.value + "|"
+        if(option.value.trim().length > 0){
+            if (index == options.length - 1)
+                options_str += option.value
+            else
+                options_str += option.value + "|"
+        }
     });
 
     options[options.length - 1].value = options_str

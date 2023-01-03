@@ -174,11 +174,12 @@ class EventOwnerCreateNewVoteEvent(View):
             options_list = data['voteOption'].split("|")
             print(options_list)
             for x in options_list:
-                vote_option = VoteOption(
-                    voteOption = x,
-                    seqNo_id = new_vote_event.seqNo
-                )
-                vote_option.save()
+                if(len(x.strip()) > 0):
+                    vote_option = VoteOption(
+                        voteOption = x,
+                        seqNo_id = new_vote_event.seqNo
+                    )
+                    vote_option.save()
       
             decoded_file = data['voterEmail'].read().decode('utf-8').splitlines()
             reader = csv.reader(decoded_file)
