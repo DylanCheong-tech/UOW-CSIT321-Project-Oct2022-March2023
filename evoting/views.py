@@ -22,7 +22,6 @@ from .models import VoterEmail
 from .helpers.otpGenerator import OTPGenerator
 from .helpers.sendOTPEmail import EmailSender
 from .helpers.hasher import Hasher
-from .helpers.readEmailCSVFile import EmailCSVReader
 
 class EventOwnerCreateAccountView(View):
     def get(self, request):
@@ -159,7 +158,6 @@ class EventOwnerCreateNewVoteEvent(View):
         if form.is_valid():
             data = form.cleaned_data
 
-            eventQuestion = data['eventQuestion']
             new_vote_event = VoteEvent(
                 eventTitle = data['eventTitle'],
                 startDate = data['startDate'],
@@ -171,23 +169,26 @@ class EventOwnerCreateNewVoteEvent(View):
 
             new_vote_event.save()
 
-            # https://docs.djangoproject.com/en/4.1/ref/models/instances/#auto-incrementing-primary-keys
+            event = VoteEvent.objects.latest('seqNo').seqNo
 
-            voteOptionList = request.POST.getlist("voteOptions")
-            voterEmailDict = EmailCSVReader(request.FILES["voterEmails"]).getVoterEmailsDict()
-
-            for x in voteOptionList:
-                vote_option = VoteOption(
-                    voteOption = x,
-                    seqNo = new_vote_event.seqNo
-                )
-                vote_option.save()
+            # TODO Needs edit because the additional Vote Options overwrite the previous ones, need to make them append
+            vote_option = VoteOption(
+                voteOption = data['voteOption'],
+                seqNo_id = event
+            )
+            vote_option.save()
+      
+            decoded_file = data['voterEmail'].read().decode('utf-8').splitlines()
+            reader = csv.reader(decoded_file)
+            emailList = []
+            for row in reader:
+                emailList.append(row)
             
-            for x in voterEmailDict:
+            for x in emailList:
                 voter_email = VoterEmail(
-                    voter = x,
-                    voterEmail = voterEmailDict[x],
-                    seqNo = new_vote_event.seqNo
+                    voter = x[0],
+                    voterEmail = x[1],
+                    seqNo_id = event
                 )
                 voter_email.save()
     
