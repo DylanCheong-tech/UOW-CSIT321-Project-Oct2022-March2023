@@ -27,7 +27,7 @@ class OTPManagement(models.Model):
         return self.email
 
 class VoteEvent(models.Model):
-    seqNo = models.BigAutoField(primary_key=True)
+    seqNo = models.AutoField(primary_key=True)
     eventTitle = models.CharField(max_length=200)
     startDate = models.DateField()
     startTime = models.TimeField()
