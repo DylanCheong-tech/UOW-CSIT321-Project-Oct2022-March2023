@@ -168,7 +168,7 @@ class EventOwnerCreateNewVoteEvent(View):
                 endDate = data['endDate'],
                 endTime = data['endTime'],
                 eventQuestion = data['eventQuestion'],
-                createdBy = current_user.id
+                createdBy = current_user
             )
 
             new_vote_event.save()

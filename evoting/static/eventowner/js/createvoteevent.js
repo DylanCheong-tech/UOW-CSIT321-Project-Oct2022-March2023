@@ -3,9 +3,7 @@
 // add option fields
 function addOptions() {
     vote_options = document.querySelectorAll("input[name=voteOption]");
-    if (vote_options[vote_options.length - 1].value.trim() == "") return;
-
-
+    
     button_ele = document.querySelector("span#vote_options>button");
     frame_ele = document.getElementById("vote_options");
 
