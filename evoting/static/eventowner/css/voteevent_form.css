@@ -49,6 +49,15 @@ div#content div#vote_event_form form span.options_and_file span#vote_options {
     row-gap: 2vh;
 }
 
+div#content div#vote_event_form form span.options_and_file span.voter_emails {
+    display: grid;
+    grid-template-columns: 30% 70%;
+}
+
+div#content div#vote_event_form form span.options_and_file span.voter_emails a {
+    grid-column: span 2;
+}
+
 div#content div#vote_event_form form span.options_and_file span.fields {
     display: flex;
     flex-flow: row;

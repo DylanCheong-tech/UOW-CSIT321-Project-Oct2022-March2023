@@ -3,7 +3,7 @@
 // add option fields
 function addOptions() {
     vote_options = document.querySelectorAll("input[name=voteOption]");
-    
+
     button_ele = document.querySelector("span#vote_options>button");
     frame_ele = document.getElementById("vote_options");
 
@@ -32,13 +32,19 @@ function removeOptions(event) {
     event.target.parentElement.remove();
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+    // download voter email csv template csv file 
+    content = "data:text/csv;charset=utf-8,Voter Name,Email\nAdam,adam@mail.com\nBrabara,brabara@mail.com"
+    document.getElementById("csv_downloader").href = encodeURI(content)
+})
+
 // preprocess the form data before submit 
 function formSubmit(event) {
     options = document.querySelectorAll("input[name=voteOption]");
     options_str = ""
     // concat all the options to be submit 
     options.forEach((option, index) => {
-        if(option.value.trim().length > 0){
+        if (option.value.trim().length > 0) {
             if (index == options.length - 1)
                 options_str += option.value
             else
