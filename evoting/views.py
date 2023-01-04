@@ -195,8 +195,8 @@ class EventOwnerCreateNewVoteEvent(View):
 
             for x in valid_email:
                 voter_email = VoterEmail(
-                    voter = x[0],
-                    voterEmail = x[1],
+                    voter = x,
+                    voterEmail = valid_email[x],
                     seqNo_id = new_vote_event.seqNo
                 )
                 voter_email.save()
