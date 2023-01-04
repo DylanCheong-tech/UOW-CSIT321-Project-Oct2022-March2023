@@ -193,10 +193,10 @@ class EventOwnerCreateNewVoteEvent(View):
             
             valid_email, invalid_email = VoterEmailChecker.checkEmails(emailList)
 
-            for x in valid_email:
+            for x, y in valid_email.items():
                 voter_email = VoterEmail(
-                    voter = x[0],
-                    voterEmail = x[1],
+                    voter = x,
+                    voterEmail = y,
                     seqNo_id = new_vote_event.seqNo
                 )
                 voter_email.save()
