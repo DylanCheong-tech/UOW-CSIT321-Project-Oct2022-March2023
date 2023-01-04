@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
-from datetime import date
+from django.utils import dateparse
+from datetime import datetime
 
 # Create your models here.
 
@@ -37,10 +38,21 @@ class VoteEvent(models.Model):
     status = models.CharField(max_length=2, default="PC")
     createdBy = models.ForeignKey("UserAccount", on_delete=models.CASCADE)
 
+    def is_event_datetime_valid(self):
+        start_datetime = dateparse.parse_datetime(str(self.startDate) + " " + str(self.startTime))
+        end_datetime = dateparse.parse_datetime(str(self.endDate) + " " + str(self.endTime))
+
+        if start_datetime < datetime.now():
+            return False
+
+        if start_datetime > end_datetime:
+            return False
+
+        return True        
+
     def __str__(self):
         return self.seqNo
 
-    
 
 class VoteOption(models.Model):
     voteOption = models.CharField(max_length=100)

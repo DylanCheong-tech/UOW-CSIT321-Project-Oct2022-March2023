@@ -172,34 +172,38 @@ class EventOwnerCreateNewVoteEvent(View):
                 createdBy_id = current_user.id
             )
 
-            new_vote_event.save()
+            if not new_vote_event.is_event_datetime_valid():
+                status_flag = False
+                error_message = "Date Time Settings Invalid"
+                options_list = []
 
-            # https://docs.djangoproject.com/en/4.1/ref/models/instances/#auto-incrementing-primary-keys
+            else:
+                new_vote_event.save()
 
-            options_list = data['voteOption'].split("|")
-            for x in options_list:
-                if(len(x.strip()) > 0):
-                    vote_option = VoteOption(
-                        voteOption = x,
+                options_list = data['voteOption'].split("|")
+                for x in options_list:
+                    if(len(x.strip()) > 0):
+                        vote_option = VoteOption(
+                            voteOption = x,
+                            seqNo_id = new_vote_event.seqNo
+                        )
+                        vote_option.save()
+          
+                decoded_file = data['voterEmail'].read().decode('utf-8').splitlines()
+                reader = csv.reader(decoded_file)
+                emailList = []
+                for row in reader:
+                    emailList.append(row)
+                
+                valid_email, invalid_email = VoterEmailChecker.checkEmails(emailList)
+
+                for x, y in valid_email.items():
+                    voter_email = VoterEmail(
+                        voter = x,
+                        voterEmail = y,
                         seqNo_id = new_vote_event.seqNo
                     )
-                    vote_option.save()
-      
-            decoded_file = data['voterEmail'].read().decode('utf-8').splitlines()
-            reader = csv.reader(decoded_file)
-            emailList = []
-            for row in reader:
-                emailList.append(row)
-            
-            valid_email, invalid_email = VoterEmailChecker.checkEmails(emailList)
-
-            for x, y in valid_email.items():
-                voter_email = VoterEmail(
-                    voter = x,
-                    voterEmail = y,
-                    seqNo_id = new_vote_event.seqNo
-                )
-                voter_email.save()
+                    voter_email.save()
     
         else:
             status_flag = False
