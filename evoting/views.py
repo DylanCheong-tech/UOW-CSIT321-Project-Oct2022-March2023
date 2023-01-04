@@ -1,4 +1,5 @@
 import csv
+import re
 
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
@@ -191,6 +192,9 @@ class EventOwnerCreateNewVoteEvent(View):
                 emailList.append(row)
             
             for x in emailList:
+                if not re.match(r'[^@]+@[^@]+\.[^@]+', x[1]):
+                    print(x)
+                    continue
                 voter_email = VoterEmail(
                     voter = x[0],
                     voterEmail = x[1],
