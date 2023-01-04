@@ -1,5 +1,4 @@
 import csv
-import re
 
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
@@ -23,6 +22,7 @@ from .models import VoterEmail
 from .helpers.otpGenerator import OTPGenerator
 from .helpers.sendOTPEmail import EmailSender
 from .helpers.hasher import Hasher
+from .helpers.voterEmailChecker import VoterEmailChecker
 
 class EventOwnerCreateAccountView(View):
     def get(self, request):
@@ -191,10 +191,9 @@ class EventOwnerCreateNewVoteEvent(View):
             for row in reader:
                 emailList.append(row)
             
-            for x in emailList:
-                if not re.match(r'[^@]+@[^@]+\.[^@]+', x[1]):
-                    print(x)
-                    continue
+            valid_email, invalid_email = VoterEmailChecker.checkEmails(emailList)
+
+            for x in valid_email:
                 voter_email = VoterEmail(
                     voter = x[0],
                     voterEmail = x[1],
