@@ -64,9 +64,9 @@
         <tr>
             <th>Seq No</th>
             <th>Name</th>
-            <th>Event Period</th>
+            <th>Event Date</th>
+            <th>Event Time</th>
             <th>Status</th>
-            <th>Time</th>
             <th>Actions</th>
         </tr>
         {% for event in VoteEvents %}
@@ -74,12 +74,13 @@
             <td>{{event.seqNo}}</td>
             <td>{{event.eventTitle}}</td>
             <td>{{event|concat_period:'date'|linebreaks}}</td>
-            <td>{{event.status}}</td>
             <td>{{event|concat_period:'time'|linebreaks}}</td>
+            <td>{{event.status}}</td>
             <td class="buttons_col">
                 <button type="button">View</button>
                 <button type="button">Delete</button>
-                <button type="button">Modify</button>
+                <br />
+                <button type="button" onclick="window.location.href='/evoting/eventowner/updateevent/' + '{{event.seqNo}}'">Modify</button>
                 <button type="button">confirm</button>
             </td>
         </tr>

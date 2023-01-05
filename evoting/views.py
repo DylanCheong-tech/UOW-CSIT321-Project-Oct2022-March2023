@@ -233,14 +233,20 @@ class EventOwnerUpdateVoteEvent(View):
 
         #  get the vote event object 
         user = UserAccount.objects.get(email=request.user.username)
-        vote_event = VoteEvent.objects.get(createdBy=user, seqNo=seqNo)
+        vote_event = VoteEvent.objects.filter(createdBy=user, seqNo=seqNo)
 
-        options = VoteOption.objects.filter(seqNo=vote_event.seqNo)
+        options = VoteOption.objects.filter(seqNo=vote_event[0].seqNo)
         options_list = []
         for item in options :
             options_list.append(item.voteOption)
 
-        data = model_to_dict(vote_event, fields=["seqNo", "eventTitle", "startDate", "startTime", "endDate", "endTime", "eventQuestion"])
+        data = vote_event.values()[0]
+
+        # reformat the date time object to be able recognise by HTML Form input element
+        data["startDate"] = data["startDate"].strftime("%Y-%m-%d")
+        data["startTime"] = data["startTime"].strftime("%H:%M")
+        data["endDate"] = data["endDate"].strftime("%Y-%m-%d")
+        data["endTime"] = data["endTime"].strftime("%H:%M")
 
         form = CreateEventForm(data)
 

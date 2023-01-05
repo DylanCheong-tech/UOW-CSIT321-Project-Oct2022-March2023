@@ -14,7 +14,7 @@ div#content_pane>div#right_pane div#content div#summary {
     margin-right: 2vw;
 }
 
-div#content_pane>div#right_pane div#content div#miscellaneous span#links{
+div#content_pane>div#right_pane div#content div#miscellaneous span#links {
     display: grid;
     grid-template-columns: repeat(2, 50%);
     row-gap: 2vh;
@@ -53,13 +53,27 @@ div#content_pane>div#right_pane div#content div#vote_events table td, div#conten
     border: 1px solid #000000;
 }
 
-div#content_pane>div#right_pane div#content div#vote_events table td.buttons_col {
-    display: grid;
-    grid-template-columns: repeat(2, 50%);
-    justify-items: center;
-    row-gap: 1vh;
+div#content_pane>div#right_pane div#content div#vote_events table tr th {
+    background-color: #EBECF0;
+}
+
+div#content_pane>div#right_pane div#content div#vote_events table tr td {
+    text-align: center;
+}
+
+div#content_pane>div#right_pane div#content div#vote_events table tr td:nth-child(1) {
+    width: 5%;
+}
+
+div#content_pane>div#right_pane div#content div#vote_events table tr td:nth-child(2) {
+    width: 30%;
+}
+
+div#content_pane>div#right_pane div#content div#vote_events table tr td:nth-child(3), div#content_pane>div#right_pane div#content div#vote_events table tr td:nth-child(4) {
+    width: 15%;
 }
 
 div#content_pane>div#right_pane div#content div#vote_events table td.buttons_col button {
-    width: 5vw;
+    min-width: 8vw;
+    margin: 1vh .5vw 1vh .5vw;
 }
