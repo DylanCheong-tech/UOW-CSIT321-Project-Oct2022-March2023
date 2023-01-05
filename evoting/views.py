@@ -139,8 +139,8 @@ class EventOwnerHomePage(View):
         EventCount = [VoteEventCount, OngoingEvent, CompletedEvent]
         EventLabels = ["Total Vote Events : ","Ongoing Vote Events : ","Completed Vote Events : "]
         EventDetails = zip(EventCount, EventLabels)
-        
-        return render(request, "eventowner/overview.html", {'VoteEvents': VoteEventList})
+
+        return render(request, "eventowner/overview.html", {'VoteEvents': VoteEventList,'UserDetails': current_user,'EventDetail': EventDetails})
 
 
 class EventOwnerLogout(View):
