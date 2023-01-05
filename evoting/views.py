@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.views import View
 from django.utils import timezone
 from django.contrib import auth
+from django.forms.models import model_to_dict
 
 # Form imports
 from .forms.eventowner import SignupForm
@@ -215,3 +216,89 @@ class EventOwnerCreateNewVoteEvent(View):
             return redirect("/evoting/eventowner/homepage")
         else:
             return render(request, "eventowner/voteevent_form.html", {"title" : "Create New Vote Event", "form_action" : "/evoting/eventowner/createevent", "status": error_message, "form": form, "voteOptions" : options_list})  
+
+
+class EventOwnerUpdateVoteEvent(View):
+    def get(self, request, seqNo):
+        # check authentication 
+        if not request.user.is_authenticated:
+            return redirect("/evoting/eventowner/login")
+
+        #  get the vote event object 
+        user = UserAccount.objects.get(email=request.user.username)
+        vote_event = VoteEvent.objects.get(createdBy=user, seqNo=seqNo)
+
+        options = VoteOption.objects.filter(seqNo=vote_event.seqNo)
+        options_list = []
+        for item in options :
+            options_list.append(item.voteOption)
+
+        data = model_to_dict(vote_event, fields=["seqNo", "eventTitle", "startDate", "startTime", "endDate", "endTime", "eventQuestion"])
+
+        form = CreateEventForm(data)
+
+        # render the static page
+        return render(request, "eventowner/voteevent_form.html", {"title" : "Update Vote Event", "form_action" : "/evoting/eventowner/updateevent/" + str(seqNo), "form": form, "voteOptions" : options_list})
+
+
+    def post(self, request, seqNo):
+        form = CreateEventForm(request.POST, request.FILES)
+
+        error_message = "Invalid inputs"
+        status_flag = True
+
+        if form.is_valid():
+            data = form.cleaned_data
+
+            # the user must be existed in the database, since user need to logged in to be able to create event
+            current_user = UserAccount.objects.get(email=request.user.username)
+            vote_event = VoteEvent.objects.get(createdBy=current_user, seqNo=seqNo)
+
+            options_list = data['voteOption'].split("|")
+
+            if not vote_event.is_event_datetime_valid():
+                status_flag = False
+                error_message = "Date Time Settings Invalid"
+
+            else:
+                vote_event.save()
+
+                # remove the existing options from the database 
+                VoteOption.objects.filter(seqNo_id=vote_event.seqNo).delete()
+
+                for x in options_list:
+                    if(len(x.strip()) > 0):
+                        vote_option = VoteOption(
+                            voteOption = x,
+                            seqNo_id = vote_event.seqNo
+                        )
+                        vote_option.save()
+          
+                decoded_file = data['voterEmail'].read().decode('utf-8').splitlines()
+                reader = csv.reader(decoded_file)
+                emailList = []
+                for row in reader:
+                    emailList.append(row)
+                
+                valid_email, invalid_email = VoterEmailChecker.checkEmails(emailList)
+
+                # remove the existing voter emails from the database 
+                VoterEmail.objects.filter(seqNo_id=vote_event.seqNo).delete()
+
+                for x, y in valid_email.items():
+                    voter_email = VoterEmail(
+                        voter = x,
+                        voterEmail = y,
+                        seqNo_id = vote_event.seqNo
+                    )
+                    voter_email.save()
+    
+        else:
+            status_flag = False
+            print(form.errors.as_data())
+
+        if status_flag:
+            # redirect to home page if success
+            return redirect("/evoting/eventowner/homepage")
+        else:
+            return render(request, "eventowner/voteevent_form.html", {"title" : "Update Vote Event", "form_action" : "/evoting/eventowner/updateevent/" + str(seqNo), "status": error_message, "form": form, "voteOptions" : options_list})  
