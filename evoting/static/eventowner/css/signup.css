@@ -16,6 +16,15 @@ div#content_pane div#left_pane {
     justify-content: center;
 }
 
+div#content_pane div#left_pane p.error_msg {
+    width: 40%;
+    text-align: center;
+    background-color: #FED2D2;
+    color: #FF0F0F;
+    padding: 1vh 0 1vh 0;
+    border-radius: 10px;
+}
+
 div#content_pane div#left_pane form {
     display: grid;
     grid-template-columns: repeat(2, 40%);
