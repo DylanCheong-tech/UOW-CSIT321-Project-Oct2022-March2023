@@ -16,13 +16,20 @@
 <link rel="stylesheet" href="{% static 'eventowner/css/overview.css' %}" />
 {% endblock %}
 
+{% block email %}
+<span> {{UserDetails.email}}</span>
+{% endblock %}
+
+{% block introduction %}
+<span> Welcome, {{UserDetails.lastName}} {{UserDetails.firstName}}</span>
+{% endblock %}
 
 {% block content %}
 <div id="summary">
     <h2>Summary</h2>
-    Total Vote Events : 3 <br />
-    Ongoing Vote Events : 2 <br />
-    Completed Vote Events : 1 <br />
+    {% for countitem, labelitem in EventDetail %}
+        {{labelitem}}{{countitem}} <br/>
+    {% endfor %}
 </div>
 
 <div id="miscellaneous">
@@ -66,9 +73,9 @@
         <tr>
             <td>{{event.seqNo}}</td>
             <td>{{event.eventTitle}}</td>
-            <td>{{event|concat_period:'date'}}</td>
+            <td>{{event|concat_period:'date'|linebreaks}}</td>
             <td>{{event.status}}</td>
-            <td>{{event|concat_period:'time'}}</td>
+            <td>{{event|concat_period:'time'|linebreaks}}</td>
             <td class="buttons_col">
                 <button type="button">View</button>
                 <button type="button">Delete</button>

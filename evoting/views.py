@@ -133,14 +133,21 @@ class EventOwnerHomePage(View):
         # render the static page
         current_user = UserAccount.objects.get(email=request.user.username)
         VoteEventList = VoteEvent.objects.filter(createdBy_id=current_user).order_by('seqNo')
+        VoteEventCount = VoteEventList.count()
+        OngoingEvent = VoteEvent.objects.filter(createdBy_id=current_user, status='PC').count()
+        CompletedEvent = VoteEventCount - OngoingEvent
+        EventCount = [VoteEventCount, OngoingEvent, CompletedEvent]
+        EventLabels = ["Total Vote Events : ","Ongoing Vote Events : ","Completed Vote Events : "]
+        EventDetails = zip(EventCount, EventLabels)
+        
         return render(request, "eventowner/overview.html", {'VoteEvents': VoteEventList})
+
 
 class EventOwnerLogout(View):
     def post(self, request):
         # redirect back to the login page
         auth.logout(request)
         return redirect("/evoting/eventowner/login")
-
 
 
 class EventOwnerCreateNewVoteEvent(View):

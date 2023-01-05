@@ -29,7 +29,8 @@
                 <span class="menu_item last_item">FAQ</span>
 
                 <span class="logout_section">
-                    <span>sampleemail@gmail.com</span>
+                    {% block email %}
+                    {% endblock %}
                     <form action="/evoting/eventowner/logout" method="POST">
                         {% csrf_token %}
                         <button type="submit" onclick="logout()">Log out</button>
@@ -42,7 +43,8 @@
             <div id="header">
                 <h1>{% block title %}{% endblock %}</h1>
                 <span>
-                    <span>Welcome, John Doe</span>
+                    {% block introduction%}
+                    {% endblock %}
                 </span>
             </div>
 
