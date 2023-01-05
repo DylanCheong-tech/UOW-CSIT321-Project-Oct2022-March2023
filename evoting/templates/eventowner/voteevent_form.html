@@ -1,14 +1,14 @@
-<!-- createvoteevent.html -->
+<!-- voteevent_form.html -->
 
 {% extends "eventowner/homepage_base.html" %}
 {% load static %}
 
-{% block tab_title %} Create New Vote Event {% endblock %}
+{% block tab_title %} {{ title }} {% endblock %}
 
-{% block title %} Create New Vote Event {% endblock %}
+{% block title %} {{ title }} {% endblock %}
 
 {% block js_scripts %}
-<script src="{% static 'eventowner/js/createvoteevent.js' %}"></script>
+<script src="{% static 'eventowner/js/voteevent_form.js' %}"></script>
 {% endblock %}
 
 {% block stylesheet_links %}
@@ -19,8 +19,8 @@
 {% block content %}
 <div id="vote_event_form">
     <h2>Vote Information</h2>
-    <p>{{ status }}</p>
-    <form action="/evoting/eventowner/createevent" method="POST" enctype="multipart/form-data"
+    <p class="{% if status %} error_msg {% endif %}">{{ status }}</p>
+    <form action="{{ form_action }}" method="POST" enctype="multipart/form-data"
         onsubmit="formSubmit(event)">
         {% csrf_token %}
         <label>Vote Event Name<span class="red_asterisk">*</span></label>
@@ -83,7 +83,7 @@
 
 
         <span class="row_flex_flow right_align">
-            <button type="button">Cancel</button>
+            <button type="button" onclick="backToHomepage()">Cancel</button>
             <button type="submit">Confirm</button>
         </span>
     </form>

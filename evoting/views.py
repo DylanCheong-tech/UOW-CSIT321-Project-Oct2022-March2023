@@ -148,7 +148,7 @@ class EventOwnerCreateNewVoteEvent(View):
             return redirect("/evoting/eventowner/login")
 
         # render the static page
-        return render(request, "eventowner/createvoteevent.html", {})
+        return render(request, "eventowner/voteevent_form.html", {"title" : "Create New Vote Event", "form_action" : "/evoting/eventowner/createevent"})
 
     def post(self,request):
         form = CreateEventForm(request.POST, request.FILES)
@@ -172,15 +172,15 @@ class EventOwnerCreateNewVoteEvent(View):
                 createdBy_id = current_user.id
             )
 
+            options_list = data['voteOption'].split("|")
+
             if not new_vote_event.is_event_datetime_valid():
                 status_flag = False
                 error_message = "Date Time Settings Invalid"
-                options_list = []
 
             else:
                 new_vote_event.save()
 
-                options_list = data['voteOption'].split("|")
                 for x in options_list:
                     if(len(x.strip()) > 0):
                         vote_option = VoteOption(
@@ -213,7 +213,7 @@ class EventOwnerCreateNewVoteEvent(View):
             # redirect to home page if success
             return redirect("/evoting/eventowner/homepage")
         else:
-            return render(request, "eventowner/createvoteevent.html", {"status": error_message, "form": form, "options" : options_list})
+            return render(request, "eventowner/voteevent_form.html", {"title" : "Create New Vote Event", "form_action" : "/evoting/eventowner/createevent", "status": error_message, "form": form, "voteOptions" : options_list})
 
 
 

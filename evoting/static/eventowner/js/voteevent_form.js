@@ -1,4 +1,4 @@
-// createvoteevent.js
+// voteevent_form.js
 
 // add option fields
 function addOptions() {
@@ -37,6 +37,11 @@ document.addEventListener("DOMContentLoaded", () => {
     content = "data:text/csv;charset=utf-8,Voter Name,Email\nAdam,adam@mail.com\nBrabara,brabara@mail.com"
     document.getElementById("csv_downloader").href = encodeURI(content)
 })
+
+// back to home page button
+function backToHomepage(){
+    window.location.href = "/evoting/eventowner/homepage"
+}
 
 // preprocess the form data before submit 
 function formSubmit(event) {
