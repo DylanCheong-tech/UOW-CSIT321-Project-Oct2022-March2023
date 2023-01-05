@@ -35,7 +35,8 @@ div#content_pane>div#right_pane div#content div#vote_events {
     border-radius: 10px;
     background-color: #FFFFFF;
     padding: 0 1.5vw 0 1.5vw;
-    margin-top: 2vh;
+    margin-top: 5vh;
+    height: 60vh;
 }
 
 div#content_pane>div#right_pane div#content div#vote_events>span {
@@ -46,7 +47,16 @@ div#content_pane>div#right_pane div#content div#vote_events>span {
 }
 
 div#content_pane>div#right_pane div#content div#vote_events table {
+    display: block;
+    height: 80%;
     border-collapse: collapse;
+    overflow-y: scroll;
+}
+
+div#content_pane>div#right_pane div#content div#vote_events table tr.header {
+    position: sticky;
+    top: 0;
+    border: 1px solid #000000;
 }
 
 div#content_pane>div#right_pane div#content div#vote_events table td, div#content_pane>div#right_pane div#content div#vote_events table th {

@@ -23,7 +23,7 @@
                 logo here
             </span>
             <span id="side_menu_bar">
-                <span class="menu_item">Overview</span>
+                <span class="menu_item" onclick="window.location.href = 'evoting/eventowner/homepage' ">Overview</span>
                 <span class="menu_item">Ongoing Vote Events</span>
                 <span class="menu_item">Completed Vote Events</span>
                 <span class="menu_item last_item">FAQ</span>
@@ -43,8 +43,7 @@
             <div id="header">
                 <h1>{% block title %}{% endblock %}</h1>
                 <span>
-                    {% block introduction%}
-                    {% endblock %}
+                    {% block introduction %}{% endblock %}
                 </span>
             </div>
 
