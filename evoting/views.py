@@ -130,8 +130,9 @@ class EventOwnerHomePage(View):
             return redirect("/evoting/eventowner/login")
 
         # render the static page
-        return render(request, "eventowner/overview.html", {})
-
+        current_user = UserAccount.objects.get(email=request.user.username)
+        VoteEventList = VoteEvent.objects.filter(createdBy_id=current_user).order_by('seqNo')
+        return render(request, "eventowner/overview.html", {'VoteEvents': VoteEventList})
 
 class EventOwnerLogout(View):
     def post(self, request):
@@ -213,10 +214,4 @@ class EventOwnerCreateNewVoteEvent(View):
             # redirect to home page if success
             return redirect("/evoting/eventowner/homepage")
         else:
-            return render(request, "eventowner/voteevent_form.html", {"title" : "Create New Vote Event", "form_action" : "/evoting/eventowner/createevent", "status": error_message, "form": form, "voteOptions" : options_list})
-
-
-
-    
-
-        
+            return render(request, "eventowner/voteevent_form.html", {"title" : "Create New Vote Event", "form_action" : "/evoting/eventowner/createevent", "status": error_message, "form": form, "voteOptions" : options_list})  
