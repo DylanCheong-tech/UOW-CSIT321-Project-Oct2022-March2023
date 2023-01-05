@@ -4,6 +4,7 @@ from django.utils import timezone
 from .helpers.hasher import Hasher
 from .helpers.otpGenerator import OTPGenerator
 from .helpers.sendOTPEmail import EmailSender
+from .helpers.passwordChecker import PasswordChecker
 
 from .models import OTPManagement
 
@@ -150,3 +151,138 @@ class HelperSendOTPEmailTest(TestCase):
 		response = emailSender.sendOTP(123456);
 
 		self.assertIs(response, False)
+
+
+class HelperPasswordCheckerTest(TestCase):
+	"""
+	- The PasswordChecker provides a static method "validate_password", accepts an argument, which is the password sting to be checked 
+	"""
+
+	def testValidatePasswordWithValidPassword(self):
+		"""
+		Test Data : "Barbara*1123"
+
+		Expected Result : True
+		"""
+
+		result = PasswordChecker.validate_password("Barbara*1123")
+
+		self.assertIs(result, True)
+
+
+	def testValidatePasswordWithShorterPassword(self):
+		"""
+		Test Data : "Barb*13"
+
+		Test invalid format:
+		-- Length = 7
+
+		Expected Result : False
+		"""
+
+		result = PasswordChecker.validate_password("Barb*13")
+
+		self.assertIs(result, False)
+
+
+	def testValidatePasswordWithLongerPassword(self):
+		"""
+		Test Data : "*BarbaraCarlifonia*112366546352112134223"
+
+		Test invalid format:
+		-- Length = 40
+
+		Expected Result : False
+		"""
+
+		result = PasswordChecker.validate_password("*BarbaraCarlifonia*112366546352112134223")
+
+		self.assertIs(result, False)
+
+
+	def testValidatePasswordWithSpacingPassword(self):
+		"""
+		Test Data : "Barbara *1123"
+
+		Test invalid format:
+		-- contains spacing
+
+		Expected Result : False
+		"""
+
+		result = PasswordChecker.validate_password("Barbara *1123")
+
+		self.assertIs(result, False)
+
+
+	def testValidatePasswordWithNotContainUppercasePassword(self):
+		"""
+		Test Data : "barbara*1123"
+
+		Test invalid format:
+		-- not contains uppercase letter 
+
+		Expected Result : False
+		"""
+
+		result = PasswordChecker.validate_password("barbara*1123")
+
+		self.assertIs(result, False)
+
+	def testValidatePasswordWithNotContainLowercasePassword(self):
+		"""
+		Test Data : "BARBARA*1123"
+
+		Test invalid format:
+		-- not contains lowercase letter 
+
+		Expected Result : False
+		"""
+
+		result = PasswordChecker.validate_password("BARBARA*1123")
+
+		self.assertIs(result, False)
+
+	def testValidatePasswordWithNotContainSpecialCharacterPassword(self):
+		"""
+		Test Data : "Barbara1123"
+
+		Test invalid format:
+		-- not contains special character  
+
+		Expected Result : False
+		"""
+
+		result = PasswordChecker.validate_password("Barbara1123")
+
+		self.assertIs(result, False)
+
+	def testValidatePasswordWithNotContainDigitPassword(self):
+		"""
+		Test Data : "Barbara_Password"
+
+		Test invalid format:
+		-- not contains digit
+
+		Expected Result : False
+		"""
+
+		result = PasswordChecker.validate_password("Barbara_Password")
+
+		self.assertIs(result, False)
+
+	def testValidatePasswordWithInvalidPassword(self):
+		"""
+		Test Data : "Barbara_Password"
+
+		Test invalid format:
+		-- not contains uppercase letter 
+		-- not contains special character 
+		-- contains spacing
+
+		Expected Result : False
+		"""
+
+		result = PasswordChecker.validate_password("Barbara_Password")
+
+		self.assertIs(result, False)

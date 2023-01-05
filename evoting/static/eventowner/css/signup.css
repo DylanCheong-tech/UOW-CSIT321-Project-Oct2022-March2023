@@ -48,6 +48,30 @@ div#content_pane div#left_pane form span.last_field {
     width: 45%;
 }
 
+div#content_pane div#left_pane form span.criteria_field {
+    grid-column: span 2;
+    width: 50%;
+    background-color: #FFFFFF;
+    row-gap: 0;
+    font-size: .8em;
+}
+
+div#content_pane div#left_pane form span.criteria_field span.criteria {
+    margin: 0;
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+div#content_pane div#left_pane form span.criteria_field span.criteria>span {
+    display: inline-block;
+    border-radius: 50%;
+    border: 1px solid #000000;
+    height: 8px;
+    width: 8px;
+}
+
 div#content_pane div#left_pane form span.email_field button {
     cursor: pointer;
     grid-row: 1 / span 2;

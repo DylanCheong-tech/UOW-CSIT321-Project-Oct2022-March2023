@@ -45,11 +45,31 @@
                 </span>
                 <span class="field">
                     <label>Password</label>
-                    <input type="password" name="password" value="{{form.password.value}}" />
+                    <input type="password" name="password" oninput="checkPassword(event)" />
                 </span>
                 <span class="field">
                     <label>Re-Enter Password</label>
-                    <input type="password" name="repeat_password" value="{{form.repeat_password.value}}" />
+                    <input type="password" name="repeat_password" />
+                </span>
+                <span class="field criteria_field">
+                    <span class="criteria">
+                        Length in 8 - 32 <span id="length_indicator"></span>
+                    </span>
+                    <span class="criteria">
+                        No Spacing <span id="spacing_indicator"></span>
+                    </span>
+                    <span class="criteria">
+                        At Least One Uppercase <span id="uppercase_indicator"></span>
+                    </span>
+                    <span class="criteria">
+                        At Least One Lowecase <span id="lowercase_indicator"></span>
+                    </span>
+                    <span class="criteria">
+                        At Least One Digit <span id="digit_indicator"></span>
+                    </span>
+                    <span class="criteria">
+                        At Least One Special Character <span id="special_char_indicator"></span>
+                    </span>
                 </span>
                 <span class="field last_field">
                     <label>OTP</label>

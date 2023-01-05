@@ -15,6 +15,7 @@ from .models import OTPManagement
 from .helpers.otpGenerator import OTPGenerator
 from .helpers.sendOTPEmail import EmailSender
 from .helpers.hasher import Hasher
+from .helpers.passwordChecker import PasswordChecker
 
 class EventOwnerCreateAccountView(View):
     def get(self, request):
@@ -46,6 +47,10 @@ class EventOwnerCreateAccountView(View):
                     expireAt = otp_from_db.expireAt
                     if otp_from_db.is_expired() or otp_from_db.otp != data['otp']:
                         error_message = "OTP value invalid !"
+                        status_flag = False
+
+                    elif not PasswordChecker.validate_password(data['password']):
+                        error_message = "Password Format Invalid !"
                         status_flag = False
 
                     else:
