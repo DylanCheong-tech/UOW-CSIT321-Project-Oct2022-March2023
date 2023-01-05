@@ -2,6 +2,7 @@
 
 {% extends "eventowner/homepage_base.html" %}
 {% load static %}
+{% load overview_extra %}
 
 {% block tab_title %} Overview {% endblock %}
 
@@ -56,18 +57,18 @@
         <tr>
             <th>Seq No</th>
             <th>Name</th>
-            <th>Date Created</th>
+            <th>Event Period</th>
             <th>Status</th>
-            <th>Time Period</th>
+            <th>Time</th>
             <th>Actions</th>
         </tr>
-
+        {% for event in VoteEvents %}
         <tr>
-            <td>sample text</td>
-            <td>sample text</td>
-            <td>sample text</td>
-            <td>sample text</td>
-            <td>sample text</td>
+            <td>{{event.seqNo}}</td>
+            <td>{{event.eventTitle}}</td>
+            <td>{{event|concat_period:'date'}}</td>
+            <td>{{event.status}}</td>
+            <td>{{event|concat_period:'time'}}</td>
             <td class="buttons_col">
                 <button type="button">View</button>
                 <button type="button">Delete</button>
@@ -75,48 +76,7 @@
                 <button type="button">confirm</button>
             </td>
         </tr>
-
-        <tr>
-            <td>sample text</td>
-            <td>sample text</td>
-            <td>sample text</td>
-            <td>sample text</td>
-            <td>sample text</td>
-            <td class="buttons_col">
-                <button type="button">View</button>
-                <button type="button">Delete</button>
-                <button type="button">Modify</button>
-                <button type="button">confirm</button>
-            </td>
-        </tr>
-
-        <tr>
-            <td>sample text</td>
-            <td>sample text</td>
-            <td>sample text</td>
-            <td>sample text</td>
-            <td>sample text</td>
-            <td class="buttons_col">
-                <button type="button">View</button>
-                <button type="button">Delete</button>
-                <button type="button">Modify</button>
-                <button type="button">confirm</button>
-            </td>
-        </tr>
-
-        <tr>
-            <td>sample text</td>
-            <td>sample text</td>
-            <td>sample text</td>
-            <td>sample text</td>
-            <td>sample text</td>
-            <td class="buttons_col">
-                <button type="button">View</button>
-                <button type="button">Delete</button>
-                <button type="button">Modify</button>
-                <button type="button">confirm</button>
-            </td>
-        </tr>
+        {% endfor %}
     </table>
 </div>
 {% endblock %}
