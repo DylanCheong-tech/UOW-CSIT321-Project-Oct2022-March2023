@@ -75,9 +75,9 @@
             <td>{{event.eventTitle}}</td>
             <td>{{event|concat_period:'date'|linebreaks}}</td>
             <td>{{event|concat_period:'time'|linebreaks}}</td>
-            <td>{{event.status}}</td>
+            <td>{{event|status_abbreviation}}</td>
             <td class="buttons_col">
-                <button type="button">View</button>
+                <button type="button" onclick="window.location.href='/evoting/eventowner/viewevent/' + '{{event.seqNo}}'">View</button>
                 <button type="button">Delete</button>
                 <br />
                 <button type="button" onclick="window.location.href='/evoting/eventowner/updateevent/' + '{{event.seqNo}}'">Modify</button>
