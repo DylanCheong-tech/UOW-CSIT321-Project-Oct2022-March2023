@@ -162,7 +162,7 @@ class EventOwnerCreateNewVoteEvent(View):
     def post(self,request):
         form = CreateEventForm(request.POST, request.FILES)
 
-        error_message = "Invalid inputs"
+        error_message = "Invalid Fields Input !"
         status_flag = True
 
         if form.is_valid():
@@ -185,7 +185,7 @@ class EventOwnerCreateNewVoteEvent(View):
 
             if not new_vote_event.is_event_datetime_valid():
                 status_flag = False
-                error_message = "Date Time Settings Invalid"
+                error_message = "Date Time Settings Invalid !"
 
             else:
                 new_vote_event.save()
@@ -257,7 +257,7 @@ class EventOwnerUpdateVoteEvent(View):
     def post(self, request, seqNo):
         form = CreateEventForm(request.POST, request.FILES)
 
-        error_message = "Invalid inputs"
+        error_message = "Invalid Fields Input !"
         status_flag = True
 
         if form.is_valid():
@@ -271,7 +271,7 @@ class EventOwnerUpdateVoteEvent(View):
 
             if not vote_event.is_event_datetime_valid():
                 status_flag = False
-                error_message = "Date Time Settings Invalid"
+                error_message = "Date Time Settings Invalid !"
 
             else:
                 vote_event.save()
