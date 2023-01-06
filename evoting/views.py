@@ -130,7 +130,7 @@ class EventOwnerHomePage(View):
         if not request.user.is_authenticated:
             return redirect("/evoting/eventowner/login")
 
-        # render the static page
+        # render the overview page with information
         current_user = UserAccount.objects.get(email=request.user.username)
         VoteEventList = VoteEvent.objects.filter(createdBy_id=current_user).order_by('seqNo')
         VoteEventCount = VoteEventList.count()
@@ -315,3 +315,22 @@ class EventOwnerUpdateVoteEvent(View):
             return redirect("/evoting/eventowner/homepage")
         else:
             return render(request, "eventowner/voteevent_form.html", {"title" : "Update Vote Event", "form_action" : "/evoting/eventowner/updateevent/" + str(seqNo), "status": error_message, "form": form, "voteOptions" : options_list})  
+
+import pprint
+class EventOwnerViewVoteEvent(View):
+    def get(self, request, seqNo):
+        # check authentication 
+        if not request.user.is_authenticated:
+            return redirect("/evoting/eventowner/login")
+
+        #  get the current authenticated user
+        current_user = UserAccount.objects.get(email="hongteryen@gmail.com")
+
+        # get the current vote event details
+        vote_event = VoteEvent.objects.get(createdBy=current_user, seqNo=int(seqNo))
+        vote_option = VoteOption.objects.filter(seqNo_id=vote_event)
+        participants = VoterEmail.objects.filter(seqNo_id=vote_event)
+
+        # render static page just for viewing event details (commented out for now as no front end html yet, use homepage for now)
+        #return render(request, "eventowner/voteevent_details.html", {"title": "View Vote Events","VoteDetails": vote_event,"VoteOptions": vote_option, "Voter": participants})
+        return redirect("/evoting/eventowner/homepage")
