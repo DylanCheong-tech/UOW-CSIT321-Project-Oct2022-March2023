@@ -8,7 +8,7 @@ class Hasher:
 
 	def messageDigest(self):
 		hasher = hashlib.md5()
-		hasher.update(self.message)
+		hasher.update(str(self.message).encode("utf-8"))
 		hashed_message = hasher.hexdigest()
 
 		return hashed_message
