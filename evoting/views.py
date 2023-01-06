@@ -25,7 +25,7 @@ class EventOwnerCreateAccountView(View):
     def post(self, request):
         form = SignupForm(request.POST)
 
-        error_message = "Field values invalid"
+        error_message = "Field Values Invalid !"
         status_flag = True
         if form.is_valid():
             # access the form data
@@ -38,7 +38,7 @@ class EventOwnerCreateAccountView(View):
                 status_flag = False
             else: 
                 if (data['password'] != data['repeat_password']):
-                    error_message = "Password not match !"
+                    error_message = "Passwords Do Not Match !"
                     status_flag = False
 
                 try:
@@ -46,7 +46,7 @@ class EventOwnerCreateAccountView(View):
                     otp_from_db = OTPManagement.objects.get(email=data['email'])
                     expireAt = otp_from_db.expireAt
                     if otp_from_db.is_expired() or otp_from_db.otp != data['otp']:
-                        error_message = "OTP value invalid !"
+                        error_message = "OTP Value Invalid!"
                         status_flag = False
 
                     elif not PasswordChecker.validate_password(data['password']):
@@ -68,7 +68,7 @@ class EventOwnerCreateAccountView(View):
                         user.save()
 
                 except OTPManagement.DoesNotExist:
-                    error_message = "No OTP generated !"
+                    error_message = "No OTP Generated !"
                     status_flag = False
 
         else:
@@ -98,7 +98,7 @@ class EventOwnerLogin(View):
     def post(self, request):
         form = LoginForm(request.POST)
 
-        error_message = "Incorrect Crendetials"
+        error_message = "Incorrect Credentials"
         status_flag = True
 
         if form.is_valid():
