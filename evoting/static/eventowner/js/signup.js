@@ -47,7 +47,7 @@ function checkPassword(event) {
         document.getElementById("digit_indicator").style.backgroundColor = off_indicator_color_stying
 
     // check for digit 
-    special_char_regex = new RegExp("[#?!@$%^&*-]")
+    special_char_regex = new RegExp("[_#?!@$%^&*-]")
     if (special_char_regex.test(password))
         document.getElementById("special_char_indicator").style.backgroundColor = on_indicator_color_stying
     else
