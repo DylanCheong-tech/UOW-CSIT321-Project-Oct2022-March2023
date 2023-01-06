@@ -8,7 +8,7 @@ from sendgrid.helpers.mail import Mail, Email, To, Content
 class EmailSender:
     def __init__(self, email):
         self.receiver_email = email
-        self.SENDGRID_API_KEY = "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";
+        self.SENDGRID_API_KEY = "";
         self.TEMPLATE_ID = "d-84a1e28f68554373b977e237e634f6bf"
 
     def sendOTP(self, otp):
