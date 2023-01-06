@@ -4,11 +4,14 @@ import sendgrid
 import os
 from sendgrid.helpers.mail import Mail, Email, To, Content
 
+import os
+from dotenv import load_dotenv
 
 class EmailSender:
     def __init__(self, email):
         self.receiver_email = email
-        self.SENDGRID_API_KEY = "";
+        load_dotenv()
+        self.SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY");
         self.TEMPLATE_ID = "d-84a1e28f68554373b977e237e634f6bf"
 
     def sendOTP(self, otp):
