@@ -1,0 +1,68 @@
+<!-- overview.html -->
+
+{% extends "eventowner/homepage_base.html" %}
+{% load static %}
+{% load overview_extra %}
+
+{% block tab_title %} View Vote Details {% endblock %}
+
+{% block title %} View Vote Details {% endblock %}
+
+{% block js_scripts %}
+<script src="{% static 'eventowner/js/overview.js' %}"></script>
+{% endblock %}
+
+{% block stylesheet_links %}
+<link rel="stylesheet" href="{% static 'eventowner/css/overview.css' %}" />
+{% endblock %}
+
+{% block email %}
+<span> {{UserDetails.email}}</span>
+{% endblock %}
+
+{% block introduction %}
+<span> Welcome, {{UserDetails.lastName}} {{UserDetails.firstName}}</span>
+{% endblock %}
+
+{% block content %}
+<div id="summary">
+    <h2>Vote Information</h2>
+    {% for countitem, labelitem in EventDetail %}
+        {{labelitem}}{{countitem}} <br/>
+    {% endfor %}
+</div>
+
+
+<div id="vote_events">
+    <table>
+        <tr>
+            <td>Vote Event Name</td>
+            <td>Vote Event Begin Date</td>
+            <td>Vote Event Begin Time</td>
+            <td>Vote Question</td>
+            <td>Vote Options</td>
+        </tr>
+        <tr>
+            <td>{{event.eventTitle}}</td>
+            <td>{{event.startDate}}</td>
+            <td>{{event.startTime}}</td>
+            <td>{{event.eventQuestion}}</td>
+            <td>{{event.voteOption}}</td>
+        </tr>
+        <tr>
+            <td>Vote Event End Date</td>
+            <td>Vote Event End Time</td>
+            <td>Vote Event Status</td>
+            <td>Vote Voter Emails</td>
+        </tr>
+        <tr>
+            <td>{{event.endDate}}</td>
+            <td>{{event.endTime}}</td>
+            <td>{{event.startTime}}</td>
+            <td>{{event.status_abbreviation}}</td>
+            <td>{{event.voterEmail}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
