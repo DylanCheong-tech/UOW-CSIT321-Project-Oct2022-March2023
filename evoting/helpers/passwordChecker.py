@@ -18,7 +18,7 @@ class PasswordChecker:
 	"""
 	@staticmethod
 	def validate_password(password):
-		if re.match('^(?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9])(?=\S*?[#?!@$%^&*-]).{8,32}$', password):
+		if re.match('^(?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9])(?=\S*?[_#?!@$%^&*-]).{8,32}$', password):
 			return True
 		else:
 			return False
