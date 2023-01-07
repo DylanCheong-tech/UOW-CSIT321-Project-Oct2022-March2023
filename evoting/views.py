@@ -270,6 +270,14 @@ class EventOwnerUpdateVoteEvent(View):
             current_user = UserAccount.objects.get(email=request.user.username)
             vote_event = VoteEvent.objects.get(createdBy=current_user, seqNo=seqNo)
 
+            # update the Event Title, Datetime and Vote Question 
+            vote_event.eventTitle = data['eventTitle']
+            vote_event.startDate = data['startDate']
+            vote_event.startTime = data['startTime']
+            vote_event.endDate = data['endDate']
+            vote_event.endTime = data['endTime']
+            vote_event.eventQuestion = data['eventQuestion']
+
             options_list = data['voteOption'].split("|")
 
             if not vote_event.is_event_datetime_valid():
