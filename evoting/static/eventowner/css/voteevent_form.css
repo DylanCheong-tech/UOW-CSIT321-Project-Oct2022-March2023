@@ -1,0 +1,87 @@
+/* voteevent_form.css */
+
+div#content {
+    background-color: #FFFFFF;
+}
+
+div#content div#vote_event_form {
+    display: flex;
+    flex-flow: column;
+}
+
+div#content div#vote_event_form p.error_msg {
+    width: 40%;
+    text-align: center;
+    background-color: #FED2D2;
+    color: #FF0F0F;
+    padding: 1vh 0 1vh 0;
+    border-radius: 10px;
+}
+
+div#content div#vote_event_form form {
+    margin-left: 5vw;
+    margin-right: 5vw;
+    display: flex;
+    flex-flow: column;
+    min-height: 70vh;
+}
+
+div#content div#vote_event_form form>input {
+    margin-top: 1vh;
+    margin-bottom: 3vh;
+}
+
+div#content div#vote_event_form form span.red_asterisk {
+    color: #800000;
+}
+
+div#content div#vote_event_form form span.row_flex_flow {
+    display: flex;
+    flex-flow: row;
+    column-gap: 3vw;
+    margin-bottom: 3vh;
+}
+
+div#content div#vote_event_form form span.row_flex_flow label input:not([type=file]) {
+    width: 12vw;
+}
+
+div#content div#vote_event_form form span.options_and_file {
+    align-items: flex-start;
+    column-gap: 6vw;
+}
+
+div#content div#vote_event_form form span.options_and_file span#vote_options {
+    display: flex;
+    flex-flow: column;
+    width: 50%;
+    row-gap: 2vh;
+}
+
+div#content div#vote_event_form form span.options_and_file span.voter_emails {
+    display: grid;
+    grid-template-columns: 30% 70%;
+}
+
+div#content div#vote_event_form form span.options_and_file span.voter_emails a {
+    grid-column: span 2;
+}
+
+div#content div#vote_event_form form span.options_and_file span.fields {
+    display: flex;
+    flex-flow: row;
+    column-gap: 1vw;
+}
+
+div#content div#vote_event_form form span.options_and_file span.fields input {
+    width: 25vw;
+}
+
+div#content div#vote_event_form form span.options_and_file span#vote_options button {
+    align-self: flex-start;
+}
+
+div#content div#vote_event_form form span.right_align {
+    justify-content: flex-end;
+    column-gap: 5vw;
+}

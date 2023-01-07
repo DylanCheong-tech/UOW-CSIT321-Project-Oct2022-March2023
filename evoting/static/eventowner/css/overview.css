@@ -1,0 +1,89 @@
+/* overview.css */
+
+div#content_pane>div#right_pane div#content {
+    display: grid;
+    grid-template-columns: repeat(2, 50%);
+}
+
+div#content_pane>div#right_pane div#content div#summary {
+    display: flex;
+    flex-flow: column;
+    border-radius: 10px;
+    background-color: #FFFFFF;
+    padding: 0 1.5vw 0 1.5vw;
+    margin-right: 2vw;
+}
+
+div#content_pane>div#right_pane div#content div#miscellaneous span#links {
+    display: grid;
+    grid-template-columns: repeat(2, 50%);
+    row-gap: 2vh;
+    border-radius: 10px;
+    background-color: #FFFFFF;
+    padding: 0 1.5vw 0 1.5vw;
+    margin-right: 2vw;
+}
+
+div#content_pane>div#right_pane div#content div#miscellaneous span#links h2 {
+    grid-column: span 2;
+}
+
+div#content_pane>div#right_pane div#content div#vote_events {
+    grid-column: span 2;
+    display: flex;
+    flex-flow: column;
+    border-radius: 10px;
+    background-color: #FFFFFF;
+    padding: 0 1.5vw 0 1.5vw;
+    margin-top: 5vh;
+    height: 60vh;
+}
+
+div#content_pane>div#right_pane div#content div#vote_events>span {
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+div#content_pane>div#right_pane div#content div#vote_events table {
+    display: block;
+    height: 80%;
+    border-collapse: collapse;
+    overflow-y: scroll;
+}
+
+div#content_pane>div#right_pane div#content div#vote_events table tr.header {
+    position: sticky;
+    top: 0;
+    border: 1px solid #000000;
+}
+
+div#content_pane>div#right_pane div#content div#vote_events table td, div#content_pane>div#right_pane div#content div#vote_events table th {
+    border: 1px solid #000000;
+}
+
+div#content_pane>div#right_pane div#content div#vote_events table tr th {
+    background-color: #EBECF0;
+}
+
+div#content_pane>div#right_pane div#content div#vote_events table tr td {
+    text-align: center;
+}
+
+div#content_pane>div#right_pane div#content div#vote_events table tr td:nth-child(1) {
+    width: 5%;
+}
+
+div#content_pane>div#right_pane div#content div#vote_events table tr td:nth-child(2) {
+    width: 30%;
+}
+
+div#content_pane>div#right_pane div#content div#vote_events table tr td:nth-child(3), div#content_pane>div#right_pane div#content div#vote_events table tr td:nth-child(4) {
+    width: 15%;
+}
+
+div#content_pane>div#right_pane div#content div#vote_events table td.buttons_col button {
+    min-width: 8vw;
+    margin: 1vh .5vw 1vh .5vw;
+}
