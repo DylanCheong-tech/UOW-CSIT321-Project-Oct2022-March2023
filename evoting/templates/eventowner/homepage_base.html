@@ -33,7 +33,7 @@
                     {% endblock %}
                     <form action="/evoting/eventowner/logout" method="POST">
                         {% csrf_token %}
-                        <button type="submit" onclick="logout()">Log out</button>
+                        <button id="logout_btn" type="submit" onclick="logout()">Log out</button>
                     </form>
                 </span>
             </span>
