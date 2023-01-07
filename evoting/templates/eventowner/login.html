@@ -22,7 +22,7 @@
     <div id="content_pane">
         <div id="left_pane">
             <h1>Login</h1>
-            <p>{{ status }}</p>
+            <p class="{% if status %} error_msg {% endif %}">{{ status }}</p>
             <form action="/evoting/eventowner/login" method="POST" onsubmit="submit_login()">
                 {% csrf_token %}
                 <span class="field">
@@ -34,7 +34,7 @@
                     <input id="password_input" type="password" name="password" value="{{ form.email.value }}" required />
                 </span>
 
-                <button type="submit">Sign In</button>
+                <button id="form_submit_btn" type="submit">Sign In</button>
             </form>
 
             <span id="annotation">

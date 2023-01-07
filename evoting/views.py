@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views import View
-from django.utils import timezone
 from django.contrib import auth
 
 # Form imports
@@ -16,6 +15,7 @@ from .models import OTPManagement
 from .helpers.otpGenerator import OTPGenerator
 from .helpers.sendOTPEmail import EmailSender
 from .helpers.hasher import Hasher
+from .helpers.passwordChecker import PasswordChecker
 
 class EventOwnerCreateAccountView(View):
     def get(self, request):
@@ -25,7 +25,7 @@ class EventOwnerCreateAccountView(View):
     def post(self, request):
         form = SignupForm(request.POST)
 
-        error_message = "Field values invalid"
+        error_message = "Field Values Invalid !"
         status_flag = True
         if form.is_valid():
             # access the form data
@@ -38,21 +38,24 @@ class EventOwnerCreateAccountView(View):
                 status_flag = False
             else: 
                 if (data['password'] != data['repeat_password']):
-                    error_message = "Password not match !"
+                    error_message = "Passwords Do Not Match !"
                     status_flag = False
 
                 try:
                     # check otp value
                     otp_from_db = OTPManagement.objects.get(email=data['email'])
-                    expireAt = otp_from_db.expireAt
-                    if otp_from_db.otp != data['otp'] or timezone.localtime() > timezone.localtime(expireAt):
-                        error_message = "OTP value invalid !"
+                    if otp_from_db.is_expired() or otp_from_db.check_otp_matching(data['otp']):
+                        error_message = "OTP Value Invalid!"
+                        status_flag = False
+
+                    elif not PasswordChecker.validate_password(data['password']):
+                        error_message = "Password Format Invalid !"
                         status_flag = False
 
                     else:
                         new_account = UserAccount(
                             email=data['email'],
-                            password=Hasher(str(data['password']).encode('utf-8')).messageDigest(),
+                            password=Hasher(data['password']).messageDigest(),
                             firstName=data['firstname'],
                             lastName=data['lastname'],
                             gender=data['gender'].upper(),
@@ -60,11 +63,11 @@ class EventOwnerCreateAccountView(View):
 
                         new_account.save()
                         user = auth.models.User(username=data['email'])
-                        user.set_password(Hasher(str(data['password']).encode('utf-8')).messageDigest())
+                        user.set_password(Hasher(data['password']).messageDigest())
                         user.save()
 
                 except OTPManagement.DoesNotExist:
-                    error_message = "No OTP generated !"
+                    error_message = "No OTP Generated !"
                     status_flag = False
 
         else:
@@ -94,7 +97,7 @@ class EventOwnerLogin(View):
     def post(self, request):
         form = LoginForm(request.POST)
 
-        error_message = "Incorrect Crendetials"
+        error_message = "Incorrect Credentials"
         status_flag = True
 
         if form.is_valid():
