@@ -9,7 +9,7 @@ from django.forms.models import model_to_dict
 # Form imports
 from .forms.eventowner import SignupForm
 from .forms.eventowner import LoginForm
-from .forms.eventowner import CreateEventForm
+from .forms.eventowner import VoteEventForm
 
 # Model imports
 from .models import UserAccount
@@ -163,7 +163,7 @@ class EventOwnerCreateNewVoteEvent(View):
         return render(request, "eventowner/voteevent_form.html", {"title" : "Create New Vote Event", "form_action" : "/evoting/eventowner/createevent"})
 
     def post(self,request):
-        form = CreateEventForm(request.POST, request.FILES)
+        form = VoteEventForm(request.POST, request.FILES)
 
         error_message = "Invalid Fields Input !"
         status_flag = True
@@ -251,14 +251,14 @@ class EventOwnerUpdateVoteEvent(View):
         data["endDate"] = data["endDate"].strftime("%Y-%m-%d")
         data["endTime"] = data["endTime"].strftime("%H:%M")
 
-        form = CreateEventForm(data)
+        form = VoteEventForm(data)
 
         # render the static page
         return render(request, "eventowner/voteevent_form.html", {"title" : "Update Vote Event", "form_action" : "/evoting/eventowner/updateevent/" + str(seqNo), "form": form, "voteOptions" : options_list})
 
 
     def post(self, request, seqNo):
-        form = CreateEventForm(request.POST, request.FILES)
+        form = VoteEventForm(request.POST, request.FILES)
 
         error_message = "Invalid Fields Input !"
         status_flag = True
@@ -269,53 +269,71 @@ class EventOwnerUpdateVoteEvent(View):
             # the user must be existed in the database, since user need to logged in to be able to create event
             current_user = UserAccount.objects.get(email=request.user.username)
             vote_event = VoteEvent.objects.get(createdBy=current_user, seqNo=seqNo)
+            vote_event_status = vote_event.status
 
-            # update the Event Title, Datetime and Vote Question 
-            vote_event.eventTitle = data['eventTitle']
-            vote_event.startDate = data['startDate']
-            vote_event.startTime = data['startTime']
-            vote_event.endDate = data['endDate']
-            vote_event.endTime = data['endTime']
-            vote_event.eventQuestion = data['eventQuestion']
+            if vote_event_status == "PC" or vote_event_status == "PB":
+                """
+                Vote Event in PC status can modify any information 
+                status: Pending Confirmation (PC)
+                """
+                if vote_event_status == "PC":
+                    vote_event.eventTitle = data['eventTitle']
+                    vote_event.startDate = data['startDate']
+                    vote_event.startTime = data['startTime']
+                    vote_event.eventQuestion = data['eventQuestion']
 
-            options_list = data['voteOption'].split("|")
+                """
+                Vote Event in PC or Published, PB can modify the end datetime 
+                """
+                vote_event.endDate = data['endDate']
+                vote_event.endTime = data['endTime']
 
-            if not vote_event.is_event_datetime_valid():
-                status_flag = False
-                error_message = "Date Time Settings Invalid !"
+                options_list = data['voteOption'].split("|")
 
-            else:
-                vote_event.save()
+                if not vote_event.is_event_datetime_valid():
+                    status_flag = False
+                    error_message = "Date Time Settings Invalid !"
 
-                # remove the existing options from the database 
-                VoteOption.objects.filter(seqNo_id=vote_event.seqNo).delete()
+                else:
+                    vote_event.save()
 
-                for x in options_list:
-                    if(len(x.strip()) > 0):
-                        vote_option = VoteOption(
-                            voteOption = x,
+                    """
+                    Only the Vote Event in PC status can modify the vote options
+                    status: Pending Confirmation (PC)
+                    """
+                    if vote_event_status == "PC":
+                        # remove the existing options from the database 
+                        VoteOption.objects.filter(seqNo_id=vote_event.seqNo).delete()
+
+                        for x in options_list:
+                            if(len(x.strip()) > 0):
+                                vote_option = VoteOption(
+                                    voteOption = x,
+                                    seqNo_id = vote_event.seqNo
+                                )
+                                vote_option.save()
+
+                    decoded_file = data['voterEmail'].read().decode('utf-8').splitlines()
+                    reader = csv.reader(decoded_file)
+                    emailList = []
+                    for row in reader:
+                        emailList.append(row)
+                    
+                    valid_email, invalid_email = VoterEmailChecker.checkEmails(emailList)
+
+                    # remove the existing voter emails from the database 
+                    VoterEmail.objects.filter(seqNo_id=vote_event.seqNo).delete()
+
+                    for x, y in valid_email.items():
+                        voter_email = VoterEmail(
+                            voter = x,
+                            voterEmail = y,
                             seqNo_id = vote_event.seqNo
                         )
-                        vote_option.save()
-          
-                decoded_file = data['voterEmail'].read().decode('utf-8').splitlines()
-                reader = csv.reader(decoded_file)
-                emailList = []
-                for row in reader:
-                    emailList.append(row)
-                
-                valid_email, invalid_email = VoterEmailChecker.checkEmails(emailList)
-
-                # remove the existing voter emails from the database 
-                VoterEmail.objects.filter(seqNo_id=vote_event.seqNo).delete()
-
-                for x, y in valid_email.items():
-                    voter_email = VoterEmail(
-                        voter = x,
-                        voterEmail = y,
-                        seqNo_id = vote_event.seqNo
-                    )
-                    voter_email.save()
+                        voter_email.save()
+            else:
+                error_message = "Vote Event Not Modifiable !"
+                status_flag = False
     
         else:
             status_flag = False
@@ -344,4 +362,22 @@ class EventOwnerViewVoteEvent(View):
 
         # render static page just for viewing event details (commented out for now as no front end html yet, use homepage for now)
         #return render(request, "eventowner/voteevent_details.html", {"title": "View Vote Events","VoteDetails": vote_event,"VoteOptions": vote_option, "Voter": participants})
+        return redirect("/evoting/eventowner/homepage")
+
+class EventOwnerDeleteVoteEvent(View):
+    def post(self, request, seqNo):
+
+        # get the current authenticated user
+        current_user = UserAccount.objects.get(email=request.user.username)
+
+        try :
+            # query the vote event to be deleted
+            vote_event = VoteEvent.objects.get(createdBy=current_user, seqNo=seqNo)
+
+            vote_event.delete()
+
+        except VoteEvent.DoesNotExist:
+            print("Error On Deleting a Vote Event, SeqNo = " + str(seqNo))
+
+        # redirect to the same page as a refresh 
         return redirect("/evoting/eventowner/homepage")

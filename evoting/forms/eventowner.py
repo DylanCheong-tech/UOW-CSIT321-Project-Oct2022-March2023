@@ -18,7 +18,7 @@ class LoginForm(forms.Form):
     password = forms.CharField(label="Passowrd")
 
 
-class CreateEventForm(forms.Form):
+class VoteEventForm(forms.Form):
     eventTitle = forms.CharField(label="Event Title")
     startDate = forms.DateField(label="Start Date")
     startTime = forms.TimeField(label="Start Time")

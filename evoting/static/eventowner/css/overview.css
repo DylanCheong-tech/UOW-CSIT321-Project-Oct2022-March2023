@@ -83,6 +83,10 @@ div#content_pane>div#right_pane div#content div#vote_events table tr td:nth-chil
     width: 15%;
 }
 
+div#content_pane>div#right_pane div#content div#vote_events table td.buttons_col form {
+    display: inline;
+}
+
 div#content_pane>div#right_pane div#content div#vote_events table td.buttons_col button {
     min-width: 8vw;
     margin: 1vh .5vw 1vh .5vw;

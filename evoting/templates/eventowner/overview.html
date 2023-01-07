@@ -78,10 +78,13 @@
             <td>{{event|status_abbreviation}}</td>
             <td class="buttons_col">
                 <button type="button" onclick="window.location.href='/evoting/eventowner/viewevent/' + '{{event.seqNo}}'">View</button>
-                <button type="button">Delete</button>
+                <form action="/evoting/eventowner/deleteevent/{{event.seqNo}}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" onclick="deleteVoteEvent(event)">Delete</button>
+                </form>
                 <br />
                 <button type="button" onclick="window.location.href='/evoting/eventowner/updateevent/' + '{{event.seqNo}}'">Modify</button>
-                <button type="button">confirm</button>
+                <button type="button">Confirm</button>
             </td>
         </tr>
         {% endfor %}
