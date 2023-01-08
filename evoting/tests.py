@@ -7,8 +7,9 @@ from .helpers.sendOTPEmail import EmailSender
 from .helpers.passwordChecker import PasswordChecker
 
 from .models import OTPManagement
+from .models import VoteEvent
 
-
+# Sprint 1 Unit Tests
 class ModelOTPManagementTest(TestCase):
 	"""
 	- OTPManagement Model class stored the email, otp value and the expiry timestamp if the otp
@@ -286,3 +287,78 @@ class HelperPasswordCheckerTest(TestCase):
 		result = PasswordChecker.validate_password("Barbara_Password")
 
 		self.assertIs(result, False)
+
+
+# Sprint 2 Unit Tests 
+
+class ModelVoteEventTest(TestCase):
+	"""
+	- Vote Event Model class stores all the information about a vote event 
+	- The relationship between vote options and vote emails are one to many 
+
+	Vote event have a start datetime and a end datetime value, these value must be make sense when creating a vote event record
+	Valid Datetime settings:
+	- start datetime is current or after the timestamp when creating 
+	- end datetime must be before the start datetime 
+	"""
+
+	def testDateTimeIsValid(self):
+		"""
+		(Time aware testing: make sure the start datetime value is after the timestamp when performing the test)
+
+		Test Data: 
+		- Start Date: 2024-06-18
+		- Start Time: 18:00
+		- End Date: 2024-06-30
+		- End Time: 18:00
+
+		Expected Result: True
+		"""
+
+		vote_event = VoteEvent()
+		vote_event.startDate = "2024-06-18"
+		vote_event.startTime = "18:00"
+		vote_event.endDate = "2024-06-30"
+		vote_event.endTime = "18:00"
+
+		self.assertIs(vote_event.is_event_datetime_valid(), True)
+
+	def testDateTimeIsNotValidByPreviousStartDateTime(self):
+		"""
+		(Time aware testing: make sure the start datetime value is before the timestamp when performing the test)
+
+		Test Data: 
+		- Start Date: 2020-06-18
+		- Start Time: 18:00
+		- End Date: 2020-06-30
+		- End Time: 18:00
+		"""
+
+		vote_event = VoteEvent()
+		vote_event.startDate = "2020-06-18"
+		vote_event.startTime = "18:00"
+		vote_event.endDate = "2020-06-30"
+		vote_event.endTime = "18:00"
+
+		self.assertIs(vote_event.is_event_datetime_valid(), False)
+
+	def testDateTimeIsNotValidByEndDateTimeBeforeStartDateTime(self):
+		"""
+		(Time aware testing: make sure the start datetime value is after the timestamp when performing the test)
+		Condition: The Start Date Time must be current or after the timestamp when executing the test
+
+
+		Test Data: 
+		- Start Date: 2023-06-18
+		- Start Time: 15:00
+		- End Date: 2020-06-17
+		- End Time: 11:00
+		"""
+
+		vote_event = VoteEvent()
+		vote_event.startDate = "2023-06-18"
+		vote_event.startTime = "15:00"
+		vote_event.endDate = "2023-06-17"
+		vote_event.endTime = "11:00"
+
+		self.assertIs(vote_event.is_event_datetime_valid(), False)
