@@ -59,6 +59,11 @@ div#content_pane>div#right_pane div#content div#vote_events table tr.header {
     border: 1px solid #000000;
 }
 
+div#content_pane>div#right_pane div#content div#vote_events table tr.no_records td {
+    height: 40vh;
+    background-color: #EBECF0;
+}
+
 div#content_pane>div#right_pane div#content div#vote_events table td, div#content_pane>div#right_pane div#content div#vote_events table th {
     border: 1px solid #000000;
 }
@@ -71,15 +76,15 @@ div#content_pane>div#right_pane div#content div#vote_events table tr td {
     text-align: center;
 }
 
-div#content_pane>div#right_pane div#content div#vote_events table tr td:nth-child(1) {
+div#content_pane>div#right_pane div#content div#vote_events table tr>*:nth-child(1) {
     width: 5%;
 }
 
-div#content_pane>div#right_pane div#content div#vote_events table tr td:nth-child(2) {
+div#content_pane>div#right_pane div#content div#vote_events table tr>*:nth-child(2) {
     width: 30%;
 }
 
-div#content_pane>div#right_pane div#content div#vote_events table tr td:nth-child(3), div#content_pane>div#right_pane div#content div#vote_events table tr td:nth-child(4) {
+div#content_pane>div#right_pane div#content div#vote_events table tr>*:nth-child(3), div#content_pane>div#right_pane div#content div#vote_events table tr>*:nth-child(4) {
     width: 15%;
 }
 

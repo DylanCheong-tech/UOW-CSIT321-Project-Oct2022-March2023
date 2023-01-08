@@ -69,6 +69,11 @@
             <th>Status</th>
             <th>Actions</th>
         </tr>
+        {% if not VoteEvents %}
+        <tr class="no_records">
+            <td colspan="6">You have no Vote Event records, let's create one !</td>
+        </tr>
+        {% endif %}
         {% for event in VoteEvents %}
         <tr>
             <td>{{event.seqNo}}</td>
