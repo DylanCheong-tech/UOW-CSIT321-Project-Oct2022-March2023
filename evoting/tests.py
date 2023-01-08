@@ -5,6 +5,7 @@ from .helpers.hasher import Hasher
 from .helpers.otpGenerator import OTPGenerator
 from .helpers.sendOTPEmail import EmailSender
 from .helpers.passwordChecker import PasswordChecker
+from .helpers.voterEmailChecker import VoterEmailChecker
 
 from .models import OTPManagement
 from .models import VoteEvent
@@ -362,3 +363,120 @@ class ModelVoteEventTest(TestCase):
 		vote_event.endTime = "11:00"
 
 		self.assertIs(vote_event.is_event_datetime_valid(), False)
+
+
+class HelperVoterEmailCheckerTest(TestCase):
+	"""
+	VoterEmailChecker class has a static method named 'VoterEmailChecker'
+	This static method accepts one argument as a 2d list of name and email and return two dictionary objects, valid emails and non-valid emails respectively 
+	"""
+
+	def testCheckEmailsByProvidingAllCorrectEmails(self):
+		"""
+		Test Data:
+		Emails : [
+			[Alice1 , alice@mail.com],
+			[Alice2 , alice@mail.au.edu],
+			[Alice3 , alice.uow.csit@mail.com],
+			[Alice4 , alice-csit@mail.com],
+			[Alice5 , alice1234@mail.com],
+			[Alice6 , alice-1234.csit@mail.com]
+		]
+
+		Expected Result: All names and emails present in the 'valid_emails' dictionary, no item entry in 'non_valid_emails''
+		"""
+
+		emails = [
+			["Alice1" , "alice@mail.com"],
+			["Alice2" , "alice@mail.au.edu"],
+			["Alice3" , "alice.uow.csit@mail.com"],
+			["Alice4" , "alice-csit@mail.com"],
+			["Alice5" , "alice1234@mail.com"],
+			["Alice6" , "alice-1234.csit@mail.com"]
+		]
+
+		valid_emails, non_valid_emails = VoterEmailChecker.checkEmails(emails)
+
+		self.assertEqual(len(valid_emails.items()), 6)
+		self.assertEqual(len(non_valid_emails.items()), 0)
+
+	def testCheckEmailsByProvidingAllIncorrectEmails(self):
+		"""
+		Test Data:
+		Emails : [
+			[Alice1 , alice-@mail.com],
+			[Alice2 , alice@mail..au..edu],
+			[Alice3 , alice..uow..csit@mail.com],
+			[Alice4 , .alice-csit@mail.com],
+			[Alice5 , alice1234@mail#csit.com],
+			[Alice6 , alice#1234.csit@mail.com],
+			[Alice7 , alice_1234.csit@mail.com.y]
+		]
+
+		Expected Result: All names and emails present in the 'non_valid_emails' dictionary, no item entry in 'valid_emails''
+		"""
+
+		emails = [
+			["Alice1" , "alice-@mail.com"],
+			["Alice2" , "alice@mail..au..edu"],
+			["Alice3" , "alice..uow..csit@mail.com"],
+			["Alice4" , ".alice-csit@mail.com"],
+			["Alice5" , "alice1234@mail#csit.com"],
+			["Alice6" , "alice#1234.csit@mail.com"],
+			["Alice7" , "alice_1234.csit@mail.com.y"]
+		]
+
+		valid_emails, non_valid_emails = VoterEmailChecker.checkEmails(emails)
+
+		self.assertEqual(len(valid_emails.items()), 0)
+		self.assertEqual(len(non_valid_emails.items()), 7)
+
+	def testCheckEmailsByProvidingMultipleEmailCases(self):
+		"""
+		Test Data:
+		Emails : [
+			[Alice1 , alice1234@mail.com],
+			[Alice2 , alice@mail.au#edu],
+			[Alice3 , alice-uow-csit@mail.com],
+			[Alice4 , .alice.csit@mail.com],
+			[Alice5 , alice1234@mail.csit.com.au],
+			[Alice6 , alice-csit.csit@mail_csit.com],
+			[Alice7 , alice_1234.csit@mail.com.y]
+		]
+
+		Expected Result: All names and emails present in the 'non_valid_emails' dictionary, no item entry in 'valid_emails''
+		"""
+
+		emails = [
+			["Alice1" , "alice1234@mail.com"],
+			["Alice2" , "alice@mail.au#edu"],
+			["Alice3" , "alice-uow-csit@mail.com"],
+			["Alice4" , ".alice.csit@mail.com"],
+			["Alice5" , "alice1234@mail.csit.com.au"],
+			["Alice6" , "alice-csit.csit@mail_csit.com"],
+			["Alice7" , "alice_1234.csit@mail.com.y"]
+		]
+
+		valid_emails, non_valid_emails = VoterEmailChecker.checkEmails(emails)
+
+		print(valid_emails)
+		print(non_valid_emails)
+
+		self.assertEqual(len(valid_emails.items()), 3)
+		self.assertEqual(len(non_valid_emails.items()), 4)
+
+		assert_valid_emails = {
+			"Alice1" : "alice1234@mail.com",
+			"Alice3" : "alice-uow-csit@mail.com",
+			"Alice5" : "alice1234@mail.csit.com.au",
+		}
+
+		assert_non_valid_emails = {
+			"Alice2" : "alice@mail.au#edu",
+			"Alice4" : ".alice.csit@mail.com",
+			"Alice6" : "alice-csit.csit@mail_csit.com",
+			"Alice7" : "alice_1234.csit@mail.com.y"
+		}
+
+		self.assertEqual(valid_emails, assert_valid_emails)
+		self.assertEqual(non_valid_emails, assert_non_valid_emails)
