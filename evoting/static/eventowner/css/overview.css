@@ -96,3 +96,19 @@ div#content_pane>div#right_pane div#content div#vote_events table td.buttons_col
     min-width: 8vw;
     margin: 1vh .5vw 1vh .5vw;
 }
+
+/* pop_out_message_box */
+span#pop_out_message_box {
+    border: 1px #000000;
+    border-style: dashed;
+    border-radius: 12px;
+    text-align: center;
+    position: fixed;
+    width: 40vw;
+    top: 50vh;
+    left: 35vw;
+    background-color: #C9D3E2;
+    margin: 1em;
+    box-shadow: 1vw 1vh #CCCCCC;
+    display: none;
+}

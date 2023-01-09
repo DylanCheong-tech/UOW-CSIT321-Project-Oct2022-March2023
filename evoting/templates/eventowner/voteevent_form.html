@@ -70,7 +70,7 @@
                     {% for item in voteOptions %}
                         <span class="fields">
                             <input type="text" name="voteOption" placeholder="Vote Option" value="{{ item }}" {% if event_status and event_status == "PB" %} disabled {% else %} required {% endif %} />
-                            {% if event_status and event_status == "PC" %}
+                            {% if event_status and event_status == "PC" and forloop.counter > 2 %}
                             <button type="button" onclick="removeOptions(event)">Remove</button>
                             {% endif %}
                         </span>
