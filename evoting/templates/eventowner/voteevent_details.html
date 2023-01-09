@@ -20,6 +20,10 @@
 <span> {{UserDetails.email}}</span>
 {% endblock %}
 
+{% block introduction %}
+<span> Welcome, {{UserDetails.lastName}} {{UserDetails.firstName}}</span>
+{% endblock %}
+
 {% block content %}
 <div id="vote_details_page">
     <h2>Vote Information</h2>

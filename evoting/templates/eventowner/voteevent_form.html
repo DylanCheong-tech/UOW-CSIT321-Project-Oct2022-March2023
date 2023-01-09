@@ -15,6 +15,13 @@
 <link rel="stylesheet" href="{% static 'eventowner/css/voteevent_form.css' %}" />
 {% endblock %}
 
+{% block email %}
+<span> {{UserDetails.email}}</span>
+{% endblock %}
+
+{% block introduction %}
+<span> Welcome, {{UserDetails.lastName}} {{UserDetails.firstName}}</span>
+{% endblock %}
 
 {% block content %}
 <div id="vote_event_form">

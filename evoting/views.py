@@ -159,8 +159,12 @@ class EventOwnerCreateNewVoteEvent(View):
         if not request.user.is_authenticated:
             return redirect("/evoting/eventowner/login")
 
+        #  get the current authenticated user
+        current_user = UserAccount.objects.get(email=request.user.username)
+        current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName}
+
         # render the static page
-        return render(request, "eventowner/voteevent_form.html", {"title" : "Create New Vote Event", "form_action" : "/evoting/eventowner/createevent"})
+        return render(request, "eventowner/voteevent_form.html", {"title" : "Create New Vote Event", "form_action" : "/evoting/eventowner/createevent", "UserDetails":current_user})
 
     def post(self,request):
         form = VoteEventForm(request.POST, request.FILES)
@@ -238,9 +242,11 @@ class EventOwnerUpdateVoteEvent(View):
         if not request.user.is_authenticated:
             return redirect("/evoting/eventowner/login")
 
+        #  get the current authenticated user
+        current_user = UserAccount.objects.get(email=request.user.username)
+
         #  get the vote event object 
-        user = UserAccount.objects.get(email=request.user.username)
-        vote_event = VoteEvent.objects.filter(createdBy=user, seqNo=seqNo)
+        vote_event = VoteEvent.objects.filter(createdBy=current_user, seqNo=seqNo)
 
         options = VoteOption.objects.filter(seqNo=vote_event[0].seqNo)
         options_list = []
@@ -256,9 +262,10 @@ class EventOwnerUpdateVoteEvent(View):
         data["endTime"] = data["endTime"].strftime("%H:%M")
 
         form = VoteEventForm(data)
+        current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName}
 
         # render the static page
-        return render(request, "eventowner/voteevent_form.html", {"title" : "Update Vote Event", "form_action" : "/evoting/eventowner/updateevent/" + str(seqNo), "form": form, "voteOptions" : options_list, "event_status" : data["status"]})
+        return render(request, "eventowner/voteevent_form.html", {"title" : "Update Vote Event", "form_action" : "/evoting/eventowner/updateevent/" + str(seqNo), "form": form, "voteOptions" : options_list, "event_status" : data["status"], "UserDetails":current_user})
 
 
     def post(self, request, seqNo):
@@ -366,6 +373,8 @@ class EventOwnerViewVoteEvent(View):
         vote_event = VoteEvent.objects.get(createdBy=current_user, seqNo=int(seqNo))
         vote_option = VoteOption.objects.filter(seqNo_id=vote_event)
         participants = VoterEmail.objects.filter(seqNo_id=vote_event)
+
+        current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName}
 
         # render static page just for viewing event details (commented out for now as no front end html yet, use homepage for now)
         return render(request, "eventowner/voteevent_details.html", {"title": "View Vote Events","VoteDetails": vote_event,"VoteOptions": vote_option, "Voter": participants, "UserDetails":current_user})
