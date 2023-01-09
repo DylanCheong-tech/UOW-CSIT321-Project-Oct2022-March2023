@@ -2,67 +2,104 @@
 
 {% extends "eventowner/homepage_base.html" %}
 {% load static %}
-{% load overview_extra %}
+{% load extrahelper %}
 
-{% block tab_title %} View Vote Details {% endblock %}
+{% block tab_title %} {{ title }} {% endblock %}
 
-{% block title %} View Vote Details {% endblock %}
-
-{% block js_scripts %}
-<script src="{% static 'eventowner/js/overview.js' %}"></script>
-{% endblock %}
+{% block title %} {{ title }} {% endblock %}
 
 {% block stylesheet_links %}
-<link rel="stylesheet" href="{% static 'eventowner/css/overview.css' %}" />
+<link rel="stylesheet" href="{% static 'eventowner/css/voteevent_details.css' %}" />
 {% endblock %}
 
 {% block email %}
 <span> {{UserDetails.email}}</span>
 {% endblock %}
 
-{% block introduction %}
-<span> Welcome, {{UserDetails.lastName}} {{UserDetails.firstName}}</span>
-{% endblock %}
-
 {% block content %}
-<div id="summary">
+<div id="vote_details_page">
     <h2>Vote Information</h2>
-    {% for countitem, labelitem in EventDetail %}
-        {{labelitem}}{{countitem}} <br/>
-    {% endfor %}
+    <p class></p>
+    <div id ="vote_details_section">
+        <label style="margin-top: 1vh;margin-bottom: 3vh">Vote Event Name: <span class="label_ans">{{VoteDetails.eventTitle}}</span></label>
+
+        <span class="row_flex_flow">
+            <div class="container">
+                <label>
+                    Vote Event Start Date:
+                </label>
+                <div class="label_ans">{{VoteDetails.startDate|date:"j F Y"}}</div>
+            </div>
+
+            <div class="container">
+                <label>
+                    Vote Event End Date:
+                </label>
+                <div class="label_ans">{{VoteDetails.endDate|date:"j F Y"}}</div>
+            </div>
+        </span>
+
+        <span class="row_flex_flow">
+            <div class="container">
+                <label>
+                    Vote Event Start Time:
+                </label>
+                <div class="label_ans">{{VoteDetails.startTime}}</div>
+            </div>
+
+            <div class="container">
+                <label>
+                    Vote Event End Time:
+                </label>
+                <div class="label_ans">{{VoteDetails.endTime}}</div>
+            </div>
+        </span>
+
+        <span class="row_flex_flow">
+            <div class="container">
+                <label>
+                    Vote Question:
+                </label>
+                <div class="label_ans">{{VoteDetails.eventQuestion}}</div>
+            </div>
+            <div class="container">
+                <label>
+                    Vote Event Status:
+                </label>
+                <div class="label_ans">{{VoteDetails|status_abbreviation}}</div>
+            </div>
+        </span>
+
+        <span class="row_flex_flow options">
+            <div class="container">
+                <label>
+                    Vote Options:
+                </label>
+                {% for option in VoteOptions %}
+                <div class="label_ans">{{forloop.counter}}. {{option.voteOption}}</div>
+                {% endfor %}
+            </div>
+
+            <div class="container">
+                <label>
+                    Participants: <span class="label_ans">{{Voter|length}}</span>
+                </label>
+                    <table>
+                        <tr class="header">
+                            <th>Name</th>
+                            <th>Email</th>
+                        </tr>
+                        {% for participants in Voter %}
+                        <tr>
+                            <td>{{participants.voter}}</td>
+                            <td>{{participants.voterEmail}}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+            </div>
+
+        </span>
+    </div>
 </div>
 
-
-<div id="vote_events">
-    <table>
-        <tr>
-            <td>Vote Event Name</td>
-            <td>Vote Event Begin Date</td>
-            <td>Vote Event Begin Time</td>
-            <td>Vote Question</td>
-            <td>Vote Options</td>
-        </tr>
-        <tr>
-            <td>{{event.eventTitle}}</td>
-            <td>{{event.startDate}}</td>
-            <td>{{event.startTime}}</td>
-            <td>{{event.eventQuestion}}</td>
-            <td>{{event.voteOption}}</td>
-        </tr>
-        <tr>
-            <td>Vote Event End Date</td>
-            <td>Vote Event End Time</td>
-            <td>Vote Event Status</td>
-            <td>Vote Voter Emails</td>
-        </tr>
-        <tr>
-            <td>{{event.endDate}}</td>
-            <td>{{event.endTime}}</td>
-            <td>{{event.startTime}}</td>
-            <td>{{event.status_abbreviation}}</td>
-            <td>{{event.voterEmail}}</td>
-        </tr>
-        {% endfor %}
-    </table>
-</div>
 {% endblock %}
