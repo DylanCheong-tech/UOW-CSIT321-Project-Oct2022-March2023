@@ -299,8 +299,8 @@ class EventOwnerUpdateVoteEvent(View):
                     error_message = "Date Time Settings Invalid !"
 
                 elif len(options_list) < 2:
-                status_flag = False
-                error_message = "At Least Two Vote Options Are Needed !"
+                    status_flag = False
+                    error_message = "At Least Two Vote Options Are Needed !"
 
                 else:
                     vote_event.save()
