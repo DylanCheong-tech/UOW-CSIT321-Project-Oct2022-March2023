@@ -190,6 +190,10 @@ class EventOwnerCreateNewVoteEvent(View):
                 status_flag = False
                 error_message = "Date Time Settings Invalid !"
 
+            elif len(options_list) < 2:
+                status_flag = False
+                error_message = "At Least Two Vote Options Are Needed !"
+
             else:
                 new_vote_event.save()
 
@@ -254,7 +258,7 @@ class EventOwnerUpdateVoteEvent(View):
         form = VoteEventForm(data)
 
         # render the static page
-        return render(request, "eventowner/voteevent_form.html", {"title" : "Update Vote Event", "form_action" : "/evoting/eventowner/updateevent/" + str(seqNo), "form": form, "voteOptions" : options_list})
+        return render(request, "eventowner/voteevent_form.html", {"title" : "Update Vote Event", "form_action" : "/evoting/eventowner/updateevent/" + str(seqNo), "form": form, "voteOptions" : options_list, "event_status" : data["status"]})
 
 
     def post(self, request, seqNo):
@@ -293,6 +297,10 @@ class EventOwnerUpdateVoteEvent(View):
                 if not vote_event.is_event_datetime_valid():
                     status_flag = False
                     error_message = "Date Time Settings Invalid !"
+
+                elif len(options_list) < 2:
+                status_flag = False
+                error_message = "At Least Two Vote Options Are Needed !"
 
                 else:
                     vote_event.save()
@@ -366,6 +374,10 @@ class EventOwnerViewVoteEvent(View):
 
 class EventOwnerDeleteVoteEvent(View):
     def post(self, request, seqNo):
+
+        # check authentication 
+        if not request.user.is_authenticated:
+            return redirect("/evoting/eventowner/login")
 
         # get the current authenticated user
         current_user = UserAccount.objects.get(email=request.user.username)

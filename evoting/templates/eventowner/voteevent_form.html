@@ -24,13 +24,13 @@
         onsubmit="formSubmit(event)">
         {% csrf_token %}
         <label>Vote Event Name<span class="red_asterisk">*</span></label>
-        <input type="text" name="eventTitle" placeholder="Vote Event Name" value="{{ form.eventTitle.value }}"
-            required />
+        <input type="text" name="eventTitle" placeholder="Vote Event Name" value="{{ form.eventTitle.value }}" 
+            {% if event_status and event_status == "PB" %} disabled {% else %} required {% endif %}/>
 
         <span class="row_flex_flow">
             <label>
                 Vote Start Date<span class="red_asterisk">*</span>:
-                <input type="date" name="startDate" value="{{ form.startDate.value }}" required />
+                <input type="date" name="startDate" value="{{ form.startDate.value }}" {% if event_status and event_status == "PB" %} disabled {% else %} required {% endif %} />
             </label>
 
             <label>
@@ -42,7 +42,7 @@
         <span class="row_flex_flow">
             <label>
                 Vote Start Time<span class="red_asterisk">*</span>:
-                <input type="time" name="startTime" value="{{ form.startTime.value }}" required />
+                <input type="time" name="startTime" value="{{ form.startTime.value }}" {% if event_status and event_status == "PB" %} disabled {% else %} required {% endif %} />
 
             </label>
 
@@ -54,24 +54,29 @@
 
 
         <label>Vote Question<span class="red_asterisk">*</span></label>
-        <input type="text" name="eventQuestion" placeholder="Vote Question" value="{{ form.eventQuestion.value }}" />
+        <input type="text" name="eventQuestion" placeholder="Vote Question" value="{{ form.eventQuestion.value }}" {% if event_status and event_status == "PB" %} disabled {% else %} required {% endif %} />
 
         <span class="row_flex_flow options_and_file">
             <span id="vote_options">
                 <label>Vote Options<span class="red_asterisk">*</span></label>
                 {% if not voteOptions %}
                     <span class="fields">
-                        <input type="text" name="voteOption" placeholder="Vote Option" />
+                        <input type="text" name="voteOption" placeholder="Vote Option" required />
+                    </span>
+                    <span class="fields">
+                        <input type="text" name="voteOption" placeholder="Vote Option" required />
                     </span>
                 {% else%}
                     {% for item in voteOptions %}
                         <span class="fields">
-                            <input type="text" name="voteOption" placeholder="Vote Option" value="{{ item }}" />
+                            <input type="text" name="voteOption" placeholder="Vote Option" value="{{ item }}" {% if event_status and event_status == "PB" %} disabled {% else %} required {% endif %} />
+                            {% if event_status and event_status == "PC" %}
                             <button type="button" onclick="removeOptions(event)">Remove</button>
+                            {% endif %}
                         </span>
                     {% endfor %}
                 {% endif %}
-                <button type="button" onclick="addOptions()">Add More Options</button>
+                <button type="button" onclick="addOptions()" {% if event_status and event_status == "PB" %} disabled {% endif %}>Add More Options</button>
             </span>
 
             <span class="row_flex_flow voter_emails">
