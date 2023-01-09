@@ -1,9 +1,8 @@
-
 div#content {
     background-color: #FFFFFF;
 }
 
-div#content label{
+div#content label {
     color: #767676;
     font-weight: bold;
 }
@@ -12,12 +11,19 @@ div#content div#vote_details_page {
     display: flex;
     flex-flow: column;
 }
+
+div#content div#vote_details_page h2 {
+    margin-left: 2vw;
+}
+
 div#content div#vote_details_page div#vote_details_section {
-    margin-left: 5vw;
-    margin-right: 5vw;
+    margin: 2vh 2.5vw 2vh 2.5vw;
+    padding: 3vh 2.5vw 3vh 2.5vw;
     display: flex;
     flex-flow: column;
     min-height: 70vh;
+    border-radius: 12px;
+    background-color: #EBECF0;
 }
 
 div#content div#vote_details_page div#vote_details_section .label_ans {
@@ -29,7 +35,7 @@ div#content div#vote_details_page div#vote_details_section .label_ans {
 div#content div#vote_details_page div#vote_details_section span.row_flex_flow {
     display: flex;
     flex-flow: row;
-    column-gap: 35vh;
+    column-gap: 15vw;
     margin-bottom: 3vh;
 }
 
@@ -43,27 +49,35 @@ div#content div#vote_details_page div#vote_details_section span.row_flex_flow .c
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-    width: 30vh;
+    width: fit-content;
     word-wrap: break-word;
 }
+
 div#content div#vote_details_page div#vote_details_section span.options div.container table {
     display: block;
-    height: 80%;
-    width: 25vw;
+    min-height: 20vh;
+    width: 30vw;
     border-collapse: collapse;
     overflow-y: scroll;
 }
 
-div#content div#vote_details_page div#vote_details_section span.options div.container table tr.header{
+div#content div#vote_details_page div#vote_details_section span.options div.container table tr.header {
     position: sticky;
     top: 0;
 }
 
-div#content div#vote_details_page div#vote_details_section span.options div.container table tr th{
-    background-color: #EBECF0;
+div#content div#vote_details_page div#vote_details_section span.options div.container table tr th {
+    background-color: #CCCCCC;
     width: 25vw;
 }
 
-div#content div#vote_details_page div#vote_details_section span.options div.container table th,td{
+div#content div#vote_details_page div#vote_details_section span.options div.container table th, td {
     border: 0.5px solid #000000;
+}
+
+div#content div#vote_details_page div#vote_details_section div#action_buttons {
+    display: flex;
+    flex-flow: row;
+    justify-content: center;
+    column-gap: 5vw;
 }
