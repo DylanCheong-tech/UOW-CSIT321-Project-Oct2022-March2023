@@ -353,7 +353,6 @@ class EventOwnerUpdateVoteEvent(View):
         else:
             return render(request, "eventowner/voteevent_form.html", {"title" : "Update Vote Event", "form_action" : "/evoting/eventowner/updateevent/" + str(seqNo), "status": error_message, "form": form, "voteOptions" : options_list})  
 
-import pprint
 class EventOwnerViewVoteEvent(View):
     def get(self, request, seqNo):
         # check authentication 
@@ -361,7 +360,7 @@ class EventOwnerViewVoteEvent(View):
             return redirect("/evoting/eventowner/login")
 
         #  get the current authenticated user
-        current_user = UserAccount.objects.get(email="hongteryen@gmail.com")
+        current_user = UserAccount.objects.get(email=request.user.username)
 
         # get the current vote event details
         vote_event = VoteEvent.objects.get(createdBy=current_user, seqNo=int(seqNo))
@@ -369,8 +368,8 @@ class EventOwnerViewVoteEvent(View):
         participants = VoterEmail.objects.filter(seqNo_id=vote_event)
 
         # render static page just for viewing event details (commented out for now as no front end html yet, use homepage for now)
-        #return render(request, "eventowner/voteevent_details.html", {"title": "View Vote Events","VoteDetails": vote_event,"VoteOptions": vote_option, "Voter": participants})
-        return redirect("/evoting/eventowner/homepage")
+        return render(request, "eventowner/voteevent_details.html", {"title": "View Vote Events","VoteDetails": vote_event,"VoteOptions": vote_option, "Voter": participants, "UserDetails":current_user})
+
 
 class EventOwnerDeleteVoteEvent(View):
     def post(self, request, seqNo):
