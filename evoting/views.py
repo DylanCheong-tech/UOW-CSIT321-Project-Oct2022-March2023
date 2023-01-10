@@ -167,6 +167,10 @@ class EventOwnerCreateNewVoteEvent(View):
         return render(request, "eventowner/voteevent_form.html", {"title" : "Create New Vote Event", "form_action" : "/evoting/eventowner/createevent", "UserDetails":current_user})
 
     def post(self,request):
+        # check authentication 
+        if not request.user.is_authenticated:
+            return redirect("/evoting/eventowner/login")
+
         form = VoteEventForm(request.POST, request.FILES)
 
         error_message = "Invalid Fields Input !"
@@ -276,6 +280,10 @@ class EventOwnerUpdateVoteEvent(View):
 
 
     def post(self, request, seqNo):
+        # check authentication 
+        if not request.user.is_authenticated:
+            return redirect("/evoting/eventowner/login")
+
         form = VoteEventForm(request.POST, request.FILES)
 
         error_message = "Invalid Fields Input !"
@@ -408,7 +416,6 @@ class EventOwnerViewVoteEvent(View):
 
 class EventOwnerDeleteVoteEvent(View):
     def post(self, request, seqNo):
-
         # check authentication 
         if not request.user.is_authenticated:
             return redirect("/evoting/eventowner/login")
