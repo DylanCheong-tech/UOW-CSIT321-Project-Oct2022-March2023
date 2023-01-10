@@ -248,6 +248,13 @@ class EventOwnerUpdateVoteEvent(View):
         #  get the vote event object 
         vote_event = VoteEvent.objects.filter(createdBy=current_user, seqNo=seqNo)
 
+        # if no object retreive from the database, redirect to the homepage
+        """
+        This may happened when the user access the other user vote event objects
+        """
+        if (vote_event.count() == 0):
+            return redirect("/evoting/eventowner/homepage")
+
         options = VoteOption.objects.filter(seqNo=vote_event[0].seqNo)
         options_list = []
         for item in options :
@@ -279,7 +286,16 @@ class EventOwnerUpdateVoteEvent(View):
 
             # the user must be existed in the database, since user need to logged in to be able to create event
             current_user = UserAccount.objects.get(email=request.user.username)
-            vote_event = VoteEvent.objects.get(createdBy=current_user, seqNo=seqNo)
+            try:
+                vote_event = VoteEvent.objects.get(createdBy=current_user, seqNo=seqNo)
+
+            except VoteEvent.DoesNotExist:
+                # if no object retreive from the database, redirect to the homepage
+                """
+                This may happened when the user access the other user vote event objects
+                """
+                return redirect("/evoting/eventowner/homepage")
+
             vote_event_status = vote_event.status
 
             if vote_event_status == "PC" or vote_event_status == "PB":
@@ -365,12 +381,22 @@ class EventOwnerViewVoteEvent(View):
         # check authentication 
         if not request.user.is_authenticated:
             return redirect("/evoting/eventowner/login")
-
+        
         #  get the current authenticated user
         current_user = UserAccount.objects.get(email=request.user.username)
 
+        # get the vote event object
+        try:
+            vote_event = VoteEvent.objects.get(createdBy=current_user, seqNo=int(seqNo))
+
+        except VoteEvent.DoesNotExist:
+            # if no object retreive from the database, redirect to the homepage
+            """
+            This may happened when the user access the other user vote event objects
+            """
+            return redirect("/evoting/eventowner/homepage")
+
         # get the current vote event details
-        vote_event = VoteEvent.objects.get(createdBy=current_user, seqNo=int(seqNo))
         vote_option = VoteOption.objects.filter(seqNo_id=vote_event)
         participants = VoterEmail.objects.filter(seqNo_id=vote_event)
 
