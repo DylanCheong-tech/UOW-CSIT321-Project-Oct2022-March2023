@@ -1,4 +1,5 @@
 import csv
+import requests
 
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
@@ -32,55 +33,69 @@ class EventOwnerCreateAccountView(View):
 
     def post(self, request):
         form = SignupForm(request.POST)
-
         error_message = "Field Values Invalid !"
         status_flag = True
-        if form.is_valid():
-            # access the form data
-            data = form.cleaned_data
 
-            # check if the account is registered here 
-            count = UserAccount.objects.filter(email=data['email']).count()
-            if (count > 0):
-                error_message = "User Account Existed !"
+        ''' Begin reCAPTCHA validation '''
+        recaptcha_response = request.POST.get('g-recaptcha-response')
+        url = 'https://www.google.com/recaptcha/api/siteverify'
+        captcha = {
+            'secret': "6LewIOMjAAAAABtqS4IYiR1xWbMbo_hJJy5jcnQb",
+            'response': recaptcha_response
+        }
+        r = requests.post(url, data=captcha)
+        result = r.json()
+        ''' End reCAPTCHA validation '''
+
+        if result['success']:
+            if form.is_valid():
+                # access the form data
+                data = form.cleaned_data
+
+                # check if the account is registered here 
+                count = UserAccount.objects.filter(email=data['email']).count()
+                if (count > 0):
+                    error_message = "User Account Existed !"
+                    status_flag = False
+                else: 
+                    if (data['password'] != data['repeat_password']):
+                        error_message = "Passwords Do Not Match !"
+                        status_flag = False
+
+                    try:
+                        # check otp value
+                        otp_from_db = OTPManagement.objects.get(email=data['email'])
+                        if otp_from_db.is_expired() or otp_from_db.check_otp_matching(data['otp']):
+                            error_message = "OTP Value Invalid!"
+                            status_flag = False
+
+                        elif not PasswordChecker.validate_password(data['password']):
+                            error_message = "Password Format Invalid !"
+                            status_flag = False
+
+                        else:
+                            new_account = UserAccount(
+                                email=data['email'],
+                                password=Hasher(data['password']).messageDigest(),
+                                firstName=data['firstname'],
+                                lastName=data['lastname'],
+                                gender=data['gender'].upper(),
+                            )
+
+                            new_account.save()
+                            user = auth.models.User(username=data['email'])
+                            user.set_password(Hasher(data['password']).messageDigest())
+                            user.save()
+
+                    except OTPManagement.DoesNotExist:
+                        error_message = "No OTP Generated !"
+                        status_flag = False
+
+            else:
                 status_flag = False
-            else: 
-                if (data['password'] != data['repeat_password']):
-                    error_message = "Passwords Do Not Match !"
-                    status_flag = False
-
-                try:
-                    # check otp value
-                    otp_from_db = OTPManagement.objects.get(email=data['email'])
-                    if otp_from_db.is_expired() or otp_from_db.check_otp_matching(data['otp']):
-                        error_message = "OTP Value Invalid!"
-                        status_flag = False
-
-                    elif not PasswordChecker.validate_password(data['password']):
-                        error_message = "Password Format Invalid !"
-                        status_flag = False
-
-                    else:
-                        new_account = UserAccount(
-                            email=data['email'],
-                            password=Hasher(data['password']).messageDigest(),
-                            firstName=data['firstname'],
-                            lastName=data['lastname'],
-                            gender=data['gender'].upper(),
-                        )
-
-                        new_account.save()
-                        user = auth.models.User(username=data['email'])
-                        user.set_password(Hasher(data['password']).messageDigest())
-                        user.save()
-
-                except OTPManagement.DoesNotExist:
-                    error_message = "No OTP Generated !"
-                    status_flag = False
-
         else:
             status_flag = False
-
+            error_message = "Captcha Failed, Try again!"
         if status_flag:
             # redirect to login page if success
             return redirect("/evoting/eventowner/login")
@@ -108,17 +123,31 @@ class EventOwnerLogin(View):
         error_message = "Incorrect Credentials"
         status_flag = True
 
-        if form.is_valid():
-            data = form.cleaned_data
-            user = auth.authenticate(username=data["email"], password=data["password"])
+        ''' Begin reCAPTCHA validation '''
+        recaptcha_response = request.POST.get('g-recaptcha-response')
+        url = 'https://www.google.com/recaptcha/api/siteverify'
+        captcha = {
+            'secret': "6LewIOMjAAAAABtqS4IYiR1xWbMbo_hJJy5jcnQb",
+            'response': recaptcha_response
+        }
+        r = requests.post(url, data=captcha)
+        result = r.json()
+        ''' End reCAPTCHA validation '''
 
-            if user is not None and user.is_active:
-                auth.login(request, user)
+        if result['success']:
+            if form.is_valid():
+                data = form.cleaned_data
+                user = auth.authenticate(username=data["email"], password=data["password"])
+
+                if user is not None and user.is_active:
+                    auth.login(request, user)
+                else:
+                    status_flag = False
             else:
                 status_flag = False
-
         else:
             status_flag = False
+            error_message = "Captcha Failed, Try again!"
 
         if status_flag:
             # redirect to home page if success

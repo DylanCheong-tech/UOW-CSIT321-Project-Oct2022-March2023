@@ -13,6 +13,8 @@
     <!-- jsHashes library CDN -->
     <script src="https://cdn.rawgit.com/h2non/jsHashes/master/hashes.js"></script>
 
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
     <script src="{% static 'eventowner/js/login.js' %}"></script>
 
     <link rel="stylesheet" href="{% static 'eventowner/css/login.css' %}" />
@@ -31,9 +33,9 @@
                 </span>
                 <span class="field">
                     <label>Password</label>
-                    <input id="password_input" type="password" name="password" value="{{ form.email.value }}" required />
+                    <input id="password_input" type="password" name="password" required />
                 </span>
-
+                <div class="g-recaptcha" data-sitekey="6LewIOMjAAAAAIYzZ4zwBv3hcLKgtcDUOVKPbI2x"></div>             
                 <button id="form_submit_btn" type="submit">Sign In</button>
             </form>
 
@@ -41,7 +43,6 @@
                 Don't have an account ? <a href="/evoting/eventowner/createaccount">Sign Up</a>
             </span>
         </div>
-
         <div id="right_pane">
             <img src="{% static 'eventowner/img/sample1.png' %}" />
         </div>

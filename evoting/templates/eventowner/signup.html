@@ -9,7 +9,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
-
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script src="{% static 'eventowner/js/signup.js' %}"></script>
     <link rel="stylesheet" href="{% static 'eventowner/css/signup.css' %}" />
 </head>
@@ -74,8 +74,8 @@
                 <span class="field last_field">
                     <label>OTP</label>
                     <input type="text" name="otp" value="{{form.otp.value}}" required />
-                </span>
-
+                </span>  
+                <div class="g-recaptcha" data-sitekey="6LewIOMjAAAAAIYzZ4zwBv3hcLKgtcDUOVKPbI2x" style="grid-column:span 2"></div> 
                 <button id="form_submit_btn" type="submit">Sign Up</button>
             </form>
 
