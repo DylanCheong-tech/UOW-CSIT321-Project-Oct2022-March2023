@@ -82,6 +82,10 @@ class EventOwnerCreateAccountView(View):
 
 class EventOwnerCreateAccountGetOTP(View):
     def get(self, request):
+        # check the email is provided 
+        if not request.GET['email']:
+            return HttpResponse(content="No Email Address Is Provided", status=404)
+
         generator = OTPGenerator(request.GET['email'])
         otp = generator.generateOTP()
         email_sender = EmailSender(request.GET['email'])
