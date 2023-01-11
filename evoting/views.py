@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from django.views import View
 from django.contrib import auth
 from django.forms.models import model_to_dict
+from django.conf import settings
 
 # Form imports
 from .forms.eventowner import SignupForm
@@ -40,7 +41,7 @@ class EventOwnerCreateAccountView(View):
         recaptcha_response = request.POST.get('g-recaptcha-response')
         url = 'https://www.google.com/recaptcha/api/siteverify'
         captcha = {
-            'secret': "6LewIOMjAAAAABtqS4IYiR1xWbMbo_hJJy5jcnQb",
+            'secret': settings.RECAPTCHA_KEY,
             'response': recaptcha_response
         }
         r = requests.post(url, data=captcha)
@@ -122,12 +123,12 @@ class EventOwnerLogin(View):
 
         error_message = "Incorrect Credentials"
         status_flag = True
-
+        
         ''' Begin reCAPTCHA validation '''
         recaptcha_response = request.POST.get('g-recaptcha-response')
         url = 'https://www.google.com/recaptcha/api/siteverify'
         captcha = {
-            'secret': "6LewIOMjAAAAABtqS4IYiR1xWbMbo_hJJy5jcnQb",
+            'secret': settings.RECAPTCHA_KEY,
             'response': recaptcha_response
         }
         r = requests.post(url, data=captcha)
