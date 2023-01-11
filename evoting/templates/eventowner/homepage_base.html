@@ -9,6 +9,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block tab_title %}{% endblock %}</title>
+    <script src="{% static 'eventowner/js/homepage_base.js' %}"></script>
 
     {% block js_scripts %}{% endblock %}
 
@@ -53,6 +54,10 @@
         </div>
     </div>
     </div>
+    <span id="session_timeout_alert">
+        <p>You session is going to expire. Please confirm your session by clicking "OK" button</p>
+        <button type="button" onclick="confirming_session()">OK</button>
+    </span>
 </body>
 
 </html>
