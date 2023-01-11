@@ -1,0 +1,90 @@
+<!-- overview.html -->
+
+{% extends "eventowner/homepage_base.html" %}
+{% load static %}
+{% load overview_extra %}
+
+{% block tab_title %} Overview {% endblock %}
+
+{% block title %} Overview {% endblock %}
+
+{% block js_scripts %}
+<script src="{% static 'eventowner/js/overview.js' %}"></script>
+{% endblock %}
+
+{% block stylesheet_links %}
+<link rel="stylesheet" href="{% static 'eventowner/css/overview.css' %}" />
+{% endblock %}
+
+{% block email %}
+<span> {{UserDetails.email}}</span>
+{% endblock %}
+
+{% block introduction %}
+<span> Welcome, {{UserDetails.lastName}} {{UserDetails.firstName}}</span>
+{% endblock %}
+
+{% block content %}
+<div id="summary">
+    <h2>Summary</h2>
+    {% for countitem, labelitem in EventDetail %}
+        {{labelitem}}{{countitem}} <br/>
+    {% endfor %}
+</div>
+
+<div id="miscellaneous">
+    <span id="links">
+        <h2>Miscellaneous</h2>
+        <a>Terms Of Services</a>
+        <a>Support</a>
+        <a>Privacy Policy</a>
+        <a>About</a>
+    </span>
+
+    <span id="annotation">&copy; evoting.com 2022</span>
+</div>
+
+
+<div id="vote_events">
+    <span>
+        <h2>Your Vote Events</h2>
+        <span class="createevent_section">
+            <form action="/evoting/eventowner/createevent" method="GET">
+                {% csrf_token %}
+                <button type="submit">Create New Vote Event</button>
+            </form>
+        </span>
+        <input type="text" placeholder="Search" />
+        <select>
+            <option>Seq No.</option>
+        </select>
+    </span>
+
+    <table>
+        <tr class="header">
+            <th>Seq No</th>
+            <th>Name</th>
+            <th>Event Date</th>
+            <th>Event Time</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+        {% for event in VoteEvents %}
+        <tr>
+            <td>{{event.seqNo}}</td>
+            <td>{{event.eventTitle}}</td>
+            <td>{{event|concat_period:'date'|linebreaks}}</td>
+            <td>{{event|concat_period:'time'|linebreaks}}</td>
+            <td>{{event|status_abbreviation}}</td>
+            <td class="buttons_col">
+                <button type="button" onclick="window.location.href='/evoting/eventowner/viewevent/' + '{{event.seqNo}}'">View</button>
+                <button type="button">Delete</button>
+                <br />
+                <button type="button" onclick="window.location.href='/evoting/eventowner/updateevent/' + '{{event.seqNo}}'">Modify</button>
+                <button type="button">confirm</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
