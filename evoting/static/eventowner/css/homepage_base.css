@@ -69,3 +69,19 @@ div#content_pane>div#right_pane div#header {
     align-items: center;
     justify-content: space-between;
 }
+
+/* session timeout alert box */
+span#session_timeout_alert {
+    display: none;
+    text-align: center;
+    padding-bottom: 1.5vh;
+    position: fixed;
+    width: 30vw;
+    top: 5vh;
+    left: 40vw;
+    border: 1px dashed #000000;
+    border-radius: 12px;
+    background-color: #C9D3E2;
+    margin: 1em;
+    box-shadow: .5vw .8vh #CCCCCC;
+}

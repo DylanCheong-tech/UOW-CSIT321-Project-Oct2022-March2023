@@ -2,7 +2,7 @@
 
 {% extends "eventowner/homepage_base.html" %}
 {% load static %}
-{% load overview_extra %}
+{% load extrahelper %}
 
 {% block tab_title %} Overview {% endblock %}
 
@@ -49,10 +49,7 @@
     <span>
         <h2>Your Vote Events</h2>
         <span class="createevent_section">
-            <form action="/evoting/eventowner/createevent" method="GET">
-                {% csrf_token %}
-                <button type="submit">Create New Vote Event</button>
-            </form>
+            <button type="button" onclick="window.location.href = '/evoting/eventowner/createevent'">Create New Vote Event</button>
         </span>
         <input type="text" placeholder="Search" />
         <select>
@@ -69,6 +66,11 @@
             <th>Status</th>
             <th>Actions</th>
         </tr>
+        {% if not VoteEvents %}
+        <tr class="no_records">
+            <td colspan="6">You have no Vote Event records, let's create one !</td>
+        </tr>
+        {% endif %}
         {% for event in VoteEvents %}
         <tr>
             <td>{{event.seqNo}}</td>
@@ -78,13 +80,25 @@
             <td>{{event|status_abbreviation}}</td>
             <td class="buttons_col">
                 <button type="button" onclick="window.location.href='/evoting/eventowner/viewevent/' + '{{event.seqNo}}'">View</button>
-                <button type="button">Delete</button>
+                <form action="/evoting/eventowner/deleteevent/{{event.seqNo}}" method="POST">
+                    {% csrf_token %}
+                    <button type="button" onclick="display_pop_out_message_box(event, confirm_delete_event)">Delete</button>
+                </form>
                 <br />
                 <button type="button" onclick="window.location.href='/evoting/eventowner/updateevent/' + '{{event.seqNo}}'">Modify</button>
-                <button type="button">confirm</button>
+                <button type="button">Confirm</button>
             </td>
         </tr>
         {% endfor %}
     </table>
 </div>
+
+<span id="pop_out_message_box">
+    <h3>evoting.com</h3>
+    <p class="message">Do you want to delete this vote event ?</p>
+    <p class="buttons">
+        <button id="cancel_btn" type="button" onclick="hide_pop_out_message_box()">Cancel</button>
+        <button id="confirm_btn" type="button">OK</button>
+    </p>
+</span>
 {% endblock %}

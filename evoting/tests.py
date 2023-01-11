@@ -5,10 +5,12 @@ from .helpers.hasher import Hasher
 from .helpers.otpGenerator import OTPGenerator
 from .helpers.sendOTPEmail import EmailSender
 from .helpers.passwordChecker import PasswordChecker
+from .helpers.voterEmailChecker import VoterEmailChecker
 
 from .models import OTPManagement
+from .models import VoteEvent
 
-
+# Sprint 1 Unit Tests
 class ModelOTPManagementTest(TestCase):
 	"""
 	- OTPManagement Model class stored the email, otp value and the expiry timestamp if the otp
@@ -324,3 +326,195 @@ class HelperPasswordCheckerTest(TestCase):
 		result = PasswordChecker.validate_password("Barbara_Password")
 
 		self.assertIs(result, False)
+
+
+# Sprint 2 Unit Tests 
+
+class ModelVoteEventTest(TestCase):
+	"""
+	- Vote Event Model class stores all the information about a vote event 
+	- The relationship between vote options and vote emails are one to many 
+
+	Vote event have a start datetime and a end datetime value, these value must be make sense when creating a vote event record
+	Valid Datetime settings:
+	- start datetime is current or after the timestamp when creating 
+	- end datetime must be before the start datetime 
+	"""
+
+	def testDateTimeIsValid(self):
+		"""
+		(Time aware testing: make sure the start datetime value is after the timestamp when performing the test)
+
+		Test Data: 
+		- Start Date: 2024-06-18
+		- Start Time: 18:00
+		- End Date: 2024-06-30
+		- End Time: 18:00
+
+		Expected Result: True
+		"""
+
+		vote_event = VoteEvent()
+		vote_event.startDate = "2024-06-18"
+		vote_event.startTime = "18:00"
+		vote_event.endDate = "2024-06-30"
+		vote_event.endTime = "18:00"
+
+		self.assertIs(vote_event.is_event_datetime_valid(), True)
+
+	def testDateTimeIsNotValidByPreviousStartDateTime(self):
+		"""
+		(Time aware testing: make sure the start datetime value is before the timestamp when performing the test)
+
+		Test Data: 
+		- Start Date: 2020-06-18
+		- Start Time: 18:00
+		- End Date: 2020-06-30
+		- End Time: 18:00
+		"""
+
+		vote_event = VoteEvent()
+		vote_event.startDate = "2020-06-18"
+		vote_event.startTime = "18:00"
+		vote_event.endDate = "2020-06-30"
+		vote_event.endTime = "18:00"
+
+		self.assertIs(vote_event.is_event_datetime_valid(), False)
+
+	def testDateTimeIsNotValidByEndDateTimeBeforeStartDateTime(self):
+		"""
+		(Time aware testing: make sure the start datetime value is after the timestamp when performing the test)
+		Condition: The Start Date Time must be current or after the timestamp when executing the test
+
+
+		Test Data: 
+		- Start Date: 2023-06-18
+		- Start Time: 15:00
+		- End Date: 2020-06-17
+		- End Time: 11:00
+		"""
+
+		vote_event = VoteEvent()
+		vote_event.startDate = "2023-06-18"
+		vote_event.startTime = "15:00"
+		vote_event.endDate = "2023-06-17"
+		vote_event.endTime = "11:00"
+
+		self.assertIs(vote_event.is_event_datetime_valid(), False)
+
+
+class HelperVoterEmailCheckerTest(TestCase):
+	"""
+	VoterEmailChecker class has a static method named 'VoterEmailChecker'
+	This static method accepts one argument as a 2d list of name and email and return two dictionary objects, valid emails and non-valid emails respectively 
+	"""
+
+	def testCheckEmailsByProvidingAllCorrectEmails(self):
+		"""
+		Test Data:
+		Emails : [
+			[Alice1 , alice@mail.com],
+			[Alice2 , alice@mail.au.edu],
+			[Alice3 , alice.uow.csit@mail.com],
+			[Alice4 , alice-csit@mail.com],
+			[Alice5 , alice1234@mail.com],
+			[Alice6 , alice-1234.csit@mail.com]
+		]
+
+		Expected Result: All names and emails present in the 'valid_emails' dictionary, no item entry in 'non_valid_emails''
+		"""
+
+		emails = [
+			["Alice1" , "alice@mail.com"],
+			["Alice2" , "alice@mail.au.edu"],
+			["Alice3" , "alice.uow.csit@mail.com"],
+			["Alice4" , "alice-csit@mail.com"],
+			["Alice5" , "alice1234@mail.com"],
+			["Alice6" , "alice-1234.csit@mail.com"]
+		]
+
+		valid_emails, non_valid_emails = VoterEmailChecker.checkEmails(emails)
+
+		self.assertEqual(len(valid_emails.items()), 6)
+		self.assertEqual(len(non_valid_emails.items()), 0)
+
+	def testCheckEmailsByProvidingAllIncorrectEmails(self):
+		"""
+		Test Data:
+		Emails : [
+			[Alice1 , alice-@mail.com],
+			[Alice2 , alice@mail..au..edu],
+			[Alice3 , alice..uow..csit@mail.com],
+			[Alice4 , .alice-csit@mail.com],
+			[Alice5 , alice1234@mail#csit.com],
+			[Alice6 , alice#1234.csit@mail.com],
+			[Alice7 , alice_1234.csit@mail.com.y]
+		]
+
+		Expected Result: All names and emails present in the 'non_valid_emails' dictionary, no item entry in 'valid_emails''
+		"""
+
+		emails = [
+			["Alice1" , "alice-@mail.com"],
+			["Alice2" , "alice@mail..au..edu"],
+			["Alice3" , "alice..uow..csit@mail.com"],
+			["Alice4" , ".alice-csit@mail.com"],
+			["Alice5" , "alice1234@mail#csit.com"],
+			["Alice6" , "alice#1234.csit@mail.com"],
+			["Alice7" , "alice_1234.csit@mail.com.y"]
+		]
+
+		valid_emails, non_valid_emails = VoterEmailChecker.checkEmails(emails)
+
+		self.assertEqual(len(valid_emails.items()), 0)
+		self.assertEqual(len(non_valid_emails.items()), 7)
+
+	def testCheckEmailsByProvidingMultipleEmailCases(self):
+		"""
+		Test Data:
+		Emails : [
+			[Alice1 , alice1234@mail.com],
+			[Alice2 , alice@mail.au#edu],
+			[Alice3 , alice-uow-csit@mail.com],
+			[Alice4 , .alice.csit@mail.com],
+			[Alice5 , alice1234@mail.csit.com.au],
+			[Alice6 , alice-csit.csit@mail_csit.com],
+			[Alice7 , alice_1234.csit@mail.com.y]
+		]
+
+		Expected Result: All names and emails present in the 'non_valid_emails' dictionary, no item entry in 'valid_emails''
+		"""
+
+		emails = [
+			["Alice1" , "alice1234@mail.com"],
+			["Alice2" , "alice@mail.au#edu"],
+			["Alice3" , "alice-uow-csit@mail.com"],
+			["Alice4" , ".alice.csit@mail.com"],
+			["Alice5" , "alice1234@mail.csit.com.au"],
+			["Alice6" , "alice-csit.csit@mail_csit.com"],
+			["Alice7" , "alice_1234.csit@mail.com.y"]
+		]
+
+		valid_emails, non_valid_emails = VoterEmailChecker.checkEmails(emails)
+
+		print(valid_emails)
+		print(non_valid_emails)
+
+		self.assertEqual(len(valid_emails.items()), 3)
+		self.assertEqual(len(non_valid_emails.items()), 4)
+
+		assert_valid_emails = {
+			"Alice1" : "alice1234@mail.com",
+			"Alice3" : "alice-uow-csit@mail.com",
+			"Alice5" : "alice1234@mail.csit.com.au",
+		}
+
+		assert_non_valid_emails = {
+			"Alice2" : "alice@mail.au#edu",
+			"Alice4" : ".alice.csit@mail.com",
+			"Alice6" : "alice-csit.csit@mail_csit.com",
+			"Alice7" : "alice_1234.csit@mail.com.y"
+		}
+
+		self.assertEqual(valid_emails, assert_valid_emails)
+		self.assertEqual(non_valid_emails, assert_non_valid_emails)

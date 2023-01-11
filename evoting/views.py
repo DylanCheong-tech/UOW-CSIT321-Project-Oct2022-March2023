@@ -10,7 +10,7 @@ from django.forms.models import model_to_dict
 # Form imports
 from .forms.eventowner import SignupForm
 from .forms.eventowner import LoginForm
-from .forms.eventowner import CreateEventForm
+from .forms.eventowner import VoteEventForm
 
 # Model imports
 from .models import UserAccount
@@ -46,15 +46,15 @@ class EventOwnerCreateAccountView(View):
                 error_message = "User Account Existed !"
                 status_flag = False
             else: 
-                if (data['password'] != data['repeat_password']):
-                    error_message = "Passwords Do Not Match !"
-                    status_flag = False
-
                 try:
                     # check otp value
                     otp_from_db = OTPManagement.objects.get(email=data['email'])
                     if otp_from_db.is_expired() or otp_from_db.check_otp_matching(data['otp']):
                         error_message = "OTP Value Invalid!"
+                        status_flag = False
+
+                    elif(data['password'] != data['repeat_password']):
+                        error_message = "Passwords Do Not Match !"
                         status_flag = False
 
                     elif not PasswordChecker.validate_password(data['password']):
@@ -86,8 +86,7 @@ class EventOwnerCreateAccountView(View):
             # redirect to login page if success
             return redirect("/evoting/eventowner/login")
         else:
-            return render(request, "eventowner/signup.html", {"status": error_message, "form": form})
-
+            return render(request, "eventowner/signup.html", {"status": error_message, "form": form}, status=400)
 
 class EventOwnerCreateAccountGetOTP(View):
     def get(self, request):
@@ -100,7 +99,6 @@ class EventOwnerCreateAccountGetOTP(View):
         email_sender = EmailSender(request.GET['email'])
         email_sender.sendOTP(otp)
         return HttpResponse("Requested OTP sent to mailbox")
-
 
 class EventOwnerLogin(View):
     user_login_failed_attempts = {}
@@ -148,7 +146,7 @@ class EventOwnerLogin(View):
             # redirect to home page if success
             return redirect("/evoting/eventowner/homepage")
         else:
-            return render(request, "eventowner/login.html", {"status": error_message, "form": form})
+            return render(request, "eventowner/login.html", {"status": error_message, "form": form},status=401)
 
     def unlock_user_account(self, email):
         deactivate_user = auth.models.User.objects.get(username=email)
@@ -177,13 +175,11 @@ class EventOwnerHomePage(View):
 
         return render(request, "eventowner/overview.html", {'VoteEvents': VoteEventList,'UserDetails': current_user,'EventDetail': EventDetails})
 
-
 class EventOwnerLogout(View):
     def post(self, request):
         # redirect back to the login page
         auth.logout(request)
         return redirect("/evoting/eventowner/login")
-
 
 class EventOwnerCreateNewVoteEvent(View):
     def get(self, request):
@@ -191,11 +187,19 @@ class EventOwnerCreateNewVoteEvent(View):
         if not request.user.is_authenticated:
             return redirect("/evoting/eventowner/login")
 
+        #  get the current authenticated user
+        current_user = UserAccount.objects.get(email=request.user.username)
+        current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName}
+
         # render the static page
-        return render(request, "eventowner/voteevent_form.html", {"title" : "Create New Vote Event", "form_action" : "/evoting/eventowner/createevent"})
+        return render(request, "eventowner/voteevent_form.html", {"title" : "Create New Vote Event", "form_action" : "/evoting/eventowner/createevent", "UserDetails":current_user})
 
     def post(self,request):
-        form = CreateEventForm(request.POST, request.FILES)
+        # check authentication 
+        if not request.user.is_authenticated:
+            return redirect("/evoting/eventowner/login")
+
+        form = VoteEventForm(request.POST, request.FILES)
 
         error_message = "Invalid Fields Input !"
         status_flag = True
@@ -221,6 +225,10 @@ class EventOwnerCreateNewVoteEvent(View):
             if not new_vote_event.is_event_datetime_valid():
                 status_flag = False
                 error_message = "Date Time Settings Invalid !"
+
+            elif len(options_list) < 2:
+                status_flag = False
+                error_message = "At Least Two Vote Options Are Needed !"
 
             else:
                 new_vote_event.save()
@@ -257,8 +265,7 @@ class EventOwnerCreateNewVoteEvent(View):
             # redirect to home page if success
             return redirect("/evoting/eventowner/homepage")
         else:
-            return render(request, "eventowner/voteevent_form.html", {"title" : "Create New Vote Event", "form_action" : "/evoting/eventowner/createevent", "status": error_message, "form": form, "voteOptions" : options_list})  
-
+            return render(request, "eventowner/voteevent_form.html", {"title" : "Create New Vote Event", "form_action" : "/evoting/eventowner/createevent", "status": error_message, "form": form, "voteOptions" : options_list},status=400)  
 
 class EventOwnerUpdateVoteEvent(View):
     def get(self, request, seqNo):
@@ -266,9 +273,18 @@ class EventOwnerUpdateVoteEvent(View):
         if not request.user.is_authenticated:
             return redirect("/evoting/eventowner/login")
 
+        #  get the current authenticated user
+        current_user = UserAccount.objects.get(email=request.user.username)
+
         #  get the vote event object 
-        user = UserAccount.objects.get(email=request.user.username)
-        vote_event = VoteEvent.objects.filter(createdBy=user, seqNo=seqNo)
+        vote_event = VoteEvent.objects.filter(createdBy=current_user, seqNo=seqNo)
+
+        # if no object retreive from the database, redirect to the homepage
+        """
+        This may happened when the user access the other user vote event objects
+        """
+        if (vote_event.count() == 0):
+            return redirect("/evoting/eventowner/homepage")
 
         options = VoteOption.objects.filter(seqNo=vote_event[0].seqNo)
         options_list = []
@@ -283,14 +299,19 @@ class EventOwnerUpdateVoteEvent(View):
         data["endDate"] = data["endDate"].strftime("%Y-%m-%d")
         data["endTime"] = data["endTime"].strftime("%H:%M")
 
-        form = CreateEventForm(data)
+        form = VoteEventForm(data)
+        current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName}
 
         # render the static page
-        return render(request, "eventowner/voteevent_form.html", {"title" : "Update Vote Event", "form_action" : "/evoting/eventowner/updateevent/" + str(seqNo), "form": form, "voteOptions" : options_list})
+        return render(request, "eventowner/voteevent_form.html", {"title" : "Update Vote Event", "form_action" : "/evoting/eventowner/updateevent/" + str(seqNo), "form": form, "voteOptions" : options_list, "event_status" : data["status"], "UserDetails":current_user})
 
 
     def post(self, request, seqNo):
-        form = CreateEventForm(request.POST, request.FILES)
+        # check authentication 
+        if not request.user.is_authenticated:
+            return redirect("/evoting/eventowner/login")
+
+        form = VoteEventForm(request.POST, request.FILES)
 
         error_message = "Invalid Fields Input !"
         status_flag = True
@@ -300,46 +321,85 @@ class EventOwnerUpdateVoteEvent(View):
 
             # the user must be existed in the database, since user need to logged in to be able to create event
             current_user = UserAccount.objects.get(email=request.user.username)
-            vote_event = VoteEvent.objects.get(createdBy=current_user, seqNo=seqNo)
+            try:
+                vote_event = VoteEvent.objects.get(createdBy=current_user, seqNo=seqNo)
 
-            options_list = data['voteOption'].split("|")
+            except VoteEvent.DoesNotExist:
+                # if no object retreive from the database, redirect to the homepage
+                """
+                This may happened when the user access the other user vote event objects
+                """
+                return redirect("/evoting/eventowner/homepage")
 
-            if not vote_event.is_event_datetime_valid():
-                status_flag = False
-                error_message = "Date Time Settings Invalid !"
+            vote_event_status = vote_event.status
 
-            else:
-                vote_event.save()
+            if vote_event_status == "PC" or vote_event_status == "PB":
+                """
+                Vote Event in PC status can modify any information 
+                status: Pending Confirmation (PC)
+                """
+                if vote_event_status == "PC":
+                    vote_event.eventTitle = data['eventTitle']
+                    vote_event.startDate = data['startDate']
+                    vote_event.startTime = data['startTime']
+                    vote_event.eventQuestion = data['eventQuestion']
 
-                # remove the existing options from the database 
-                VoteOption.objects.filter(seqNo_id=vote_event.seqNo).delete()
+                """
+                Vote Event in PC or Published, PB can modify the end datetime 
+                """
+                vote_event.endDate = data['endDate']
+                vote_event.endTime = data['endTime']
 
-                for x in options_list:
-                    if(len(x.strip()) > 0):
-                        vote_option = VoteOption(
-                            voteOption = x,
+                options_list = data['voteOption'].split("|")
+
+                if not vote_event.is_event_datetime_valid():
+                    status_flag = False
+                    error_message = "Date Time Settings Invalid !"
+
+                elif len(options_list) < 2:
+                    status_flag = False
+                    error_message = "At Least Two Vote Options Are Needed !"
+
+                else:
+                    vote_event.save()
+
+                    """
+                    Only the Vote Event in PC status can modify the vote options
+                    status: Pending Confirmation (PC)
+                    """
+                    if vote_event_status == "PC":
+                        # remove the existing options from the database 
+                        VoteOption.objects.filter(seqNo_id=vote_event.seqNo).delete()
+
+                        for x in options_list:
+                            if(len(x.strip()) > 0):
+                                vote_option = VoteOption(
+                                    voteOption = x,
+                                    seqNo_id = vote_event.seqNo
+                                )
+                                vote_option.save()
+
+                    decoded_file = data['voterEmail'].read().decode('utf-8').splitlines()
+                    reader = csv.reader(decoded_file)
+                    emailList = []
+                    for row in reader:
+                        emailList.append(row)
+                    
+                    valid_email, invalid_email = VoterEmailChecker.checkEmails(emailList)
+
+                    # remove the existing voter emails from the database 
+                    VoterEmail.objects.filter(seqNo_id=vote_event.seqNo).delete()
+
+                    for x, y in valid_email.items():
+                        voter_email = VoterEmail(
+                            voter = x,
+                            voterEmail = y,
                             seqNo_id = vote_event.seqNo
                         )
-                        vote_option.save()
-          
-                decoded_file = data['voterEmail'].read().decode('utf-8').splitlines()
-                reader = csv.reader(decoded_file)
-                emailList = []
-                for row in reader:
-                    emailList.append(row)
-                
-                valid_email, invalid_email = VoterEmailChecker.checkEmails(emailList)
-
-                # remove the existing voter emails from the database 
-                VoterEmail.objects.filter(seqNo_id=vote_event.seqNo).delete()
-
-                for x, y in valid_email.items():
-                    voter_email = VoterEmail(
-                        voter = x,
-                        voterEmail = y,
-                        seqNo_id = vote_event.seqNo
-                    )
-                    voter_email.save()
+                        voter_email.save()
+            else:
+                error_message = "Vote Event Not Modifiable !"
+                status_flag = False
     
         else:
             status_flag = False
@@ -351,21 +411,52 @@ class EventOwnerUpdateVoteEvent(View):
         else:
             return render(request, "eventowner/voteevent_form.html", {"title" : "Update Vote Event", "form_action" : "/evoting/eventowner/updateevent/" + str(seqNo), "status": error_message, "form": form, "voteOptions" : options_list})  
 
-import pprint
 class EventOwnerViewVoteEvent(View):
     def get(self, request, seqNo):
         # check authentication 
         if not request.user.is_authenticated:
             return redirect("/evoting/eventowner/login")
-
+        
         #  get the current authenticated user
-        current_user = UserAccount.objects.get(email="hongteryen@gmail.com")
+        current_user = UserAccount.objects.get(email=request.user.username)
+
+        # get the vote event object
+        try:
+            vote_event = VoteEvent.objects.get(createdBy=current_user, seqNo=int(seqNo))
+
+        except VoteEvent.DoesNotExist:
+            # if no object retreive from the database, redirect to the homepage
+            """
+            This may happened when the user access the other user vote event objects
+            """
+            return redirect("/evoting/eventowner/homepage")
 
         # get the current vote event details
-        vote_event = VoteEvent.objects.get(createdBy=current_user, seqNo=int(seqNo))
         vote_option = VoteOption.objects.filter(seqNo_id=vote_event)
         participants = VoterEmail.objects.filter(seqNo_id=vote_event)
 
+        current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName}
+
         # render static page just for viewing event details (commented out for now as no front end html yet, use homepage for now)
-        #return render(request, "eventowner/voteevent_details.html", {"title": "View Vote Events","VoteDetails": vote_event,"VoteOptions": vote_option, "Voter": participants})
+        return render(request, "eventowner/voteevent_details.html", {"title": "View Vote Events","VoteDetails": vote_event,"VoteOptions": vote_option, "Voter": participants, "UserDetails":current_user})
+
+class EventOwnerDeleteVoteEvent(View):
+    def post(self, request, seqNo):
+        # check authentication 
+        if not request.user.is_authenticated:
+            return redirect("/evoting/eventowner/login")
+
+        # get the current authenticated user
+        current_user = UserAccount.objects.get(email=request.user.username)
+
+        try :
+            # query the vote event to be deleted
+            vote_event = VoteEvent.objects.get(createdBy=current_user, seqNo=seqNo)
+
+            vote_event.delete()
+
+        except VoteEvent.DoesNotExist:
+            print("Error On Deleting a Vote Event, SeqNo = " + str(seqNo))
+
+        # redirect to the same page as a refresh 
         return redirect("/evoting/eventowner/homepage")

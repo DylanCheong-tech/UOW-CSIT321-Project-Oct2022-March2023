@@ -3,6 +3,12 @@
 function requestOTP() {
     let email_ele = document.querySelector("input[name=email]");
     let message_box_ele = document.getElementById("message_box");
+    let btn = document.getElementById("otp_request_btn");
+    btn.disabled = true;
+    //alert("OTP is sent to your email. You can request new OTP after 2 minutes.")
+    setTimeout(()=>{
+        btn.disabled = false;
+        console.log('Button Activated')}, 120000)
 
     if (!email_ele.value.match(/^[A-Za-z0-9]+([_\.-][A-za-z0-9]+)*@[A-Za-z0-9]+(-[A-Za-z0-9]+)*(\.[A-Za-z0-9]+(-[A-Za-z0-9]+)*)*(\.[A-Za-z]{2,})$/)) {
         message_box_ele.firstElementChild.innerHTML = "Invalid Email !"
