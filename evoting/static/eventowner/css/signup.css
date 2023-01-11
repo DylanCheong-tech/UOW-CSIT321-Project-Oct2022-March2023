@@ -95,6 +95,12 @@ div#content_pane div#left_pane form span.email_field button {
     font-size: .7em;
 }
 
+div#content_pane div#left_pane form span.email_field button#otp_request_btn:disabled {
+    opacity: 30%;
+    cursor: not-allowed;
+}
+
+
 div#content_pane div#left_pane form span.field label {
     font-size: .8em;
     margin-bottom: 0;
@@ -109,7 +115,7 @@ div#content_pane div#left_pane form span.field input:focus, div#content_pane div
     outline: none;
 }
 
-div#content_pane div#left_pane form button[type=submit] {
+div#content_pane div#left_pane form button#form_submit_btn {
     grid-column: span 2;
     cursor: pointer;
     background-color: #3F54BE;

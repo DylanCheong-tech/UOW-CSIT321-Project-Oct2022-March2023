@@ -2,6 +2,12 @@
 
 function requestOTP() {
     let email_ele = document.querySelector("input[name=email]");
+    let btn = document.getElementById("otp_request_btn");
+    btn.disabled = true;
+    alert("OTP is sent to your email. You can request new OTP after 2 minutes.")
+    setTimeout(()=>{
+        btn.disabled = false;
+        console.log('Button Activated')}, 120000)
 
     fetch("/evoting/eventowner/getOTP?email=" + email_ele.value)
         .then(console.log)
@@ -53,4 +59,14 @@ function checkPassword(event) {
     else
         document.getElementById("special_char_indicator").style.backgroundColor = off_indicator_color_stying
 
+}
+
+function checkForm(){
+    if(!document.getElementById("g-recaptcha-response").value){
+        alert("Please tick the captcha box!");
+        return false;
+    }else{
+        document.getElementById("form_submit_btn").type = "submit";         
+        return true;
+    }
 }
