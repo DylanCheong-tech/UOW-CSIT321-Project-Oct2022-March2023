@@ -203,6 +203,7 @@ class EventOwnerCreateNewVoteEvent(View):
 
         error_message = "Invalid Fields Input !"
         status_flag = True
+        options_list = []
 
         if form.is_valid():
             data = form.cleaned_data
