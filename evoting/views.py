@@ -45,15 +45,15 @@ class EventOwnerCreateAccountView(View):
                 error_message = "User Account Existed !"
                 status_flag = False
             else: 
-                if (data['password'] != data['repeat_password']):
-                    error_message = "Passwords Do Not Match !"
-                    status_flag = False
-
                 try:
                     # check otp value
                     otp_from_db = OTPManagement.objects.get(email=data['email'])
                     if otp_from_db.is_expired() or otp_from_db.check_otp_matching(data['otp']):
                         error_message = "OTP Value Invalid!"
+                        status_flag = False
+
+                    elif(data['password'] != data['repeat_password']):
+                        error_message = "Passwords Do Not Match !"
                         status_flag = False
 
                     elif not PasswordChecker.validate_password(data['password']):
@@ -85,8 +85,7 @@ class EventOwnerCreateAccountView(View):
             # redirect to login page if success
             return redirect("/evoting/eventowner/login")
         else:
-            return render(request, "eventowner/signup.html", {"status": error_message, "form": form})
-
+            return render(request, "eventowner/signup.html", {"status": error_message, "form": form}, status=400)
 
 class EventOwnerCreateAccountGetOTP(View):
     def get(self, request):
@@ -95,7 +94,6 @@ class EventOwnerCreateAccountGetOTP(View):
         email_sender = EmailSender(request.GET['email'])
         email_sender.sendOTP(otp)
         return HttpResponse("Requested OTP sent to mailbox")
-
 
 class EventOwnerLogin(View):
     def get(self, request):
@@ -124,8 +122,7 @@ class EventOwnerLogin(View):
             # redirect to home page if success
             return redirect("/evoting/eventowner/homepage")
         else:
-            return render(request, "eventowner/login.html", {"status": error_message, "form": form})
-
+            return render(request, "eventowner/login.html", {"status": error_message, "form": form},status=401)
 
 class EventOwnerHomePage(View):
     def get(self, request):
@@ -145,13 +142,11 @@ class EventOwnerHomePage(View):
 
         return render(request, "eventowner/overview.html", {'VoteEvents': VoteEventList,'UserDetails': current_user,'EventDetail': EventDetails})
 
-
 class EventOwnerLogout(View):
     def post(self, request):
         # redirect back to the login page
         auth.logout(request)
         return redirect("/evoting/eventowner/login")
-
 
 class EventOwnerCreateNewVoteEvent(View):
     def get(self, request):
@@ -237,8 +232,7 @@ class EventOwnerCreateNewVoteEvent(View):
             # redirect to home page if success
             return redirect("/evoting/eventowner/homepage")
         else:
-            return render(request, "eventowner/voteevent_form.html", {"title" : "Create New Vote Event", "form_action" : "/evoting/eventowner/createevent", "status": error_message, "form": form, "voteOptions" : options_list})  
-
+            return render(request, "eventowner/voteevent_form.html", {"title" : "Create New Vote Event", "form_action" : "/evoting/eventowner/createevent", "status": error_message, "form": form, "voteOptions" : options_list},status=400)  
 
 class EventOwnerUpdateVoteEvent(View):
     def get(self, request, seqNo):
@@ -412,7 +406,6 @@ class EventOwnerViewVoteEvent(View):
 
         # render static page just for viewing event details (commented out for now as no front end html yet, use homepage for now)
         return render(request, "eventowner/voteevent_details.html", {"title": "View Vote Events","VoteDetails": vote_event,"VoteOptions": vote_option, "Voter": participants, "UserDetails":current_user})
-
 
 class EventOwnerDeleteVoteEvent(View):
     def post(self, request, seqNo):
