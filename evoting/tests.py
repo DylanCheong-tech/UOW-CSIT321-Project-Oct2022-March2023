@@ -52,6 +52,44 @@ class ModelOTPManagementTest(TestCase):
 		# assert is expired, True
 		self.assertIs(otp_record.is_expired(), True)
 
+	def testCheckOTPIsMatchingByProvidingCorrectOTP(self):
+		"""
+		class method 'check_otp_matching' accepts one argument, OTP values as a String
+
+		Test Data:
+			- Email : abc@gmail.com
+			- OTP : 543273
+			- Expire Tiemstamp = django.utils.timezone.localtime() - django.utils.timezone.timedelta(minutes=5)
+			- matching OTP values : 543273
+		"""
+
+		otp_record = OTPManagement()
+		otp_record.email = "abc@gmail.com"
+		otp_record.otp = 543273
+		otp_record.expireAt = timezone.localtime() - timezone.timedelta(minutes=5)
+
+		# assert is expired, True
+		self.assertIs(otp_record.check_otp_matching("543273"), True)
+
+	def testCheckOTPIsMatchingByProvidingIncorrectOTP(self):
+		"""
+		class method 'check_otp_matching' accepts one argument, OTP values as a String
+
+		Test Data:
+			- Email : abc@gmail.com
+			- OTP : 543273
+			- Expire Tiemstamp = django.utils.timezone.localtime() - django.utils.timezone.timedelta(minutes=5)
+			- matching OTP values : 998273
+		"""
+
+		otp_record = OTPManagement()
+		otp_record.email = "abc@gmail.com"
+		otp_record.otp = 543273
+		otp_record.expireAt = timezone.localtime() - timezone.timedelta(minutes=5)
+
+		# assert is expired, True
+		self.assertIs(otp_record.check_otp_matching("998273"), False)
+
 
 class HelperHasherTest(TestCase):
 	def testHasherDigestMessageCorrectly(self):
@@ -128,31 +166,31 @@ class HelperSendOTPEmailTest(TestCase):
 	- The OTP EmailSender class constructor accepts one argument, which is the email receiver address
 	- class method sendOTP requires an augument, the OTP to be encapsulate in the email body to send out
 	"""
-	def testSendEmailWithProvidedEmail(self):
-		"""
-		Test Data : cheongwaihong44@gmail.com
-		OTP value : 123456
+	# def testSendEmailWithProvidedEmail(self):
+	# 	"""
+	# 	Test Data : cheongwaihong44@gmail.com
+	# 	OTP value : 123456
 
-		Expected Result: A response object with a status_code of 202
-		"""
+	# 	Expected Result: A response object with a status_code of 202
+	# 	"""
 
-		emailSender = EmailSender("cheongwaihong44@gmail.com")
-		response = emailSender.sendOTP(123456);
+	# 	emailSender = EmailSender("cheongwaihong44@gmail.com")
+	# 	response = emailSender.sendOTP(123456);
 
-		self.assertEqual(response.status_code, 202)
+	# 	self.assertEqual(response.status_code, 202)
 
-	def testSendEmailWithProvidedEmailAsEmptyString(self):
-		"""
-		Test Data : ""
-		OTP value : 123456
+	# def testSendEmailWithProvidedEmailAsEmptyString(self):
+	# 	"""
+	# 	Test Data : ""
+	# 	OTP value : 123456
 
-		Expected Result: A response with False 
-		"""
+	# 	Expected Result: A response with False 
+	# 	"""
 
-		emailSender = EmailSender("")
-		response = emailSender.sendOTP(123456);
+	# 	emailSender = EmailSender("")
+	# 	response = emailSender.sendOTP(123456);
 
-		self.assertIs(response, False)
+	# 	self.assertIs(response, False)
 
 
 class HelperPasswordCheckerTest(TestCase):

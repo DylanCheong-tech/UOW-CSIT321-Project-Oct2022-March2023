@@ -1,3 +1,4 @@
+from threading import Timer 
 import csv
 
 from django.shortcuts import render, redirect
@@ -89,6 +90,10 @@ class EventOwnerCreateAccountView(View):
 
 class EventOwnerCreateAccountGetOTP(View):
     def get(self, request):
+        # check the email is provided 
+        if not request.GET['email']:
+            return HttpResponse(content="No Email Address Is Provided", status=404)
+
         generator = OTPGenerator(request.GET['email'])
         otp = generator.generateOTP()
         email_sender = EmailSender(request.GET['email'])
@@ -96,6 +101,8 @@ class EventOwnerCreateAccountGetOTP(View):
         return HttpResponse("Requested OTP sent to mailbox")
 
 class EventOwnerLogin(View):
+    user_login_failed_attempts = {}
+
     def get(self, request):
         # render the static page
         return render(request, "eventowner/login.html", {})
@@ -113,8 +120,25 @@ class EventOwnerLogin(View):
             if user is not None and user.is_active:
                 auth.login(request, user)
             else:
-                status_flag = False
+                self.user_login_failed_attempts[data["email"]] = self.user_login_failed_attempts.get(data["email"], 0) + 1
+                if self.user_login_failed_attempts[data["email"]] > 4 :
+                    try :
+                        deactivate_user = auth.models.User.objects.get(username=data["email"])
+                        deactivate_user.is_active = False
+                        deactivate_user.save()
+                        error_message = "Login Failed Attempts Exceed. Please Try Again in 5 Minutes !"
 
+                        # schedule the timeout task once only
+                        if self.user_login_failed_attempts[data["email"]] == 5:
+                            # unclock the accoount in 5 minutes 
+                            unlock_timer = Timer(300, self.unlock_user_account, (data["email"],))
+                            unlock_timer.start()
+                        
+                    except auth.models.User.DoesNotExist:
+                        print("No User Account Existed !")
+
+                status_flag = False
+            print(self.user_login_failed_attempts)
         else:
             status_flag = False
 
@@ -123,6 +147,15 @@ class EventOwnerLogin(View):
             return redirect("/evoting/eventowner/homepage")
         else:
             return render(request, "eventowner/login.html", {"status": error_message, "form": form},status=401)
+
+    def unlock_user_account(self, email):
+        deactivate_user = auth.models.User.objects.get(username=email)
+        deactivate_user.is_active = True
+        deactivate_user.save()
+
+        del self.user_login_failed_attempts[email]
+
+        print("User Activated !")
 
 class EventOwnerHomePage(View):
     def get(self, request):
