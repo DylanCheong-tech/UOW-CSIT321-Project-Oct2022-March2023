@@ -124,3 +124,39 @@ div#content_pane div#left_pane span#annotation {
     margin-top: 10vh;
     width: 80%;
 }
+
+/* message_box styling */
+span#message_box {
+    display: none;
+    position: fixed;
+    width: 40vw;
+    top: 5vh;
+    left: 30vw;
+    border: 1px dashed #000000;
+    border-radius: 12px;
+    text-align: center;
+    background-color: #C9D3E2;
+    box-shadow: .5vw .8vh #CCCCCC;
+    animation: fadein 2s ease forwards;
+}
+
+@keyframes fadein {
+    0%{
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeout {
+    0%{
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        display: none;
+    }
+}
