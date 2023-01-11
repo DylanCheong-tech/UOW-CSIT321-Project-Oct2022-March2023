@@ -9,6 +9,10 @@ div#content div#vote_event_form {
     flex-flow: column;
 }
 
+div#content div#vote_event_form h2 {
+    padding-left: 2vw;
+}
+
 div#content div#vote_event_form p.error_msg {
     width: 40%;
     text-align: center;
@@ -16,6 +20,7 @@ div#content div#vote_event_form p.error_msg {
     color: #FF0F0F;
     padding: 1vh 0 1vh 0;
     border-radius: 10px;
+    align-self: center;
 }
 
 div#content div#vote_event_form form {
