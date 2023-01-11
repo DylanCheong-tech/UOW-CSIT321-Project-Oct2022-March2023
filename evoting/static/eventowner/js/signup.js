@@ -2,6 +2,12 @@
 
 function requestOTP() {
     let email_ele = document.querySelector("input[name=email]");
+    let btn = document.getElementById("otp_request_btn");
+    btn.disabled = true;
+    //alert("OTP is sent to your email. You can request new OTP after 2 minutes.")
+    setTimeout(()=>{
+        btn.disabled = false;
+        console.log('Button Activated')}, 120000)
 
     fetch("/evoting/eventowner/getOTP?email=" + email_ele.value)
         .then(console.log)
