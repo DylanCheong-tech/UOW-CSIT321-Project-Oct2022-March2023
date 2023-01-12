@@ -84,7 +84,7 @@ enrolled_namelist = [
 	"Michael Scott","michael-scoot@mail.com",
 	"Ivan Leu","ivan-leu@mail.com",
 	"Isabel Martin","isabel-martin@mail.com",
-	"Susila Chia", "susila-chia@mail.com"
+	"Susila Chia","susila-chia@mail.com"
 ]
 
 table_contents = driver.find_elements(By.CSS_SELECTOR, "table tr td")

@@ -62,7 +62,8 @@ driver.find_element(By.CSS_SELECTOR, 'div#vote_events table tr:last-child td.but
 WebDriverWait(driver, timeout=100).until(lambda driver : driver.title == "View Vote Events")
 
 enrolled_namelist = [
-	"Darren","darren@gmaol.com"
+	"Ivan Leu","ivan-leu@mail-csit.com",
+	"Darren","darren@gmaol.com",
 	"David Brown","david-brown@mail.com"
 ]
 
