@@ -9,6 +9,7 @@ When the idle time is longer than the predefined login session max age, the user
 
 """
 import os 
+from threading import Timer 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
@@ -35,11 +36,11 @@ driver.find_element(By.NAME, "password").send_keys("JamesSmith_1234")
 driver.find_element(By.ID, "form_submit_btn").click()
 WebDriverWait(driver, timeout=100).until(lambda driver : driver.title == "Overview")
 
-# logout the system
-driver.find_element(By.ID, "logout_btn").click()
+# wait for 10 minutes 
+timeout_task = Timer(10 * 60, lambda : driver.refresh())
+timeout_task.start()
 
-# direct access the homepage
-driver.get("http://127.0.0.1:8000/evoting/eventowner/homepage")
+WebDriverWait(driver, timeout=11 * 60).until(lambda driver : driver.title == "Event Owner Login")
 
 # assert the redirection 
 assert driver.current_url == "http://127.0.0.1:8000/evoting/eventowner/login"

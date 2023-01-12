@@ -78,8 +78,13 @@ for index, row in zip(range(len(rows)), rows):
 WebDriverWait(driver, timeout=100).until(lambda driver : driver.title == "View Vote Events")
 
 enrolled_namelist = [
-	"Darren","darren@gmaol.com"
-	"David Brown","david-brown@mail.com"
+	"John Smith","john-smith@mail.com",
+	"David Brown","david-brown@mail.com",
+	"Susan Jones","susan-jones@mail.com",
+	"Michael Scott","michael-scoot@mail.com",
+	"Ivan Leu","ivan-leu@mail.com",
+	"Isabel Martin","isabel-martin@mail.com",
+	"Susila Chia", "susila-chia@mail.com"
 ]
 
 table_contents = driver.find_elements(By.CSS_SELECTOR, "table tr td")
