@@ -201,7 +201,7 @@ class EventOwnerCreateNewVoteEvent(View):
 
         form = VoteEventForm(request.POST, request.FILES)
 
-        error_message = "Invalid Fields Input !"
+        error_message = "Field Values Invalid !"
         status_flag = True
         options_list = []
 
@@ -314,7 +314,7 @@ class EventOwnerUpdateVoteEvent(View):
 
         form = VoteEventForm(request.POST, request.FILES)
 
-        error_message = "Invalid Fields Input !"
+        error_message = "Field Values Invalid !"
         status_flag = True
 
         if form.is_valid():
