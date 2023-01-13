@@ -44,9 +44,9 @@ WebDriverWait(driver, timeout=100).until(lambda driver : driver.title == "Create
 # fill in the form data
 driver.find_element(By.NAME, "eventTitle").send_keys("Vote Event Name 5")
 driver.find_element(By.NAME, "startDate").send_keys("10032023")
-driver.find_element(By.NAME, "startTime").send_keys("1000")
+driver.find_element(By.NAME, "startTime").send_keys("1300")
 driver.find_element(By.NAME, "endDate").send_keys("12032023")
-driver.find_element(By.NAME, "endTime").send_keys("1300")
+driver.find_element(By.NAME, "endTime").send_keys("1500")
 driver.find_element(By.NAME, "eventQuestion").send_keys("Vote Question 5")
 
 driver.find_element(By.CSS_SELECTOR, 'span.options_and_file span.fields:nth-child(2) input').send_keys("Option 5A")

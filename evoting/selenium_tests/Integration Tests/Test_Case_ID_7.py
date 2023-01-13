@@ -26,7 +26,7 @@ driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install())
 driver.get("http://127.0.0.1:8000/evoting/eventowner/login")
 
 # fill in the form data 
-driver.find_element(By.NAME, "email").send_keys("")
+driver.find_element(By.NAME, "email").send_keys("jamessmith@mail.com")
 driver.find_element(By.NAME, "password").send_keys("wrongpassword_1234")
 
 # submit the webform 
