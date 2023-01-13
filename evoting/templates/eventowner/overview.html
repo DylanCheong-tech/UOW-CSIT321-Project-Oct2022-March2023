@@ -73,7 +73,7 @@
         {% endif %}
         {% for event in VoteEvents %}
         <tr>
-            <td>{{event.seqNo}}</td>
+            <td>{{forloop.counter}}</td>
             <td>{{event.eventTitle}}</td>
             <td>{{event|concat_period:'date'|linebreaks}}</td>
             <td>{{event|concat_period:'time'|linebreaks}}</td>

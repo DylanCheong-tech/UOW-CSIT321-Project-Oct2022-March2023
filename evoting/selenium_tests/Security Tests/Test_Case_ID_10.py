@@ -49,5 +49,19 @@ driver.execute_script(
 assert driver.current_url == "http://127.0.0.1:8000/evoting/eventowner/login"
 
 # inspect the database see if the vote event is deleted
+mydb = mysql.connector.connect(
+  host="127.0.0.1",
+  user="evoting_django",
+  password="django_password",
+  database="evoting"
+)
+
+cursor = mydb.cursor()
+
+cursor.execute("SELECT COUNT(*) FROM evoting_voteevent WHERE seqNo = 12")
+
+result = cursor.fetchone()
+
+assert result[0] == 1
 
 driver.quit()
