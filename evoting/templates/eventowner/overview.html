@@ -79,13 +79,13 @@
             <td>{{event|concat_period:'time'|linebreaks}}</td>
             <td>{{event|status_abbreviation}}</td>
             <td class="buttons_col">
-                <button type="button" onclick="window.location.href='/evoting/eventowner/viewevent/' + '{{event.seqNo}}'">View</button>
-                <form action="/evoting/eventowner/deleteevent/{{event.seqNo}}" method="POST">
+                <button type="button" onclick="window.location.href='/evoting/eventowner/viewevent/' + '{{event.eventNo}}'">View</button>
+                <form action="/evoting/eventowner/deleteevent/{{event.eventNo}}" method="POST">
                     {% csrf_token %}
                     <button type="button" onclick="display_pop_out_message_box(event, confirm_delete_event)">Delete</button>
                 </form>
                 <br />
-                <button type="button" onclick="window.location.href='/evoting/eventowner/updateevent/' + '{{event.seqNo}}'">Modify</button>
+                <button type="button" onclick="window.location.href='/evoting/eventowner/updateevent/' + '{{event.eventNo}}'">Modify</button>
                 <button type="button">Confirm</button>
             </td>
         </tr>
