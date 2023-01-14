@@ -49,7 +49,7 @@
     <span>
         <h2>Your Vote Events</h2>
         <span class="createevent_section">
-            <button type="button" onclick="window.location.href = '/evoting/eventowner/createevent'">Create New Vote Event</button>
+            <button id="create_vote_event_btn" type="button" onclick="window.location.href = '/evoting/eventowner/createevent'">Create New Vote Event</button>
         </span>
         <input type="text" placeholder="Search" />
         <select>
@@ -73,7 +73,7 @@
         {% endif %}
         {% for event in VoteEvents %}
         <tr>
-            <td>{{event.seqNo}}</td>
+            <td>{{forloop.counter}}</td>
             <td>{{event.eventTitle}}</td>
             <td>{{event|concat_period:'date'|linebreaks}}</td>
             <td>{{event|concat_period:'time'|linebreaks}}</td>

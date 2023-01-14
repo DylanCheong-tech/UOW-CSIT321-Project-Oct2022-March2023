@@ -201,8 +201,9 @@ class EventOwnerCreateNewVoteEvent(View):
 
         form = VoteEventForm(request.POST, request.FILES)
 
-        error_message = "Invalid Fields Input !"
+        error_message = "Field Values Invalid !"
         status_flag = True
+        options_list = []
 
         if form.is_valid():
             data = form.cleaned_data
@@ -313,7 +314,7 @@ class EventOwnerUpdateVoteEvent(View):
 
         form = VoteEventForm(request.POST, request.FILES)
 
-        error_message = "Invalid Fields Input !"
+        error_message = "Field Values Invalid !"
         status_flag = True
 
         if form.is_valid():
@@ -387,16 +388,18 @@ class EventOwnerUpdateVoteEvent(View):
                     
                     valid_email, invalid_email = VoterEmailChecker.checkEmails(emailList)
 
-                    # remove the existing voter emails from the database 
-                    VoterEmail.objects.filter(seqNo_id=vote_event.seqNo).delete()
+                    # query the existing voter email list 
+                    email_query_set = VoterEmail.objects.filter(seqNo_id=vote_event.seqNo)
+                    existing_email_list = [x.voterEmail for x in email_query_set]
 
                     for x, y in valid_email.items():
-                        voter_email = VoterEmail(
-                            voter = x,
-                            voterEmail = y,
-                            seqNo_id = vote_event.seqNo
-                        )
-                        voter_email.save()
+                        if y not in existing_email_list:
+                            voter_email = VoterEmail(
+                                voter = x,
+                                voterEmail = y,
+                                seqNo_id = vote_event.seqNo
+                            )
+                            voter_email.save()
             else:
                 error_message = "Vote Event Not Modifiable !"
                 status_flag = False

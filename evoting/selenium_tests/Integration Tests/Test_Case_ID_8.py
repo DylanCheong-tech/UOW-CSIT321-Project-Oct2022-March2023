@@ -1,10 +1,10 @@
-# Test_Case_ID_7.py 
+# Test_Case_ID_8.py 
 
 """
-Title: Event Owner Login with incorrect password value
+Title: Event Owner Logout with success
 
 Descriptions:
-Test the system to be able to identify and check the password of the registered user. 
+Test the system to be able to logout the user from the logged in session. 
 
 """
 
@@ -23,18 +23,21 @@ from selenium.webdriver.support.ui import Select
 
 driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
+# login the user first 
 driver.get("http://127.0.0.1:8000/evoting/eventowner/login")
 
 # fill in the form data 
-driver.find_element(By.NAME, "email").send_keys("")
-driver.find_element(By.NAME, "password").send_keys("wrongpassword_1234")
+driver.find_element(By.NAME, "email").send_keys("jamessmith@mail.com")
+driver.find_element(By.NAME, "password").send_keys("JamesSmith_1234")
 
 # submit the webform 
 driver.find_element(By.ID, "form_submit_btn").click()
 
-error_msg_ele = driver.find_element(By.CSS_SELECTOR, "p.error_msg")
+# after login and get redirect to the homepage, perform the logout 
+driver.find_element(By.ID, "logout_btn").click()
 
-# Assert the Error Message
-assert error_msg_ele.get_attribute("innerHTML") == "Incorrect Credentials"
+# Assert the application will redirect to the login page
+WebDriverWait(driver, timeout=100).until(lambda driver : driver.title != "Home Page")
+assert driver.current_url == "http://127.0.0.1:8000/evoting/eventowner/login"
 
 driver.quit()
