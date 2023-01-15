@@ -21,7 +21,7 @@ from .models import VoterEmail
 
 # Helper module imports
 from .helpers.otpGenerator import OTPGenerator
-from .helpers.sendOTPEmail import EmailSender
+from .helpers.emailSender import EmailSender
 from .helpers.hasher import Hasher
 from .helpers.passwordChecker import PasswordChecker
 from .helpers.voterEmailChecker import VoterEmailChecker
