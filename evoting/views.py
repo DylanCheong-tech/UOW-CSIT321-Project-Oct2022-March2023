@@ -465,6 +465,8 @@ class EventOwnerDeleteVoteEvent(View):
         # redirect to the same page as a refresh 
         return redirect("/evoting/eventowner/homepage")
 
+from .homo_encryption import *
+
 class EventOwnerConfirmVoteEvent(View):
     def post(self, request, eventNo):
         # check authentication 
@@ -484,6 +486,11 @@ class EventOwnerConfirmVoteEvent(View):
 
             # change the vote event status to "Published"
             vote_event.status = "PB"
+            vote_event.save()
+
+            # generates the public key for the event and write it into the database
+            public_key = key_generation(current_user.id, vote_event.eventNo, 1024)
+            vote_event.publicKey = str(public_key["n"]) + "//" + str(public_key["e"])
             vote_event.save()
 
             # send out the invitation email to the voters

@@ -5,7 +5,8 @@ This module consists of all the core functionalities of Homomorphic Encryption.
 We will be using RSA cryptosystem as the encryption scheme and utilize its key generation function. 
 
 This module covers the following functions:
-- Key Generation 
+- Key Generation with writing the private key to the local file system 
+- Private Keys file reader 
 - Encryption 
 - Decryption 
 - Multiplicative Homomorphic Operation 
@@ -14,19 +15,41 @@ This module covers the following functions:
 
 # rsa module library 
 import rsa 
+import csv 
+import os
 
 """
 Function : Key Generation
-Parameter(s) : int : Key Size  
-Return(s) : tuple of rsa.PublicKey and rsa.PrivateKey, (rsa.PublicKey, rsa.PrivateKey)
+Parameter(s) : int : event owner id, int : vote event id, int : Key Size  
+Return(s) : rsa.PublicKey
 
 rsa.PublicKey consists of "n" and "e"
 rsa.PrivateKey consists of "n", "e", "d", "p", "q"
+
+This function will write the public key to the localfile system as csv file
 """
-def key_generation(key_size:int) -> (rsa.PublicKey, rsa.PrivateKey):
-	return rsa.newkeys(key_size)
+def key_generation(event_owner_id:int, vote_event_id:int, key_size:int) -> rsa.PublicKey:
+	public, private = rsa.newkeys(key_size)
 
+	keys_file = open(os.getcwd() + "/evoting/.private", "a")
+	file_writer = csv.writer(keys_file)
 
+	file_writer.writerow([event_owner_id, vote_event_id, private["n"], private["e"], private["d"], private["p"], private["q"]])
+
+	return public
+
+"""
+Function : Private Key File Reader
+Parameter(s) : int : event owner id, int : vote event id
+Return(s) : rsa.PrivateKey
+"""
+def read_private_key(event_owner_id:int, vote_event_id:int) -> rsa.PrivateKey:
+	keys_file = open(os.getcwd() + "/evoting/.private", "r")
+	file_reader = csv.reader(keys_file)
+
+	for row in file_reader:
+		if (int(row[0]) == event_owner_id and int(row[1]) == vote_event_id):
+			return rsa.PrivateKey(int(row[2]), int(row[3]), int(row[4]), int(row[5]), int(row[6]))
 
 """
 Function: Encryption 

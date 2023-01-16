@@ -43,6 +43,7 @@ class VoteEvent(models.Model):
     eventQuestion = models.CharField(max_length=200)
     status = models.CharField(max_length=2, default="PC")
     createdBy = models.ForeignKey("UserAccount", on_delete=models.CASCADE)
+    publicKey = models.TextField(default="NOT APPLICABLE")
 
     def is_event_datetime_valid(self):
         start_datetime = dateparse.parse_datetime(str(self.startDate) + " " + str(self.startTime))
