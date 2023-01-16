@@ -2,10 +2,10 @@
 
 -- Test Data for VoterEmail Model
 
-ALTER TABLE `evoting_voteremail`
+ALTER TABLE `evoting_voter`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
-INSERT INTO `evoting_voteremail` (`id`, `voter`, `voterEmail`, `seqNo_id`) VALUES
+INSERT INTO `evoting_voter` (`id`, `name`, `email`, `eventNo_id`) VALUES
 (1, 'John Smith', 'john-smith@mail.com', 1),
 (2, 'David Brown', 'david-brown@mail.com', 1),
 (3, 'Susan Jones', 'susan-jones@mail.com', 1),

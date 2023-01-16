@@ -5,7 +5,7 @@
 ALTER TABLE `evoting_voteoption`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
-INSERT INTO `evoting_voteoption` (`id`, `voteOption`, `seqNo_id`) VALUES
+INSERT INTO `evoting_voteoption` (`id`, `voteOption`, `eventNo_id`) VALUES
 (1, 'Option 1-1', 1),
 (2, 'Option 1-2', 1),
 (3, 'Option 1-3', 1),

@@ -3,9 +3,9 @@
 -- Test Data for VoteEvent Model
 
 ALTER TABLE `evoting_voteevent`
-  MODIFY `seqNo` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+  MODIFY `eventNo` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
-INSERT INTO `evoting_voteevent` (`seqNo`, `eventTitle`, `startDate`, `startTime`, `endDate`, `endTime`, `eventQuestion`, `status`, `createdBy_id`) VALUES
+INSERT INTO `evoting_voteevent` (`eventNo`, `eventTitle`, `startDate`, `startTime`, `endDate`, `endTime`, `eventQuestion`, `status`, `createdBy_id`) VALUES
 (1, 'Vote Event Title 1', '2024-09-18', '08:00:00.000000', '2024-09-22', '11:00:00.000000', 'Vote Event Question 1', 'PC', 1),
 (2, 'Vote Event Title 2', '2024-04-26', '20:00:00.000000', '2024-05-10', '20:00:00.000000', 'Vote Event Question 2', 'PC', 1),
 (3, 'Vote Event Title 3', '2024-06-13', '11:00:00.000000', '2024-07-06', '05:00:00.000000', 'Vote Event Question 3', 'PC', 1),
