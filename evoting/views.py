@@ -25,6 +25,7 @@ from .helpers.emailSender import EmailSender
 from .helpers.hasher import Hasher
 from .helpers.passwordChecker import PasswordChecker
 from .helpers.voterEmailChecker import VoterEmailChecker
+from .helpers.voterAuthentication import VoterAuthentication
 
 class EventOwnerCreateAccountView(View):
     def get(self, request):
@@ -460,6 +461,54 @@ class EventOwnerDeleteVoteEvent(View):
 
         except VoteEvent.DoesNotExist:
             print("Error On Deleting a Vote Event, eventNo = " + str(eventNo))
+
+        # redirect to the same page as a refresh 
+        return redirect("/evoting/eventowner/homepage")
+
+class EventOwnerConfirmVoteEvent(View):
+    def post(self, request, eventNo):
+        # check authentication 
+        if not request.user.is_authenticated:
+            return redirect("/evoting/eventowner/login")
+
+        # get the current authenticated user
+        current_user = UserAccount.objects.get(email=request.user.username)
+
+        try :
+            # query the vote event to be deleted
+            vote_event = VoteEvent.objects.get(createdBy=current_user, eventNo=eventNo)
+
+            # check if the vote event is in status of "Pending Confirmation"
+            if (vote_event.status != "PC"):
+                raise Exception
+
+            # change the vote event status to "Published"
+            vote_event.status = "PB"
+            vote_event.save()
+
+            # send out the invitation email to the voters
+            host_origin = "http://" + request.get_host() + "/evoting/voter"
+            event_owner_name = current_user.firstName + " " + current_user.lastName
+            vote_event_name = vote_event.eventTitle
+
+            # generate authentication token for each voter and save it into the database 
+            vote_event_voters = Voter.objects.filter(eventNo=eventNo)
+
+            for voter in vote_event_voters:
+                token = VoterAuthentication.generateTokenString()
+                # hash the token and before storing into the database 
+                voter.token = Hasher(token).messageDigest()
+                voter.save()
+
+                # send out the invitation email 
+                emailSender = EmailSender(voter.email)
+                emailSender.sendInvitation(host_origin, token, voter.name, event_owner_name, vote_event_name)
+
+        except VoteEvent.DoesNotExist:
+            print("Error On Confirming a Vote Event, eventNo = " + str(eventNo))
+
+        except Exception:
+            print("Vote Event is published or not applicable to be published.")
 
         # redirect to the same page as a refresh 
         return redirect("/evoting/eventowner/homepage")

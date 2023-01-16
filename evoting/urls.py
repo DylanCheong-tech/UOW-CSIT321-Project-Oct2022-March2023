@@ -11,5 +11,6 @@ urlpatterns = [
     path('eventowner/createevent', views.EventOwnerCreateNewVoteEvent.as_view()),
     path('eventowner/updateevent/<int:eventNo>', views.EventOwnerUpdateVoteEvent.as_view()),
     path('eventowner/viewevent/<int:eventNo>', views.EventOwnerViewVoteEvent.as_view()),
-    path('eventowner/deleteevent/<int:eventNo>', views.EventOwnerDeleteVoteEvent.as_view())
+    path('eventowner/deleteevent/<int:eventNo>', views.EventOwnerDeleteVoteEvent.as_view()),
+    path('eventowner/confirmevent/<int:eventNo>', views.EventOwnerConfirmVoteEvent.as_view())
 ]
