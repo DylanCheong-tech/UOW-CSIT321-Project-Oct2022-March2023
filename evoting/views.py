@@ -17,7 +17,7 @@ from .models import UserAccount
 from .models import OTPManagement
 from .models import VoteEvent
 from .models import VoteOption
-from .models import VoterEmail
+from .models import Voter
 
 # Helper module imports
 from .helpers.otpGenerator import OTPGenerator
@@ -251,9 +251,9 @@ class EventOwnerCreateNewVoteEvent(View):
                 valid_email, invalid_email = VoterEmailChecker.checkEmails(emailList)
 
                 for x, y in valid_email.items():
-                    voter_email = VoterEmail(
-                        voter = x,
-                        voterEmail = y,
+                    voter_email = Voter(
+                        name = x,
+                        email = y,
                         eventNo_id = new_vote_event.eventNo
                     )
                     voter_email.save()
@@ -389,14 +389,14 @@ class EventOwnerUpdateVoteEvent(View):
                     valid_email, invalid_email = VoterEmailChecker.checkEmails(emailList)
 
                     # query the existing voter email list 
-                    email_query_set = VoterEmail.objects.filter(eventNo_id=vote_event.eventNo)
-                    existing_email_list = [x.voterEmail for x in email_query_set]
+                    email_query_set = Voter.objects.filter(eventNo_id=vote_event.eventNo)
+                    existing_email_list = [x.email for x in email_query_set]
 
                     for x, y in valid_email.items():
                         if y not in existing_email_list:
-                            voter_email = VoterEmail(
-                                voter = x,
-                                voterEmail = y,
+                            voter_email = Voter(
+                                name = x,
+                                email = y,
                                 eventNo_id = vote_event.eventNo
                             )
                             voter_email.save()
@@ -436,7 +436,7 @@ class EventOwnerViewVoteEvent(View):
 
         # get the current vote event details
         vote_option = VoteOption.objects.filter(eventNo_id=vote_event)
-        participants = VoterEmail.objects.filter(eventNo_id=vote_event)
+        participants = Voter.objects.filter(eventNo_id=vote_event)
 
         current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName}
 

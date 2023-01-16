@@ -67,7 +67,7 @@ class VoteOption(models.Model):
     def __str__(self):
         return self.id
 
-class VoterEmail(models.Model):
+class Voter(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField()
     eventNo = models.ForeignKey("VoteEvent", on_delete=models.CASCADE)
