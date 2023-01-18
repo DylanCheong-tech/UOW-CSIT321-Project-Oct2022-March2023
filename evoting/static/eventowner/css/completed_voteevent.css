@@ -1,0 +1,72 @@
+/* completed_voteevent.css */
+
+div#completed_vote_event_page {
+    display: flex;
+    flex-flow: column;
+    row-gap: 5vh;
+    background-color: #FFFFFF;
+    min-height: 80vh;
+    padding: 3vh 2vw 3vh 2vw;
+}
+
+div#completed_vote_event_page div#completed_vote_events>span {
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    column-gap: 5vw;
+}
+
+div#completed_vote_event_page div#completed_vote_events>span h2 {
+    margin-right: auto;
+}
+
+div#completed_vote_event_page div#completed_vote_events table {
+    display: block;
+    height: 50vh;
+    border-collapse: collapse;
+    overflow-y: scroll;
+}
+
+div#completed_vote_event_page div#completed_vote_events table tr.header {
+    position: sticky;
+    top: 0;
+    border: 1px solid #000000;
+}
+
+div#completed_vote_event_page div#completed_vote_events table tr.no_records td {
+    height: 40vh;
+    background-color: #EBECF0;
+}
+
+div#completed_vote_event_page div#completed_vote_events table td, div#completed_vote_event_page div#completed_vote_events table th {
+    border: 1px solid #000000;
+}
+
+div#completed_vote_event_page div#completed_vote_events table tr th {
+    background-color: #EBECF0;
+}
+
+div#completed_vote_event_page div#completed_vote_events table tr td {
+    text-align: center;
+}
+
+div#completed_vote_event_page div#completed_vote_events table tr>*:nth-child(1) {
+    width: 5%;
+}
+
+div#completed_vote_event_page div#completed_vote_events table tr>*:nth-child(2) {
+    width: 30%;
+}
+
+div#completed_vote_event_page div#completed_vote_events table tr>*:nth-child(3), div#completed_vote_event_page div#completed_vote_events table tr>*:nth-child(4) {
+    width: 15%;
+}
+
+div#completed_vote_event_page div#completed_vote_events table td.buttons_col form {
+    display: inline;
+}
+
+div#completed_vote_event_page div#completed_vote_events table td.buttons_col button {
+    min-width: 8vw;
+    margin: 1vh .5vw 1vh .5vw;
+}

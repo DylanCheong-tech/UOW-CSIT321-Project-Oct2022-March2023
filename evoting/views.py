@@ -174,6 +174,8 @@ class EventOwnerHomePage(View):
         EventLabels = ["Total Vote Events : ","Ongoing Vote Events : ","Completed Vote Events : "]
         EventDetails = zip(EventCount, EventLabels)
 
+        current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName}
+        
         return render(request, "eventowner/overview.html", {'VoteEvents': VoteEventList,'UserDetails': current_user,'EventDetail': EventDetails})
 
 class EventOwnerLogout(View):
@@ -441,7 +443,7 @@ class EventOwnerViewVoteEvent(View):
 
         current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName}
 
-        # render static page just for viewing event details (commented out for now as no front end html yet, use homepage for now)
+        # render static page just for viewing event details
         return render(request, "eventowner/voteevent_details.html", {"title": "View Vote Events","VoteDetails": vote_event,"VoteOptions": vote_option, "Voter": participants, "UserDetails":current_user})
 
 class EventOwnerDeleteVoteEvent(View):
@@ -519,3 +521,44 @@ class EventOwnerConfirmVoteEvent(View):
 
         # redirect to the same page as a refresh 
         return redirect("/evoting/eventowner/homepage")
+
+class EventOwnerViewVoteEventFinalResult(View):
+    def get(self, request, eventNo):
+        # check authentication 
+        if not request.user.is_authenticated:
+            return redirect("/evoting/eventowner/login")
+        
+        #  get the current authenticated user
+        current_user = UserAccount.objects.get(email=request.user.username)
+
+        # get the vote event object
+        try:
+            vote_event = VoteEvent.objects.get(createdBy=current_user, eventNo=int(eventNo))
+
+        except VoteEvent.DoesNotExist:
+            # if no object retreive from the database, redirect to the homepage
+            """
+            This may happened when the user access the other user vote event objects
+            """
+            return redirect("/evoting/eventowner/homepage")
+
+        current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName}
+
+        return render(request, "eventowner/voteevent_finalresult.html", {"title": "Vote Event Final Result", "UserDetails":current_user})
+
+class EventOwnerViewCompletedVoteEvents(View):
+    def get(self, request):
+        # check authentication 
+        if not request.user.is_authenticated:
+            return redirect("/evoting/eventowner/login")
+        
+        #  get the current authenticated user
+        current_user = UserAccount.objects.get(email=request.user.username)
+
+        current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName}
+
+        return render(request, "eventowner/completed_voteevent.html", {"title": "Completed Vote Event", "UserDetails":current_user})
+
+
+
+

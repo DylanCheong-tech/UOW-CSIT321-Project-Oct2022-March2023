@@ -64,6 +64,8 @@ class VoteEvent(models.Model):
 class VoteOption(models.Model):
     voteOption = models.CharField(max_length=100)
     eventNo = models.ForeignKey("VoteEvent", on_delete=models.CASCADE)
+    voteEncoding = models.BigIntegerField(default=0)
+    voteTotalCount = models.BigIntegerField(default=0)
 
     def __str__(self):
         return self.id

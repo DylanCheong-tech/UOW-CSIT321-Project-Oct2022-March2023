@@ -1,0 +1,65 @@
+/* voteevent_finalresult.css */
+
+/* left pane */
+div#vote_final_result_page {
+    display: flex;
+    flex-flow: row;
+    background-color: #FFFFFF;
+    border-radius: 15px;
+    min-height: 80vh;
+    padding: 2vh 2vw 2vh 2vw;
+}
+
+div#vote_final_result_page>div {
+    width: 50%;
+}
+
+div#vote_final_result_page div#left_content_pane {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+}
+
+div#vote_final_result_page div#left_content_pane label {
+    font-weight: bold;
+}
+
+div#vote_final_result_page div#left_content_pane label:not(:first-child) {
+    margin-top: 5vh;
+}
+
+div#vote_final_result_page div#left_content_pane table {
+    display: block;
+    align-self: center;
+    height: 20vh;
+    width: 30vw;
+    border-collapse: collapse;
+    overflow-y: scroll;
+}
+
+div#vote_final_result_page div#left_content_pane table tr.header {
+    position: sticky;
+    top: 0;
+}
+
+div#vote_final_result_page div#left_content_pane table tr th {
+    background-color: #CCCCCC;
+    width: 25vw;
+}
+
+div#vote_final_result_page div#left_content_pane table th, div#vote_final_result_page div#left_content_pane table td {
+    border: 0.5px solid #000000;
+}
+
+/* right pane */
+div#right_content_pane {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    row-gap: 5vh;
+}
+
+div#right_content_pane>div {
+    min-height: 30vh;
+    border: 1px solid #000000;
+}
