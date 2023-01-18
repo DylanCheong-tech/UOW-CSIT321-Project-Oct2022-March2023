@@ -17,16 +17,18 @@ This module covers the following functions:
 import rsa 
 import csv 
 import os
+import random 
 
 """
 Function : Key Generation
 Parameter(s) : int : event owner id, int : vote event id, int : Key Size  
-Return(s) : rsa.PublicKey
+Return(s) : rsa.PublicKey, int : seed
 
 rsa.PublicKey consists of "n" and "e"
 rsa.PrivateKey consists of "n", "e", "d", "p", "q"
 
-This function will write the public key to the localfile system as csv file
+A seed number will be generated for the vote option encryption
+This function will write the public key and the seed to the localfile system as csv file
 """
 def key_generation(event_owner_id:int, vote_event_id:int, key_size:int) -> rsa.PublicKey:
 	public, private = rsa.newkeys(key_size)
@@ -34,14 +36,16 @@ def key_generation(event_owner_id:int, vote_event_id:int, key_size:int) -> rsa.P
 	keys_file = open(os.getcwd() + "/evoting/.private", "a")
 	file_writer = csv.writer(keys_file)
 
-	file_writer.writerow([event_owner_id, vote_event_id, private["n"], private["e"], private["d"], private["p"], private["q"]])
+	seed = random.randint(10, 999)
 
-	return public
+	file_writer.writerow([event_owner_id, vote_event_id, private["n"], private["e"], private["d"], private["p"], private["q"], seed])
+
+	return public, seed
 
 """
 Function : Private Key File Reader
 Parameter(s) : int : event owner id, int : vote event id
-Return(s) : rsa.PrivateKey
+Return(s) : rsa.PrivateKey and the seed number
 """
 def read_private_key(event_owner_id:int, vote_event_id:int) -> rsa.PrivateKey:
 	keys_file = open(os.getcwd() + "/evoting/.private", "r")
@@ -49,7 +53,7 @@ def read_private_key(event_owner_id:int, vote_event_id:int) -> rsa.PrivateKey:
 
 	for row in file_reader:
 		if (int(row[0]) == event_owner_id and int(row[1]) == vote_event_id):
-			return rsa.PrivateKey(int(row[2]), int(row[3]), int(row[4]), int(row[5]), int(row[6]))
+			return rsa.PrivateKey(int(row[2]), int(row[3]), int(row[4]), int(row[5]), int(row[6])), int(row[7])
 
 """
 Function: Encryption 
@@ -77,7 +81,7 @@ def decrypt(cipher:int, d:int, n:int) -> int:
 """
 Function: Multiplicative Homomorphic Operation (Vote Tally Process)
 Parameter(s) : list : list of individual encrypted values 
-Return(s) : list : subresult for every 10 values
+Return(s) : list : subresult for every 10 values, int : total number of votes counted in 
 
 Algorithm:
 For every 10 records, do:
@@ -88,9 +92,11 @@ return the list
 def homo_counting(casted_votes:list) -> list:
 	return_list = []
 	subresult = 1
+	counted_vote = 0
 
 	for index, vote in zip(range(len(casted_votes)), casted_votes):
 		subresult = subresult * vote
+		counted_vote = counted_vote + 1
 
 		if (index + 1) % 10 == 0:
 			return_list.append(subresult)
@@ -100,12 +106,12 @@ def homo_counting(casted_votes:list) -> list:
 	if subresult != 1:
 		return_list.append(subresult)
 
-	return return_list
+	return return_list, counted_vote
 
 
 """
 Function: Vote Result Counting 
-Parameter(s) : list: all the original vote option value, list : subresults, d : int, n : int
+Parameter(s) : list: all the original vote option value, list : subresults, int: total number of voted counted in, int : d, int : n, int : the seed number generated in the key_generation function 
 Return(s) : dict :  key-value of orginal value and it counting 
 
 Algorithm: 
@@ -117,16 +123,21 @@ For every subresult in the list, do:
 			divide the subresult with the vote option value 
 			add the key-value of the vote option and the counting into the dict 
 """
-def result_counting(vote_options:list, subresults:list, d:int, n:int) -> dict:
+def result_counting(vote_options:list, subresults:list, total_counted_vote:int, d:int, n:int, seed:int) -> dict:
 	return_dict = {}
 
-	for subresult in subresults:
+	for index, subresult in zip(range(len(subresults)), subresults):
 		decrypted_subresult = decrypt(subresult, d, n)
+
+		# removing the seed value from the subresults
+		if index == len(subresults) - 1:
+			decrypted_subresult = decrypted_subresult / pow(seed, total_counted_vote % 10)
+		else:
+			decrypted_subresult = decrypted_subresult / pow(seed, 10)
+
 		for option in vote_options:
 			while (decrypted_subresult != 1 and decrypted_subresult % option == 0):
 				return_dict[str(option)] = return_dict.get(str(option), 0) + 1
 				decrypted_subresult = decrypted_subresult / option
 
 	return return_dict
-
-
