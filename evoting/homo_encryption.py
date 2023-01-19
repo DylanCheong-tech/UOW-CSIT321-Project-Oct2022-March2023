@@ -7,6 +7,7 @@ We will be using RSA cryptosystem as the encryption scheme and utilize its key g
 This module covers the following functions:
 - Key Generation with writing the private key to the local file system 
 - Private Keys file reader 
+- Vote Option Encoding 
 - Encryption 
 - Decryption 
 - Multiplicative Homomorphic Operation 
@@ -28,9 +29,9 @@ rsa.PublicKey consists of "n" and "e"
 rsa.PrivateKey consists of "n", "e", "d", "p", "q"
 
 A salt number will be generated for the vote option encryption
-This function will write the public key and the salt to the localfile system as csv file
+This function will write the private key and the salt to the localfile system as csv file
 """
-def key_generation(event_owner_id:int, vote_event_id:int, key_size:int) -> rsa.PublicKey:
+def key_generation(event_owner_id:int, vote_event_id:int, key_size:int) -> (rsa.PublicKey, int):
 	public, private = rsa.newkeys(key_size)
 
 	keys_file = open(os.getcwd() + "/evoting/.private", "a")
@@ -40,7 +41,7 @@ def key_generation(event_owner_id:int, vote_event_id:int, key_size:int) -> rsa.P
 
 	file_writer.writerow([event_owner_id, vote_event_id, private["n"], private["e"], private["d"], private["p"], private["q"], salt])
 
-	return public, salt
+	return (public, salt)
 
 """
 Function : Private Key File Reader
@@ -54,6 +55,26 @@ def read_private_key(event_owner_id:int, vote_event_id:int) -> rsa.PrivateKey:
 	for row in file_reader:
 		if (int(row[0]) == event_owner_id and int(row[1]) == vote_event_id):
 			return rsa.PrivateKey(int(row[2]), int(row[3]), int(row[4]), int(row[5]), int(row[6])), int(row[7])
+
+"""
+Function : Vote Option Encoding 
+Parameter(s) : int : number of options need to encode, int : salt value
+Return(s) : list : generated encoding values
+
+Vote option will be encoded by randomly selecting a prime number in between 11 to 97 and multiply the prime with the salt value 
+"""
+def vote_option_encoding_genration(vote_options_num:int, salt:int) -> list :
+	prime_list = [11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]
+
+	return_list = []
+
+	for i in range(vote_options_num):
+		prime = random.choice(prime_list)
+		return_list.append(prime * salt)
+		prime_list.remove(prime)
+
+	return return_list
+
 
 """
 Function: Encryption 

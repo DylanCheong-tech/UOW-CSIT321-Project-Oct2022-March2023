@@ -175,7 +175,7 @@ class EventOwnerHomePage(View):
         EventDetails = zip(EventCount, EventLabels)
 
         current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName}
-        
+
         return render(request, "eventowner/overview.html", {'VoteEvents': VoteEventList,'UserDetails': current_user,'EventDetail': EventDetails})
 
 class EventOwnerLogout(View):
@@ -491,9 +491,16 @@ class EventOwnerConfirmVoteEvent(View):
             vote_event.save()
 
             # generates the public key for the event and write it into the database
-            public_key = key_generation(current_user.id, vote_event.eventNo, 1024)
+            (public_key, salt) = key_generation(current_user.id, vote_event.eventNo, 1024)
             vote_event.publicKey = str(public_key["n"]) + "//" + str(public_key["e"])
             vote_event.save()
+
+            # generates the encoding for each vote options 
+            vote_options = VoteOption.objects.filter(eventNo_id=vote_event.eventNo)
+            encoding_list = vote_option_encoding_genration(vote_options.count(), salt)
+            for index, option in zip(range(len(encoding_list)), vote_options):
+                option.voteEncoding = encoding_list[index]
+                option.save()
 
             # send out the invitation email to the voters
             host_origin = "http://" + request.get_host() + "/evoting/voter"
