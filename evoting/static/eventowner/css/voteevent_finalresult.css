@@ -62,4 +62,11 @@ div#right_content_pane {
 div#right_content_pane>div {
     min-height: 30vh;
     border: 1px solid #000000;
+    text-align: center;
+}
+
+div#right_content_pane>div svg {
+    width: 90%;
+    height: 40vh;
+    text-align: center;
 }

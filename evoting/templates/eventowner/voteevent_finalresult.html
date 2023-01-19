@@ -9,6 +9,7 @@
 
 {% block js_scripts %}
 <script src="https://d3js.org/d3.v4.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <script src="{% static 'eventowner/js/voteevent_finalresult.js' %}"></script>
 {% endblock %}
 
@@ -56,9 +57,9 @@
     </div>
 
     <div id="right_content_pane">
-        <div id="vote_count_chart">Graph 1</div>
+        <div id="vote_count_chart"></div>
 
-        <div id="response_rate_chart">Graph 2</div>
+        <div id="response_rate_chart"></div>
     </div>
 </div>
 
