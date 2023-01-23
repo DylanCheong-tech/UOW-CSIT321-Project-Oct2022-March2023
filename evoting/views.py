@@ -542,6 +542,24 @@ class EventOwnerViewVoteEventFinalResult(View):
         try:
             vote_event = VoteEvent.objects.get(createdBy=current_user, eventNo=int(eventNo))
 
+            final_result_data = {}
+            final_result_data["vote_event_id"] = vote_event.eventNo
+            final_result_data["vote_event_status"] = vote_event.status
+            final_result_data["vote_event_name"] = vote_event.eventTitle
+            final_result_data["vote_event_question"] = vote_event.eventQuestion
+            final_result_data["vote_options"] = []
+            final_result_data["voters"] = []
+
+            vote_options = VoteOption.objects.filter(eventNo_id=int(eventNo))
+            for option in vote_options:
+                final_result_data["vote_options"].append(option.voteOption)
+
+            voters = Voter.objects.filter(eventNo_id=int(eventNo))
+            final_result_data["voter_counts"] = voters.count()
+            for voter in voters :
+                final_result_data["voters"].append({"name" : voter.name, "email" : voter.email})  
+
+
         except VoteEvent.DoesNotExist:
             # if no object retreive from the database, redirect to the homepage
             """
@@ -549,9 +567,52 @@ class EventOwnerViewVoteEventFinalResult(View):
             """
             return redirect("/evoting/eventowner/homepage")
 
-        current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName}
+        current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName} 
 
-        return render(request, "eventowner/voteevent_finalresult.html", {"title": "Vote Event Final Result", "UserDetails":current_user})
+        return render(request, "eventowner/voteevent_finalresult.html", {"title": "Vote Event Final Result", "UserDetails":current_user, "FinalResultData" : final_result_data})
+
+class EventOwnerPublishVoteEventFinalResult(View):
+    def post(self, request, eventNo):
+        # check authentication 
+        if not request.user.is_authenticated:
+            return redirect("/evoting/eventowner/login")
+        
+        #  get the current authenticated user
+        current_user = UserAccount.objects.get(email=request.user.username)
+
+        # get the vote event object
+        try:
+            vote_event = VoteEvent.objects.get(createdBy=current_user, eventNo=int(eventNo))
+
+            # send out the invitation email to the voters
+            host_origin = "http://" + request.get_host() + "/evoting/voter/finalresult"
+            vote_event_name = vote_event.eventTitle
+
+            # generate authentication token for each voter and save it into the database 
+            vote_event_voters = Voter.objects.filter(eventNo=eventNo)
+
+            for voter in vote_event_voters:
+                token = VoterAuthentication.generateTokenString()
+                # hash the token and before storing into the database 
+                voter.token = Hasher(token).messageDigest()
+                voter.save()
+
+                # send out the invitation email 
+                emailSender = EmailSender(voter.email)
+                emailSender.sendFinalResult(host_origin, token, voter.name, vote_event_name)
+
+            # update the vote event status 
+            vote_event.status = "RP";
+            vote_event.save()
+
+        except VoteEvent.DoesNotExist:
+            # if no object retreive from the database, redirect to the homepage
+            """
+            This may happened when the user access the other user vote event objects
+            """
+            return redirect("/evoting/eventowner/homepage")
+
+        return redirect("/evoting/eventowner/event/finalresult/" + str(eventNo) + "?publish_status=success")
 
 class EventOwnerViewCompletedVoteEvents(View):
     def get(self, request):
@@ -564,7 +625,7 @@ class EventOwnerViewCompletedVoteEvents(View):
 
         current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName}
 
-        return render(request, "eventowner/completed_voteevent.html", {"title": "Completed Vote Event", "UserDetails":current_user})
+        return render(request, "eventowner/completed_voteevent.html", {"title": "Completed Vote Events", "UserDetails":current_user})
 
 
 

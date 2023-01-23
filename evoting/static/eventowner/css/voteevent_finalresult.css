@@ -5,7 +5,8 @@ div#vote_final_result_page {
     display: flex;
     flex-flow: row;
     background-color: #FFFFFF;
-    border-radius: 15px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
     min-height: 80vh;
     padding: 2vh 2vw 2vh 2vw;
 }
@@ -69,4 +70,33 @@ div#right_content_pane>div svg {
     width: 90%;
     height: 40vh;
     text-align: center;
+}
+
+div#publish_button_bar {
+    display: flex;
+    flex-flow: row;
+    justify-content: center;
+    align-items: center;
+    background-color: #FFFFFF;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    min-height: 10vh;
+    padding: 2vh 2vw 2vh 2vw;
+    margin-bottom: 3vh;
+}
+
+/* pop_out_message_box */
+span#pop_out_message_box {
+    border: 1px #000000;
+    border-style: dashed;
+    border-radius: 12px;
+    text-align: center;
+    position: fixed;
+    width: 40vw;
+    top: 50vh;
+    left: 35vw;
+    background-color: #C9D3E2;
+    margin: 1em;
+    box-shadow: 1vw 1vh #CCCCCC;
+    display: none;
 }
