@@ -18,7 +18,8 @@ div#vote_final_result_page>div {
 div#vote_final_result_page div#left_content_pane {
     display: flex;
     flex-flow: column;
-    justify-content: center;
+    justify-content: flex-start;
+    margin-top: 5vh;
 }
 
 div#vote_final_result_page div#left_content_pane label {

@@ -39,7 +39,8 @@ function renderPieChart(frame_id, data) {
         .enter()
         .append("text")
         .text(function (d) { return "Option " + d.data.key })
-        .attr("transform", function (d) { return "translate(" + arc_generator.centroid(d)[0] * 2.6 + ", " + arc_generator.centroid(d)[1] * 2.6 + ")"; })
+        .attr("max-width", "10vw")
+        .attr("transform", function (d) { return "translate(" + arc_generator.centroid(d)[0] * 3.3 + ", " + arc_generator.centroid(d)[1] * 2.6 + ")"; })
         .style("text-anchor", "middle")
         .style("font-size", ".8em")
 
@@ -49,19 +50,22 @@ function renderPieChart(frame_id, data) {
         .append("text")
         .attr("dy", "1.2em")
         .text(function (d) { return "Count : " + d.data.value })
-        .attr("transform", function (d) { return "translate(" + arc_generator.centroid(d)[0] * 2.6 + ", " + arc_generator.centroid(d)[1] * 2.6 + ")"; })
+        .attr("transform", function (d) { return "translate(" + arc_generator.centroid(d)[0] * 3 + ", " + arc_generator.centroid(d)[1] * 2.6 + ")"; })
         .style("text-anchor", "middle")
         .style("font-size", ".8em")
 }
 
-document.addEventListener('DOMContentLoaded', doSomething, false);
+function preprocess_vote_data(data){
+    // data preprocessing 
+    data = data.map(item => {
+        return [item.option, item.result]
+    })
+    data = Object.fromEntries(data)
 
-function doSomething() {
-    renderPieChart("vote_count_chart", { "a": 12, "b": 14 })
-    renderPieChart("response_rate_chart", { "a": 89, "b": 14, "c": 13, "d": 32, "pop": 12 })
+    return data
 }
 
-function hide_pop_out_message_box(){
+function hide_pop_out_message_box() {
     let message_box = document.getElementById("pop_out_message_box");
     message_box.style.display = "none";
 }
@@ -72,7 +76,7 @@ function publishFinalResult(event) {
     document.getElementById("pop_out_message_box").style.display = "block";
     document.getElementById("message_content").innerHTML = "You are going ot publish the vote event results. <br /> Confirm to proceed ?"
 
-    document.getElementById("confirm_btn").addEventListener("click",  () => {
+    document.getElementById("confirm_btn").addEventListener("click", () => {
         document.querySelector("div#publish_button_bar form").submit()
     });
 }

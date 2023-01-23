@@ -36,7 +36,7 @@
 
         <label>Vote Option</label>
         {% for option in FinalResultData.vote_options %}
-            <span>{{option}}</span>
+            <span>{{option.option}}</span>
         {% endfor %}
 
         <label>Participants : {{FinalResultData.voter_counts}}</label>
@@ -55,9 +55,13 @@
     </div>
 
     <div id="right_content_pane">
-        <div id="vote_count_chart"></div>
+        <div id="vote_count_chart">
+            <h2>Statistic - Vote Option Counts</h2>
+        </div>
 
-        <div id="response_rate_chart"></div>
+        <div id="response_rate_chart">
+            <h2>Statistic - Response Rate</h2>
+        </div>
     </div>
 </div>
 
@@ -76,4 +80,9 @@
         <button id="confirm_btn" type="button">OK</button>
     </p>
 </span>
+
+<script>
+    renderPieChart("vote_count_chart", preprocess_vote_data({{ FinalResultData.vote_options | safe }}))
+    renderPieChart("response_rate_chart", {{ FinalResultData.response_rate | safe }})
+</script>
 {% endblock %}

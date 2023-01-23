@@ -499,7 +499,8 @@ class EventOwnerConfirmVoteEvent(View):
             vote_options = VoteOption.objects.filter(eventNo_id=vote_event.eventNo)
             encoding_list = vote_option_encoding_genration(vote_options.count(), salt)
             for index, option in zip(range(len(encoding_list)), vote_options):
-                option.voteEncoding = encoding_list[index]
+                # encrypt the encodings when storing into the database 
+                option.voteEncoding = str(encrypt(encoding_list[index], public_key))
                 option.save()
 
             # send out the invitation email to the voters
@@ -551,13 +552,18 @@ class EventOwnerViewVoteEventFinalResult(View):
             final_result_data["voters"] = []
 
             vote_options = VoteOption.objects.filter(eventNo_id=int(eventNo))
+            total_vote_counts = 0
             for option in vote_options:
-                final_result_data["vote_options"].append(option.voteOption)
+                vote_counts = int(decrypt(int(option.voteTotalCount), private_key) / salt)
+                total_vote_counts = total_vote_counts + vote_counts
+                final_result_data["vote_options"].append({"option" : option.voteOption, "result" : vote_counts })
 
             voters = Voter.objects.filter(eventNo_id=int(eventNo))
             final_result_data["voter_counts"] = voters.count()
             for voter in voters :
-                final_result_data["voters"].append({"name" : voter.name, "email" : voter.email})  
+                final_result_data["voters"].append({"name" : voter.name, "email" : voter.email})
+
+            final_result_data["response_rate"] = {"Responded" : total_vote_counts / voters.count(), "Non-Responded" : abs((voters.count() - total_vote_counts) / voters.count())}
 
 
         except VoteEvent.DoesNotExist:

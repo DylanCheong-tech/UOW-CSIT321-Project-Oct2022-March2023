@@ -48,13 +48,13 @@ Function : Private Key File Reader
 Parameter(s) : int : event owner id, int : vote event id
 Return(s) : rsa.PrivateKey and the salt number
 """
-def read_private_key(event_owner_id:int, vote_event_id:int) -> rsa.PrivateKey:
+def read_private_key(event_owner_id:int, vote_event_id:int) -> (rsa.PrivateKey, int):
 	keys_file = open(os.getcwd() + "/evoting/.private", "r")
 	file_reader = csv.reader(keys_file)
 
 	for row in file_reader:
 		if (int(row[0]) == event_owner_id and int(row[1]) == vote_event_id):
-			return rsa.PrivateKey(int(row[2]), int(row[3]), int(row[4]), int(row[5]), int(row[6])), int(row[7])
+			return (rsa.PrivateKey(int(row[2]), int(row[3]), int(row[4]), int(row[5]), int(row[6])), int(row[7]))
 
 """
 Function : Vote Option Encoding 
@@ -78,25 +78,25 @@ def vote_option_encoding_genration(vote_options_num:int, salt:int) -> list :
 
 """
 Function: Encryption 
-Parameter(s) : int : value to be encrypted, int : "e" from public key, int : "n" from public key
+Parameter(s) : int : value to be encrypted, rsa.PublicKey : public key
 Return(s) : int : encrypted value, cipher
 
 Algorithm:
 cipher = (message) ^ e modulo n
 """
-def encrypt(value:int, e:int, n:int) -> int:
-	return pow(value, e, n)
+def encrypt(value:int, public:rsa.PublicKey) -> int:
+	return pow(value, public["e"], public["n"])
 
 """
 Function: Decryption  
-Parameter(s) : int : value to be decrypted, cipher, int : "d" from private key, int : "n" from private key
+Parameter(s) : int : value to be decrypted, cipher, rsa.PrivateKey : private key
 Return(s) : int : messsage/original value 
 
 Algorithm:
 value/message = (cipher) ^ d modulo n
 """
-def decrypt(cipher:int, d:int, n:int) -> int:
-	return pow(cipher, d, n)
+def decrypt(cipher:int, private:rsa.PrivateKey) -> int:
+	return pow(cipher, private["d"], private["n"])
 
 
 """
