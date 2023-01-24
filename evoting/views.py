@@ -383,26 +383,27 @@ class EventOwnerUpdateVoteEvent(View):
                                 )
                                 vote_option.save()
 
-                    decoded_file = data['voterEmail'].read().decode('utf-8').splitlines()
-                    reader = csv.reader(decoded_file)
-                    emailList = []
-                    for row in reader:
-                        emailList.append(row)
-                    
-                    valid_email, invalid_email = VoterEmailChecker.checkEmails(emailList)
+                    if data['voterEmail'] is not None:
+                        decoded_file = data['voterEmail'].read().decode('utf-8').splitlines()
+                        reader = csv.reader(decoded_file)
+                        emailList = []
+                        for row in reader:
+                            emailList.append(row)
+                        
+                        valid_email, invalid_email = VoterEmailChecker.checkEmails(emailList)
 
-                    # query the existing voter email list 
-                    email_query_set = Voter.objects.filter(eventNo_id=vote_event.eventNo)
-                    existing_email_list = [x.email for x in email_query_set]
+                        # query the existing voter email list 
+                        email_query_set = Voter.objects.filter(eventNo_id=vote_event.eventNo)
+                        existing_email_list = [x.email for x in email_query_set]
 
-                    for x, y in valid_email.items():
-                        if y not in existing_email_list:
-                            voter_email = Voter(
-                                name = x,
-                                email = y,
-                                eventNo_id = vote_event.eventNo
-                            )
-                            voter_email.save()
+                        for x, y in valid_email.items():
+                            if y not in existing_email_list:
+                                voter_email = Voter(
+                                    name = x,
+                                    email = y,
+                                    eventNo_id = vote_event.eventNo
+                                )
+                                voter_email.save()
             else:
                 error_message = "Vote Event Not Modifiable !"
                 status_flag = False
@@ -519,7 +520,7 @@ class EventOwnerConfirmVoteEvent(View):
 
                 # send out the invitation email 
                 emailSender = EmailSender(voter.email)
-                emailSender.sendInvitation(host_origin, token, voter.name, event_owner_name, vote_event_name)
+                # emailSender.sendInvitation(host_origin, token, voter.name, event_owner_name, vote_event_name)
 
         except VoteEvent.DoesNotExist:
             print("Error On Confirming a Vote Event, eventNo = " + str(eventNo))
@@ -605,7 +606,7 @@ class EventOwnerPublishVoteEventFinalResult(View):
 
                 # send out the invitation email 
                 emailSender = EmailSender(voter.email)
-                emailSender.sendFinalResult(host_origin, token, voter.name, vote_event_name)
+                # emailSender.sendFinalResult(host_origin, token, voter.name, vote_event_name)
 
             # update the vote event status 
             vote_event.status = "RP";

@@ -87,8 +87,8 @@
             </span>
 
             <span class="row_flex_flow voter_emails">
-                <label>Participants<span class="red_asterisk">*</span>:</label>
-                <input type="file" name="voterEmail" accept=".csv" required />
+                <label>Participants {% if not event_status %} <span class="red_asterisk">*</span> {% endif %}:</label>
+                <input type="file" name="voterEmail" accept=".csv" {% if not event_status %} required {% endif %} />
                 <a id="csv_downloader" href="" target="_blank" download="Voter_Email_CSV">Download CSV Template</a>
             </span>
         </span>
