@@ -66,6 +66,7 @@
 </div>
 
 <div id="publish_button_bar">
+    <button type="button" onclick="window.history.back()">Back</button>
     <form action="/evoting/eventowner/event/finalresult/publish/{{FinalResultData.vote_event_id}}" method="POST">
         {% csrf_token %}
         <button type="submit" onclick="publishFinalResult(event)" {% if FinalResultData.vote_event_status == "RP" %} disabled {% endif %}>Publish Final Result</button>

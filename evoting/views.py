@@ -7,6 +7,7 @@ from django.http import HttpResponse
 from django.views import View
 from django.contrib import auth
 from django.forms.models import model_to_dict
+from django.db.models import Q
 
 # Form imports
 from .forms.eventowner import SignupForm
@@ -167,7 +168,7 @@ class EventOwnerHomePage(View):
 
         # render the overview page with information
         current_user = UserAccount.objects.get(email=request.user.username)
-        VoteEventList = VoteEvent.objects.filter(createdBy_id=current_user).order_by('eventNo')
+        VoteEventList = VoteEvent.objects.filter(createdBy_id=current_user).filter(~Q(status="FR") & ~Q(status="RP")).order_by('eventNo')
         VoteEventCount = VoteEventList.count()
         OngoingEvent = VoteEvent.objects.filter(createdBy_id=current_user, status='PC').count()
         CompletedEvent = VoteEventCount - OngoingEvent
@@ -555,6 +556,7 @@ class EventOwnerViewVoteEventFinalResult(View):
 
             vote_options = VoteOption.objects.filter(eventNo_id=int(eventNo))
             total_vote_counts = 0
+            (private_key, salt) = read_private_key(current_user.id, vote_event.eventNo)
             for option in vote_options:
                 vote_counts = int(decrypt(int(option.voteTotalCount), private_key) / salt)
                 total_vote_counts = total_vote_counts + vote_counts
@@ -630,11 +632,15 @@ class EventOwnerViewCompletedVoteEvents(View):
         
         #  get the current authenticated user
         current_user = UserAccount.objects.get(email=request.user.username)
+        VoteEventList = VoteEvent.objects.filter(createdBy_id=current_user).filter(Q(status="FR") | Q(status="RP")).order_by('eventNo')
+        VoteEventCount = VoteEventList.count()
+        CompletedEvent = VoteEvent.objects.filter(createdBy_id=current_user, status='FR').count()
+        PublishedEvent = VoteEvent.objects.filter(createdBy_id=current_user, status='RP').count()
+        EventCount = [VoteEventCount, CompletedEvent, PublishedEvent]
+        EventLabels = ["Total Completed/Published Events : ","Completed Vote Events : ","Published Vote Events : "]
+        EventDetails = zip(EventCount, EventLabels)
 
         current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName}
 
-        return render(request, "eventowner/completed_voteevent.html", {"title": "Completed Vote Events", "UserDetails":current_user})
-
-
-
+        return render(request, "eventowner/completed_voteevent.html", {"title": "Completed Vote Events", 'VoteEvents': VoteEventList,'UserDetails': current_user,'EventDetail': EventDetails})
 

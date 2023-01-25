@@ -106,7 +106,7 @@
             </div>
         </span>
         <div id="action_buttons">
-            <button type="button" onclick="backToHomepage()">Back</button>
+            <button type="button" onclick="window.history.back()">Back</button>
             <button type="button" {% if VoteDetails.status != "FR" and VoteDetails.status != "RP" %} disabled {% endif %} onclick="window.location.href='/evoting/eventowner/event/finalresult/' + '{{VoteDetails.eventNo}}'" >View Final Result</button>
         </div>
     </div>
