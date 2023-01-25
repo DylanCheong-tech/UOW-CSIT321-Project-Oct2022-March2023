@@ -1,5 +1,6 @@
 from threading import Timer 
 import csv
+from .helpers.tallyJobScheduler import JobScheduler
 
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
@@ -498,7 +499,7 @@ class EventOwnerConfirmVoteEvent(View):
 
             # generates the encoding for each vote options 
             vote_options = VoteOption.objects.filter(eventNo_id=vote_event.eventNo)
-            encoding_list = vote_option_encoding_genration(vote_options.count(), salt)
+            encoding_list = vote_option_encoding_generation(vote_options.count(), salt)
             for index, option in zip(range(len(encoding_list)), vote_options):
                 # encrypt the encodings when storing into the database 
                 option.voteEncoding = str(encrypt(encoding_list[index], public_key))

@@ -63,7 +63,7 @@ Return(s) : list : generated encoding values
 
 Vote option will be encoded by randomly selecting a prime number in between 11 to 97 and multiply the prime with the salt value 
 """
-def vote_option_encoding_genration(vote_options_num:int, salt:int) -> list :
+def vote_option_encoding_generation(vote_options_num:int, salt:int) -> list :
 	prime_list = [11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]
 
 	return_list = []
@@ -110,7 +110,7 @@ For every 10 records, do:
 	append the subresult into the list 
 return the list
 """
-def homo_counting(casted_votes:list) -> list:
+def homo_counting(casted_votes:list) -> (list, int):
 	return_list = []
 	subresult = 1
 	counted_vote = 0
@@ -144,11 +144,11 @@ For every subresult in the list, do:
 			divide the subresult with the vote option value 
 			add the key-value of the vote option and the counting into the dict 
 """
-def result_counting(vote_options:list, subresults:list, total_counted_vote:int, d:int, n:int, salt:int) -> dict:
+def result_counting(vote_options:list, subresults:list, total_counted_vote:int, private:rsa.PrivateKey, salt:int) -> dict:
 	return_dict = {}
 
 	for index, subresult in zip(range(len(subresults)), subresults):
-		decrypted_subresult = decrypt(subresult, d, n)
+		decrypted_subresult = decrypt(subresult, private)
 
 		# removing the salt value from the subresults
 		if index == len(subresults) - 1:
@@ -157,8 +157,10 @@ def result_counting(vote_options:list, subresults:list, total_counted_vote:int, 
 			decrypted_subresult = decrypted_subresult / pow(salt, 10)
 
 		for option in vote_options:
-			while (decrypted_subresult != 1 and decrypted_subresult % option == 0):
+			# get the original option encoding (prime number)
+			decrypted_option = int(decrypt(option, private) / salt)
+			while (decrypted_subresult != 1 and decrypted_subresult % decrypted_option == 0):
 				return_dict[str(option)] = return_dict.get(str(option), 0) + 1
-				decrypted_subresult = decrypted_subresult / option
+				decrypted_subresult = decrypted_subresult / decrypted_option
 
 	return return_dict
