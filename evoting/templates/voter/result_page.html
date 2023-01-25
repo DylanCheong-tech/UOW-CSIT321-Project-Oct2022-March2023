@@ -1,0 +1,36 @@
+<!-- result_page.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vote Results</title>
+
+    <link rel="stylesheet" href="{% static 'voter/css/result_page.css' %}" />
+</head>
+
+<body>
+    <div id="result_booth">
+        <span>Vote Result Booth</span>
+        <h1>Vote Event Name</h1>
+        <div id="result_pane">
+            <label class="span2">Vote Question</label>
+            <span class="span2">XXXXXXXXXX</span>
+
+            <label class="span2 top_space">Vote Options</label>
+            <span>XXXXXXXXXX</span>
+            <span class="counts">999</span>
+            <span>XXXXXXXXXX</span>
+            <span class="counts">999</span>
+
+            <label class="span2 center">Vote Options</label>
+            <span class="span2 center">XXXXXXXXXX</span>
+        </div>
+    </div>
+</body>
+
+</html>

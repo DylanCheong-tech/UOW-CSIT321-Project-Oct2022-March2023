@@ -1,0 +1,44 @@
+/* result_page.css */
+
+div#result_booth {
+    display: flex;
+    flex-flow: column;
+    width: 70vw;
+    min-height: 60vh;
+    justify-content: space-evenly;
+    margin-left: 15vw;
+    margin-top: 20vh;
+    background-color: #ECECEC;
+    border-radius: 15px;
+    text-align: center;
+}
+
+div#result_booth div#result_pane {
+    display: grid;
+    grid-template-columns: repeat(2, 20vw);
+    column-gap: 10vw;
+    row-gap: 2vh;
+    text-align: left;
+    justify-content: center;
+}
+
+div#result_booth div#result_pane label {
+    font-weight: bold;
+}
+
+div#result_booth div#result_pane :is(label:nth-child(3), label.span2.center) {
+    margin-top: 4vh;
+}
+
+div#result_booth div#result_pane .span2 {
+    grid-column: span 2;
+}
+
+div#result_booth div#result_pane .counts {
+    text-align: center;
+    text-decoration: underline;
+}
+
+div#result_booth div#result_pane .center {
+    justify-self: center;
+}

@@ -1,0 +1,43 @@
+<!-- vote_form.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voting Booth</title>
+
+    <script src="{% static 'voter/js/vote_form.js' %}"></script>
+
+    <link rel="stylesheet" href="{% static 'voter/css/vote_form.css' %}" />
+
+</head>
+
+<body>
+    <div id="vote_booth">
+        <div id="booth_header">
+            <span> </span>
+            <span>Voting Booth</span>
+            <span>John Doe</span>
+        </div>
+        <h1>Vote Event Name</h1>
+        <form action="/evoting/voter/vote" method="POST">
+            <label>Vote Question</label>
+            <span>XXXXXXXXXX</span>
+
+            <label>Vote Options</label>
+            <label class="options"><input type="radio" name="voteOption" required /> Option 1</label>
+            <label class="options"><input type="radio" name="voteOption" /> Option 2</label>
+            <label class="options"><input type="radio" name="voteOption" /> Option 3</label>
+            <label class="options"><input type="radio" name="voteOption" /> Option 4</label>
+
+            <input class="hidden" type="text" name="voterAuth" required />
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</body>
+
+</html>

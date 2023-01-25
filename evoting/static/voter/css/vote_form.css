@@ -1,0 +1,57 @@
+/* vote_form.css */
+
+div#vote_booth {
+    display: flex;
+    flex-flow: column;
+    width: 70vw;
+    min-height: 60vh;
+    justify-content: space-evenly;
+    margin-left: 15vw;
+    margin-top: 20vh;
+    background-color: #ECECEC;
+    border-radius: 15px;
+}
+
+div#vote_booth div#booth_header {
+    display: flex;
+    flex-flow: row;
+    justify-content: space-between;
+}
+
+div#vote_booth div#booth_header span {
+    width: 15vw;
+    text-align: center;
+    font-size: 1.2em;
+}
+
+div#vote_booth h1 {
+    text-align: center;
+}
+
+div#vote_booth form {
+    display: flex;
+    flex-flow: column;
+    row-gap: 1vh;
+    margin-left: 6vw;
+    margin-right: 6vw;
+}
+
+div#vote_booth form label:not(.options) {
+    font-weight: bold;
+}
+
+div#vote_booth form label:nth-child(3) {
+    margin-top: 3vh;
+}
+
+div#vote_booth form>:is(:not(label, button), label.options) {
+    margin-left: 3vw;
+}
+
+div#vote_booth form button {
+    align-self: flex-end;
+}
+
+div#vote_booth form .hidden {
+    display: none;
+}

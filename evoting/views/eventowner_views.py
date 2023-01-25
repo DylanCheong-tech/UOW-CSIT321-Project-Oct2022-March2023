@@ -1,6 +1,8 @@
+# eventowner_views.py
+
 from threading import Timer 
 import csv
-from .helpers.tallyJobScheduler import JobScheduler
+from ..helpers.tallyJobScheduler import JobScheduler
 
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
@@ -10,24 +12,24 @@ from django.forms.models import model_to_dict
 from django.db.models import Q
 
 # Form imports
-from .forms.eventowner import SignupForm
-from .forms.eventowner import LoginForm
-from .forms.eventowner import VoteEventForm
+from ..forms.eventowner import SignupForm
+from ..forms.eventowner import LoginForm
+from ..forms.eventowner import VoteEventForm
 
 # Model imports
-from .models import UserAccount
-from .models import OTPManagement
-from .models import VoteEvent
-from .models import VoteOption
-from .models import Voter
+from ..models import UserAccount
+from ..models import OTPManagement
+from ..models import VoteEvent
+from ..models import VoteOption
+from ..models import Voter
 
 # Helper module imports
-from .helpers.otpGenerator import OTPGenerator
-from .helpers.emailSender import EmailSender
-from .helpers.hasher import Hasher
-from .helpers.passwordChecker import PasswordChecker
-from .helpers.voterEmailChecker import VoterEmailChecker
-from .helpers.voterAuthentication import VoterAuthentication
+from ..helpers.otpGenerator import OTPGenerator
+from ..helpers.emailSender import EmailSender
+from ..helpers.hasher import Hasher
+from ..helpers.passwordChecker import PasswordChecker
+from ..helpers.voterEmailChecker import VoterEmailChecker
+from ..helpers.voterAuthentication import VoterAuthentication
 
 class EventOwnerCreateAccountView(View):
     def get(self, request):
@@ -470,7 +472,7 @@ class EventOwnerDeleteVoteEvent(View):
         # redirect to the same page as a refresh 
         return redirect("/evoting/eventowner/homepage")
 
-from .homo_encryption import *
+from ..homo_encryption import *
 
 class EventOwnerConfirmVoteEvent(View):
     def post(self, request, eventNo):
