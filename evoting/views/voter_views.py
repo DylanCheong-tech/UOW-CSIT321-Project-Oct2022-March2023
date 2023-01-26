@@ -8,14 +8,25 @@ from ..models import VoteEvent
 from ..models import VoteOption
 from ..models import Voter
 
+from ..forms.voter import VoteForm
+
 from ..homo_encryption import *
 
 class VoterVoteForm(View):
 	def get(self, request):
-		auth_token = request.GET["auth"]
-		error_message = "Something went wrong ... "
 
 		try :
+			# check if the authentication infromation is provided 
+			if (len(request.GET.getlist("auth")) != 1):
+				error_message = "Access Link Invalid !"
+				raise Exception
+
+			# get the voter authentication information 
+			auth_token = request.GET["auth"]
+
+			# initialise the error message
+			error_message = "Something went wrong ... "
+
 			# check the voter is exists, if not an exception will be raised 
 			voter = Voter.objects.get(token=auth_token)
 
@@ -66,14 +77,79 @@ class VoterVoteForm(View):
 			print("Error occurred !")
 
 		return render(request, "voter/vote_form.html", {"error_message" : error_message})
+	
 
+	def post(self, request):
+		# obtain the form data
+		form = VoteForm(request.POST)
+
+		# initialise the error messsage
+		error_message = "Something went wrong ... "
+
+		if form.is_valid():
+			data = form.cleaned_data
+
+			try:
+				# obtain the voter authentication token 
+				auth_token = data["voterAuth"]
+
+				# check the voter is exists, if not an exception will be raised 
+				voter = Voter.objects.get(token=auth_token) 
+
+				# check if the voter is casted the vote before 
+				if voter.castedVote != "NOT APPLICABLE":
+					error_message = "Voter has been voted, no access allowed !"
+					raise Exception
+				
+				# get the vote event which the voter associated 
+				vote_event_id = voter.eventNo_id
+
+				# get the vote event object 
+				vote_event = VoteEvent.objects.get(eventNo=vote_event_id)
+
+				# check if the vote event is in the Published state
+				# voter will not be get access the PC event, in this state, no auth token will be generated for the voters 
+				if (vote_event.status != "PB"):
+					error_message = "Vote Event has been ended !"
+					raise Exception
+
+				# write the casted vote option to the system database 
+				voter.castedVote = data["voteOption"]
+				voter.save()
+
+				return render(request, "voter/vote_form.html", {"vote_status" : "success"})
+
+			except Voter.DoesNotExist:
+				print("No Voter Information Founded !")
+				error_message = "Voter Information Not Founded !"
+
+			except VoteEvent.DoesNotExist:
+				print("No Vote Event Information Founded !")
+				error_message = "Vote Event Information Not Founded !"
+
+			except Exception:
+				print("Error occurred !")
+
+		else:
+			error_message = "Vote Submission Invalid !"
+
+		return render(request, "voter/vote_form.html", {"vote_status" : "fail", "error_message" : error_message})
 
 class VoterViewFinalResult(View):
 	def get(self, request):
-		auth_token = request.GET["auth"]
-		error_message = "Vote Event has been ended !"
-
+		
 		try:
+			# check if the authentication infromation is provided 
+			if (len(request.GET.getlist("auth")) != 1):
+				error_message = "Access Link Invalid !"
+				raise Exception
+
+			# get the voter authentication information 
+			auth_token = request.GET["auth"]
+
+			# initialise the error message
+			error_message = "Something went wrong ... "
+
 			# check the voter is exists, if not an exception will be raised 
 			voter = Voter.objects.get(token=auth_token) 
 

@@ -26,6 +26,7 @@
         </div>
         <h1>{{ vote_event_info.eventTitle }}</h1>
         <form action="/evoting/voter/vote" method="POST">
+            {% csrf_token %}
             <label>Vote Question</label>
             <span>{{ vote_event_info.eventQuestion }}</span>
 

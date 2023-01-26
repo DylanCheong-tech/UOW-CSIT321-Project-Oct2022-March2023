@@ -79,7 +79,7 @@ class JobScheduler:
 			voters = Voter.objects.filter(eventNo_id=event_id)
 
 			# integer array of the casted vote result
-			casted_vote = [int(x.castedVote) for x in voters]
+			casted_vote = [int(x.castedVote) for x in voters if x.castedVote != "NOT APPLICABLE"]
 
 			(tallied_result_list, tallied_vote_count) = homo_counting(casted_vote)
 
