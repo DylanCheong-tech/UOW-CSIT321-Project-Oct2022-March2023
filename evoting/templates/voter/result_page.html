@@ -16,19 +16,19 @@
 <body>
     <div id="result_booth">
         <span>Vote Result Booth</span>
-        <h1>Vote Event Name</h1>
+        <h1>{{final_result_info.eventTitle}}</h1>
         <div id="result_pane">
             <label class="span2">Vote Question</label>
-            <span class="span2">XXXXXXXXXX</span>
+            <span class="span2">{{final_result_info.eventQuestion}}</span>
 
             <label class="span2 top_space">Vote Options</label>
-            <span>XXXXXXXXXX</span>
-            <span class="counts">999</span>
-            <span>XXXXXXXXXX</span>
-            <span class="counts">999</span>
+            {% for option in final_result_info.voteOptions %}
+                <span>{{option.option}}</span>
+                <span class="counts">{{option.counts}}</span>
+            {% endfor %}
 
-            <label class="span2 center">Vote Options</label>
-            <span class="span2 center">XXXXXXXXXX</span>
+            <label class="span2 center">Vote Winner</label>
+            <span class="span2 center">{{final_result_info.majorVoteOption}}</span>
         </div>
     </div>
 </body>
