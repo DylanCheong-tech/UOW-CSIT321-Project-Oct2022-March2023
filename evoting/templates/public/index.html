@@ -1,0 +1,63 @@
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homomorphic Encryption</title>
+
+    <script src="{% static 'public/js/index.js' %}"></script>
+
+    <link rel="stylesheet" href="{% static 'public/css/index.css' %}" />
+</head>
+
+<body>
+    <div id="content_pane">
+        <div id="header">
+            <span>Logo here</span>
+            <span class="menu_items">About</span>
+            <span class="menu_items" onclick="window.location.href = '/evoting/eventowner/createaccount'">Get Started</span>
+            <span class="menu_items" onclick="window.location.href = '/evoting/eventowner/login'">Login</span>
+        </div>
+        <div id="banner">
+            <div id="banner_left">
+                <h2>Simple Online voting for everyone!</h2>
+                <p>
+                    Evoting provides everyone a platform for electronic voting where it is easy to take part.
+                    Get Started with us by registering, then login and organize a voting event, finally invite
+                    participants to the vote event.
+                    Online voting has never been so easy without us !
+                </p>
+                <button type="button" onclick="window.location.href = '/evoting/eventowner/createaccount'">GET STARTED</button>
+            </div>
+            <img src="{% static 'public/img/sample.png' %}" />
+        </div>
+        <div id="main_content_pane">
+            <h2>E-voting has been so simple with us</h2>
+            <p>Some text here, Lorme ipsum dolor sit amet ... </p>
+            <div>
+                <span>
+                    <h3>Secure</h3>
+                    <p>Descriptions xxxxxxxx xxxxxxxxx xxxxxxxx xxxxxxxx</p>
+                </span>
+                <span>
+                    <h3>Anonymous</h3>
+                    <p>Descriptions xxxxxxxx xxxxxxxxx xxxxxxxx xxxxxxxx</p>
+                </span>
+                <span>
+                    <h3>Regulated</h3>
+                    <p>Descriptions xxxxxxxx xxxxxxxxx xxxxxxxx xxxxxxxx</p>
+                </span>
+            </div>
+        </div>
+        <footer>
+            evoting &copy; copyright
+        </footer>
+    </div>
+</body>
+
+</html>

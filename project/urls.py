@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
+    path('evoting/', include("evoting.urls.public_urls")),
     path('evoting/eventowner/', include("evoting.urls.eventowner_urls")),
     path('evoting/voter/', include("evoting.urls.voter_urls")),
     path('admin/', admin.site.urls),
