@@ -17,24 +17,24 @@
 </head>
 
 <body>
+    {{error_message}}
     <div id="vote_booth">
         <div id="booth_header">
             <span> </span>
             <span>Voting Booth</span>
-            <span>John Doe</span>
+            <span>{{ voter_info.name }}</span>
         </div>
-        <h1>Vote Event Name</h1>
+        <h1>{{ vote_event_info.eventTitle }}</h1>
         <form action="/evoting/voter/vote" method="POST">
             <label>Vote Question</label>
-            <span>XXXXXXXXXX</span>
+            <span>{{ vote_event_info.eventQuestion }}</span>
 
             <label>Vote Options</label>
-            <label class="options"><input type="radio" name="voteOption" required /> Option 1</label>
-            <label class="options"><input type="radio" name="voteOption" /> Option 2</label>
-            <label class="options"><input type="radio" name="voteOption" /> Option 3</label>
-            <label class="options"><input type="radio" name="voteOption" /> Option 4</label>
+            {% for option in vote_event_info.voteOptions %}
+                <label class="options"><input type="radio" name="voteOption" value="{{option.encoding}}" required />{{option.option}}</label>
+            {% endfor %}
 
-            <input class="hidden" type="text" name="voterAuth" required />
+            <input class="hidden" type="text" name="voterAuth" value="{{voter_info.token}}" required />
             <button type="submit">Submit</button>
         </form>
     </div>
