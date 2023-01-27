@@ -83,7 +83,7 @@
                         </span>
                     {% endfor %}
                 {% endif %}
-                <button type="button" onclick="addOptions()" {% if event_status and event_status == "PB" %} readonly {% endif %}>Add More Options</button>
+                {% if event_status and event_status == "PC" %}<button type="button" onclick="addOptions()" >Add More Options</button>{% endif %}
             </span>
 
             <span class="row_flex_flow voter_emails">

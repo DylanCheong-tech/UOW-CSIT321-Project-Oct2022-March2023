@@ -55,7 +55,7 @@ function renderPieChart(frame_id, data) {
         .style("font-size", ".8em")
 }
 
-function preprocess_vote_data(data){
+function preprocess_vote_data(data) {
     // data preprocessing 
     data = data.map(item => {
         return [item.option, item.result]
@@ -77,6 +77,23 @@ function publishFinalResult(event) {
     document.getElementById("message_content").innerHTML = "You are going ot publish the vote event results. <br /> Confirm to proceed ?"
 
     document.getElementById("confirm_btn").addEventListener("click", () => {
-        document.querySelector("div#publish_button_bar form").submit()
+        document.querySelector("div#publish_button_bar form").submit();
     });
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    // check pop up message box for the publication result status 
+    let publish_status = (new URLSearchParams(window.location.search)).get("publish_status")
+
+    if (publish_status == "success") {
+        document.getElementById("pop_out_message_box").style.display = "block";
+        document.getElementById("message_content").innerHTML = "Final Result Published Successfully !"
+
+        document.getElementById("cancel_btn").style.display = "none";
+        document.getElementById("confirm_btn").addEventListener("click", () => {
+            document.getElementById("pop_out_message_box").style.display = "none";
+            window.location.href = window.location.pathname;
+        });
+    }
+})
+

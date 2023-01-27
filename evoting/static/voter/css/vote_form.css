@@ -1,6 +1,6 @@
 /* vote_form.css */
 
-div#vote_booth {
+div:is(#vote_booth, #vote_acknowledge_page) {
     display: flex;
     flex-flow: column;
     width: 70vw;
@@ -54,4 +54,8 @@ div#vote_booth form button {
 
 div#vote_booth form .hidden {
     display: none;
+}
+
+div#vote_acknowledge_page {
+    align-items: center;
 }

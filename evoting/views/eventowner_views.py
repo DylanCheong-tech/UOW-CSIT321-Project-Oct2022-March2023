@@ -588,7 +588,7 @@ class EventOwnerViewVoteEventFinalResult(View):
             vote_event = VoteEvent.objects.get(createdBy=current_user, eventNo=int(eventNo))
 
             # check the vote event status 
-            if vote_event.status != "FR":
+            if vote_event.status != "FR" and vote_event.status != "RP":
                 error_message = "Final Result Is Not Ready !"
                 raise Exception
 
@@ -633,7 +633,7 @@ class EventOwnerViewVoteEventFinalResult(View):
 
         except Exception:
             print(error_message)
-            return redirect("/evoting/eventowner/viewevent/" + str(eventNo))
+            return redirect("/evoting/eventowner/viewevent/" + str(eventNo) + "?view_final=fail")
             
 
 class EventOwnerPublishVoteEventFinalResult(View):
@@ -687,7 +687,7 @@ class EventOwnerPublishVoteEventFinalResult(View):
         except Exception:
             print(error_message)
 
-        return redirect("/evoting/eventowner/viewevent/" + str(eventNo))
+        return redirect("/evoting/eventowner/viewevent/" + str(eventNo) + "?publish_status=fail")
 
 class EventOwnerViewCompletedVoteEvents(View):
     def get(self, request):

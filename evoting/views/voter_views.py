@@ -34,13 +34,6 @@ class VoterVoteForm(View):
 			# check the voter is exists, if not an exception will be raised 
 			voter = Voter.objects.get(token=auth_token)
 
-			# check if the voter is casted the vote before 
-			if voter.castedVote != "NOT APPLICABLE":
-				error_message = "Voter has been voted, no access allowed !"
-				error_summary_message = "Forbidden Request Received"
-				error_code = 403
-				raise Exception
-
 			# get the vote event which the voter associated 
 			vote_event_id = voter.eventNo_id
 
@@ -52,6 +45,13 @@ class VoterVoteForm(View):
 			if (vote_event.status != "PB"):
 				error_message = "Vote Event has been ended !"
 				error_summary_message = "Forbidden Request !"
+				error_code = 403
+				raise Exception
+
+			# check if the voter is casted the vote before 
+			if voter.castedVote != "NOT APPLICABLE":
+				error_message = "Voter has been voted, no access allowed !"
+				error_summary_message = "Forbidden Request Received"
 				error_code = 403
 				raise Exception
 
@@ -108,13 +108,6 @@ class VoterVoteForm(View):
 
 				# check the voter is exists, if not an exception will be raised 
 				voter = Voter.objects.get(token=auth_token) 
-
-				# check if the voter is casted the vote before 
-				if voter.castedVote != "NOT APPLICABLE":
-					error_message = "Voter Has Already Voted !"
-					error_summary_message = "Forbidden Request Received"
-					error_code = 403
-					raise Exception
 				
 				# get the vote event which the voter associated 
 				vote_event_id = voter.eventNo_id
@@ -126,6 +119,13 @@ class VoterVoteForm(View):
 				# voter will not be get access the PC event, in this state, no auth token will be generated for the voters 
 				if (vote_event.status != "PB"):
 					error_message = "Invitation Link Expired !"
+					error_summary_message = "Forbidden Request Received"
+					error_code = 403
+					raise Exception
+
+				# check if the voter is casted the vote before 
+				if voter.castedVote != "NOT APPLICABLE":
+					error_message = "Voter Has Already Voted !"
 					error_summary_message = "Forbidden Request Received"
 					error_code = 403
 					raise Exception
