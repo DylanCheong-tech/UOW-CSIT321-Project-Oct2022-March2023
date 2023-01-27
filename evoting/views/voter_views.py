@@ -4,12 +4,18 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views import View
 
+# Models imports
 from ..models import VoteEvent
 from ..models import VoteOption
 from ..models import Voter
 
+# Forms imports 
 from ..forms.voter import VoteForm
 
+# Helper module imports
+from ..helpers.hasher import Hasher
+
+# Homomorphic Encryption Module 
 from ..homo_encryption import *
 
 class VoterVoteForm(View):
@@ -29,7 +35,7 @@ class VoterVoteForm(View):
 				raise Exception
 
 			# get the voter authentication information 
-			auth_token = request.GET["auth"]
+			auth_token = Hasher(request.GET["auth"]).messageDigest()
 
 			# check the voter is exists, if not an exception will be raised 
 			voter = Voter.objects.get(token=auth_token)
@@ -104,7 +110,7 @@ class VoterVoteForm(View):
 
 			try:
 				# obtain the voter authentication token 
-				auth_token = data["voterAuth"]
+				auth_token = Hasher(data["voterAuth"]).messageDigest()
 
 				# check the voter is exists, if not an exception will be raised 
 				voter = Voter.objects.get(token=auth_token) 
@@ -173,7 +179,8 @@ class VoterViewFinalResult(View):
 				raise Exception
 
 			# get the voter authentication information 
-			auth_token = request.GET["auth"]
+			auth_token = Hasher(request.GET["auth"]).messageDigest()
+			print(auth_token)
 
 			# check the voter is exists, if not an exception will be raised 
 			voter = Voter.objects.get(token=auth_token) 

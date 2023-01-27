@@ -41,8 +41,8 @@
                 <label class="options"><input type="radio" name="voteOption" value="{{option.encoding}}" required />{{option.option}}</label>
             {% endfor %}
 
-            <input class="hidden" type="text" name="voterAuth" value="{{voter_info.token}}" required />
-            <button type="submit">Submit</button>
+            <input class="hidden" type="text" name="voterAuth" required />
+            <button type="submit" onclick="submitVoteForm()">Submit</button>
         </form>
     </div>
 
