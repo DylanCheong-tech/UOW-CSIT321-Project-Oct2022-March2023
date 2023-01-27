@@ -25,8 +25,7 @@ class VoterVoteForm(View):
 			# check if the authentication infromation is provided 
 			if (len(request.GET.getlist("auth")) != 1):
 				error_message = "Access Link Invalid !"
-				error_summary_message = "Unauthorized Request Received"
-				error_code = 401
+				error_summary_message = "Bad Request Received"
 				raise Exception
 
 			# get the voter authentication information 
@@ -38,6 +37,8 @@ class VoterVoteForm(View):
 			# check if the voter is casted the vote before 
 			if voter.castedVote != "NOT APPLICABLE":
 				error_message = "Voter has been voted, no access allowed !"
+				error_summary_message = "Forbidden Request Received"
+				error_code = 403
 				raise Exception
 
 			# get the vote event which the voter associated 
@@ -50,6 +51,8 @@ class VoterVoteForm(View):
 			# voter will not be get access the PC event, in this state, no auth token will be generated for the voters 
 			if (vote_event.status != "PB"):
 				error_message = "Vote Event has been ended !"
+				error_summary_message = "Forbidden Request !"
+				error_code = 403
 				raise Exception
 
 			vote_options = VoteOption.objects.filter(eventNo_id=vote_event_id)
@@ -109,6 +112,8 @@ class VoterVoteForm(View):
 				# check if the voter is casted the vote before 
 				if voter.castedVote != "NOT APPLICABLE":
 					error_message = "Voter Has Already Voted !"
+					error_summary_message = "Forbidden Request Received"
+					error_code = 403
 					raise Exception
 				
 				# get the vote event which the voter associated 
@@ -121,6 +126,8 @@ class VoterVoteForm(View):
 				# voter will not be get access the PC event, in this state, no auth token will be generated for the voters 
 				if (vote_event.status != "PB"):
 					error_message = "Invitation Link Expired !"
+					error_summary_message = "Forbidden Request Received"
+					error_code = 403
 					raise Exception
 
 				# write the casted vote option to the system database 
@@ -132,10 +139,14 @@ class VoterVoteForm(View):
 			except Voter.DoesNotExist:
 				print("No Voter Information Founded !")
 				error_message = "Invitation Link Invalid !"
+				error_summary_message = "Unauthorized Request Received"
+				error_code = 401
 
 			except VoteEvent.DoesNotExist:
 				print("No Vote Event Information Founded !")
 				error_message = "Invitation Link Expired !"
+				error_summary_message = "Unauthorized Request Received"
+				error_code = 401
 
 			except Exception:
 				print("Error occurred !")
@@ -158,6 +169,7 @@ class VoterViewFinalResult(View):
 			# if the authentication infromation is provided 
 			if (len(request.GET.getlist("auth")) != 1):
 				error_message = "Access Link Invalid !"
+				error_summary_message = "Bad Request Received"
 				raise Exception
 
 			# get the voter authentication information 
@@ -180,6 +192,8 @@ class VoterViewFinalResult(View):
 			# due to the authentication token will be generated iff the event owner published the final result
 			if (vote_event.status != "RP"):
 				error_message = "Access Link Invalid !"
+				error_summary_message = "Unauthorized Request Received"
+				error_code = 401
 				raise Exception
 
 			vote_options = VoteOption.objects.filter(eventNo_id=vote_event_id)
@@ -199,9 +213,14 @@ class VoterViewFinalResult(View):
 
 		except Voter.DoesNotExist:
 			print("No Voter Information Founded !")
+			error_summary_message = "Unauthorized Request !"
+			error_code = 401
+			error_message = "Access Link Invalid !"
 
 		except VoteEvent.DoesNotExist:
 			print("No Vote Event Information Founded !")
+			error_summary_message = "Unauthorized Request !"
+			error_code = 401
 			error_message = "Access Link Invalid !"
 
 		except Exception:

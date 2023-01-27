@@ -565,6 +565,11 @@ class EventOwnerViewVoteEventFinalResult(View):
         try:
             vote_event = VoteEvent.objects.get(createdBy=current_user, eventNo=int(eventNo))
 
+            # check the vote event status 
+            if vote_event.status != "FR":
+                error_message = "Final Result Is Not Ready !"
+                raise Exception
+
             final_result_data = {}
             final_result_data["vote_event_id"] = vote_event.eventNo
             final_result_data["vote_event_status"] = vote_event.status
@@ -588,17 +593,23 @@ class EventOwnerViewVoteEventFinalResult(View):
 
             final_result_data["response_rate"] = {"Responded" : total_vote_counts / voters.count(), "Non-Responded" : abs((voters.count() - total_vote_counts) / voters.count())}
 
+            current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName} 
+
+            return render(request, "eventowner/voteevent_finalresult.html", {"title": "Vote Event Final Result", "UserDetails":current_user, "FinalResultData" : final_result_data})
+
 
         except VoteEvent.DoesNotExist:
             # if no object retreive from the database, redirect to the homepage
             """
             This may happened when the user access the other user vote event objects
             """
+            print("Vote Ecent Does Not Exists !")
             return redirect("/evoting/eventowner/homepage")
 
-        current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName} 
-
-        return render(request, "eventowner/voteevent_finalresult.html", {"title": "Vote Event Final Result", "UserDetails":current_user, "FinalResultData" : final_result_data})
+        except Exception:
+            print(error_message)
+            return redirect("/evoting/eventowner/viewevent/" + str(eventNo))
+            
 
 class EventOwnerPublishVoteEventFinalResult(View):
     def post(self, request, eventNo):
@@ -612,6 +623,11 @@ class EventOwnerPublishVoteEventFinalResult(View):
         # get the vote event object
         try:
             vote_event = VoteEvent.objects.get(createdBy=current_user, eventNo=int(eventNo))
+
+            # check the vote event status 
+            if vote_event.status != "FR":
+                error_message = "Final Result Is Not Ready !"
+                raise Exception
 
             # send out the invitation email to the voters
             host_origin = "http://" + request.get_host() + "/evoting/voter/finalresult"
@@ -634,14 +650,19 @@ class EventOwnerPublishVoteEventFinalResult(View):
             vote_event.status = "RP";
             vote_event.save()
 
+            return redirect("/evoting/eventowner/event/finalresult/" + str(eventNo) + "?publish_status=success")
+
         except VoteEvent.DoesNotExist:
             # if no object retreive from the database, redirect to the homepage
             """
             This may happened when the user access the other user vote event objects
             """
-            return redirect("/evoting/eventowner/homepage")
+            print("Vote Event Does Not Exists !")
 
-        return redirect("/evoting/eventowner/event/finalresult/" + str(eventNo) + "?publish_status=success")
+        except Exception:
+            print(error_message)
+
+        return redirect("/evoting/eventowner/viewevent/" + str(eventNo))
 
 class EventOwnerViewCompletedVoteEvents(View):
     def get(self, request):
