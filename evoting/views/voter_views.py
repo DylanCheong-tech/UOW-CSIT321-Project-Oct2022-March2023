@@ -49,11 +49,14 @@ class VoterVoteForm(View):
 
 			vote_options = VoteOption.objects.filter(eventNo_id=vote_event_id)
 
+			# get the private keys to decrypt the option name
+			(private_key, _) = read_private_key(vote_event.createdBy_id, vote_event_id)
+
 			# organise the vote event information to be rendered on the page 
 			vote_event_info = {
 				"eventTitle" : vote_event.eventTitle,
 				"eventQuestion" : vote_event.eventQuestion,
-				"voteOptions" : [{"option" : x.voteOption, "encoding" : x.voteEncoding} for x in vote_options]
+				"voteOptions" : [{"option" : decrypt_str(x.voteOption, private_key), "encoding" : x.voteEncoding} for x in vote_options]
 			}
 
 			# organise the voter information to be rendered on the page 
@@ -177,7 +180,7 @@ class VoterViewFinalResult(View):
 			final_result_info = {
 				"eventTitle" : vote_event.eventTitle,
 				"eventQuestion" : vote_event.eventQuestion,
-				"voteOptions" : [{"option" : x.voteOption, "counts" : int(decrypt(int(x.voteTotalCount), private_key) / int(salt))} for x in vote_options],
+				"voteOptions" : [{"option" : decrypt_str(x.voteOption, private_key), "counts" : int(decrypt_int(int(x.voteTotalCount), private_key) / int(salt))} for x in vote_options],
 			}
 			# get the majority vote option name
 			final_result_info["majorVoteOption"] = max(final_result_info["voteOptions"], key=lambda k : k["counts"], default="None")["option"]

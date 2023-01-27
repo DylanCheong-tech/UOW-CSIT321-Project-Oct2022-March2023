@@ -8,8 +8,10 @@ This module covers the following functions:
 - Key Generation with writing the private key to the local file system 
 - Private Keys file reader 
 - Vote Option Encoding 
-- Encryption 
-- Decryption 
+- Encryption of vote encoding 
+- Decryption of vote encoding 
+- Encryption of vote options
+- Decryption of vote options 
 - Multiplicative Homomorphic Operation 
 - Vote Counting 
 """
@@ -41,6 +43,8 @@ def key_generation(event_owner_id:int, vote_event_id:int, key_size:int) -> (rsa.
 
 	file_writer.writerow([event_owner_id, vote_event_id, private["n"], private["e"], private["d"], private["p"], private["q"], salt])
 
+	keys_file.close()
+
 	return (public, salt)
 
 """
@@ -55,6 +59,10 @@ def read_private_key(event_owner_id:int, vote_event_id:int) -> (rsa.PrivateKey, 
 	for row in file_reader:
 		if (int(row[0]) == event_owner_id and int(row[1]) == vote_event_id):
 			return (rsa.PrivateKey(int(row[2]), int(row[3]), int(row[4]), int(row[5]), int(row[6])), int(row[7]))
+
+	keys_file.close()
+
+	return None
 
 """
 Function : Vote Option Encoding 
@@ -77,26 +85,47 @@ def vote_option_encoding_generation(vote_options_num:int, salt:int) -> list :
 
 
 """
-Function: Encryption 
+Function: Encryption the vote encoding
 Parameter(s) : int : value to be encrypted, rsa.PublicKey : public key
 Return(s) : int : encrypted value, cipher
 
 Algorithm:
 cipher = (message) ^ e modulo n
 """
-def encrypt(value:int, public:rsa.PublicKey) -> int:
+def encrypt_int(value:int, public:rsa.PublicKey) -> int:
 	return pow(value, public["e"], public["n"])
 
 """
-Function: Decryption  
+Function: Decryption the vote encoding
 Parameter(s) : int : value to be decrypted, cipher, rsa.PrivateKey : private key
 Return(s) : int : messsage/original value 
 
 Algorithm:
 value/message = (cipher) ^ d modulo n
 """
-def decrypt(cipher:int, private:rsa.PrivateKey) -> int:
+def decrypt_int(cipher:int, private:rsa.PrivateKey) -> int:
 	return pow(cipher, private["d"], private["n"])
+
+"""
+Function: Encryption the vote option string
+Parameter(s) : string : value to be encrypted, rsa.PublicKey : public key
+Return(s) : str : encrypted value, cipher
+
+"""
+def encrypt_str(value:str, public:rsa.PublicKey) -> bytes:
+	encoded_value = value.encode("utf8")
+	return rsa.encrypt(encoded_value, public)
+
+"""
+Function: Decryption the vote option string
+Parameter(s) : string : value to be decrypted, cipher, rsa.PrivateKey : private key
+Return(s) : str : messsage/original value 
+
+"""
+def decrypt_str(cipher:bytes, private:rsa.PrivateKey) -> str:
+	# print(cipher)
+	value = rsa.decrypt(cipher, private)
+	return value.decode("utf8")
 
 
 """
@@ -148,7 +177,7 @@ def result_counting(vote_options:list, subresults:list, total_counted_vote:int, 
 	return_dict = {}
 
 	for index, subresult in zip(range(len(subresults)), subresults):
-		decrypted_subresult = decrypt(subresult, private)
+		decrypted_subresult = decrypt_int(subresult, private)
 
 		# removing the salt value from the subresults
 		if index == len(subresults) - 1:
@@ -158,7 +187,7 @@ def result_counting(vote_options:list, subresults:list, total_counted_vote:int, 
 
 		for option in vote_options:
 			# get the original option encoding (prime number)
-			decrypted_option = int(decrypt(option, private) / salt)
+			decrypted_option = int(decrypt_int(option, private) / salt)
 			while (decrypted_subresult != 1 and decrypted_subresult % decrypted_option == 0):
 				return_dict[str(option)] = return_dict.get(str(option), 0) + 1
 				decrypted_subresult = decrypted_subresult / decrypted_option

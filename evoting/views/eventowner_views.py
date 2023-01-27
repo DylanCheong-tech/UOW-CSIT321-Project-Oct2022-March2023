@@ -31,6 +31,9 @@ from ..helpers.passwordChecker import PasswordChecker
 from ..helpers.voterEmailChecker import VoterEmailChecker
 from ..helpers.voterAuthentication import VoterAuthentication
 
+# Homomorphic Encryption Module
+from ..homo_encryption import *
+
 class EventOwnerCreateAccountView(View):
     def get(self, request):
         # render the static page
@@ -241,10 +244,15 @@ class EventOwnerCreateNewVoteEvent(View):
             else:
                 new_vote_event.save()
 
+                # generates the public key for the event and write it into the database
+                (public_key, _) = key_generation(current_user.id, new_vote_event.eventNo, 1024)
+                new_vote_event.publicKey = str(public_key["n"]) + "//" + str(public_key["e"])
+                new_vote_event.save()
+
                 for x in options_list:
                     if(len(x.strip()) > 0):
                         vote_option = VoteOption(
-                            voteOption = x,
+                            voteOption = encrypt_str(x, public_key),
                             eventNo_id = new_vote_event.eventNo
                         )
                         vote_option.save()
@@ -296,8 +304,10 @@ class EventOwnerUpdateVoteEvent(View):
 
         options = VoteOption.objects.filter(eventNo=vote_event[0].eventNo)
         options_list = []
+
+        (private_key, _) = read_private_key(current_user.id, eventNo)
         for item in options :
-            options_list.append(item.voteOption)
+            options_list.append(decrypt_str(item.voteOption, private_key))
 
         data = vote_event.values()[0]
 
@@ -379,10 +389,13 @@ class EventOwnerUpdateVoteEvent(View):
                         # remove the existing options from the database 
                         VoteOption.objects.filter(eventNo_id=vote_event.eventNo).delete()
 
+                        # get the public key 
+                        public_key = vote_event.publicKey.split("//")
+                        public_key = rsa.PublicKey(int(public_key[0]), int(public_key[1]))
                         for x in options_list:
                             if(len(x.strip()) > 0):
                                 vote_option = VoteOption(
-                                    voteOption = x,
+                                    voteOption = encrypt_str(x, public_key),
                                     eventNo_id = vote_event.eventNo
                                 )
                                 vote_option.save()
@@ -443,13 +456,18 @@ class EventOwnerViewVoteEvent(View):
             return redirect("/evoting/eventowner/homepage")
 
         # get the current vote event details
-        vote_option = VoteOption.objects.filter(eventNo_id=vote_event)
+        vote_options = VoteOption.objects.filter(eventNo_id=vote_event)
+        # decrypt the vote option 
+        (private_key, _) = read_private_key(current_user.id, vote_event.eventNo)
+        for option in vote_options:
+            option.voteOption = decrypt_str(option.voteOption, private_key)
+
         participants = Voter.objects.filter(eventNo_id=vote_event)
 
         current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName}
 
         # render static page just for viewing event details
-        return render(request, "eventowner/voteevent_details.html", {"title": "View Vote Events","VoteDetails": vote_event,"VoteOptions": vote_option, "Voter": participants, "UserDetails":current_user})
+        return render(request, "eventowner/voteevent_details.html", {"title": "View Vote Events","VoteDetails": vote_event,"VoteOptions": vote_options, "Voter": participants, "UserDetails":current_user})
 
 class EventOwnerDeleteVoteEvent(View):
     def post(self, request, eventNo):
@@ -472,7 +490,6 @@ class EventOwnerDeleteVoteEvent(View):
         # redirect to the same page as a refresh 
         return redirect("/evoting/eventowner/homepage")
 
-from ..homo_encryption import *
 
 class EventOwnerConfirmVoteEvent(View):
     def post(self, request, eventNo):
@@ -495,17 +512,17 @@ class EventOwnerConfirmVoteEvent(View):
             vote_event.status = "PB"
             vote_event.save()
 
-            # generates the public key for the event and write it into the database
-            (public_key, salt) = key_generation(current_user.id, vote_event.eventNo, 1024)
-            vote_event.publicKey = str(public_key["n"]) + "//" + str(public_key["e"])
-            vote_event.save()
+            # get the salt and public key values 
+            (_, salt) = read_private_key(current_user.id, vote_event.eventNo)
+            public_key = vote_event.publicKey.split("//")
+            public_key = rsa.PublicKey(int(public_key[0]), int(public_key[1]))
 
             # generates the encoding for each vote options 
             vote_options = VoteOption.objects.filter(eventNo_id=vote_event.eventNo)
             encoding_list = vote_option_encoding_generation(vote_options.count(), salt)
             for index, option in zip(range(len(encoding_list)), vote_options):
                 # encrypt the encodings when storing into the database 
-                option.voteEncoding = str(encrypt(encoding_list[index], public_key))
+                option.voteEncoding = str(encrypt_int(encoding_list[index], public_key))
                 option.save()
 
             # send out the invitation email to the voters
@@ -560,9 +577,9 @@ class EventOwnerViewVoteEventFinalResult(View):
             total_vote_counts = 0
             (private_key, salt) = read_private_key(current_user.id, vote_event.eventNo)
             for option in vote_options:
-                vote_counts = int(decrypt(int(option.voteTotalCount), private_key) / salt)
+                vote_counts = int(decrypt_int(int(option.voteTotalCount), private_key) / salt)
                 total_vote_counts = total_vote_counts + vote_counts
-                final_result_data["vote_options"].append({"option" : option.voteOption, "result" : vote_counts })
+                final_result_data["vote_options"].append({"option" : decrypt_str(option.voteOption, private_key), "result" : vote_counts })
 
             voters = Voter.objects.filter(eventNo_id=int(eventNo))
             final_result_data["voter_counts"] = voters.count()

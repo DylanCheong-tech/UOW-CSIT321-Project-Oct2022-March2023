@@ -62,7 +62,7 @@ class VoteEvent(models.Model):
 
 
 class VoteOption(models.Model):
-    voteOption = models.CharField(max_length=100)
+    voteOption = models.BinaryField()
     eventNo = models.ForeignKey("VoteEvent", on_delete=models.CASCADE)
     voteEncoding = models.TextField(default=0)
     voteTotalCount = models.TextField(default=0)
