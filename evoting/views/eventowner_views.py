@@ -174,6 +174,14 @@ class EventOwnerHomePage(View):
         # render the overview page with information
         current_user = UserAccount.objects.get(email=request.user.username)
         VoteEventList = VoteEvent.objects.filter(createdBy_id=current_user).filter(~Q(status="FR") & ~Q(status="RP")).order_by('eventNo')
+        
+        # decrypt the event title and question 
+        for event in VoteEventList:
+            # get the private key information 
+            (private_key, _) = read_private_key(current_user.id, event.eventNo)
+            event.eventTitle = decrypt_str(event.eventTitle, private_key)
+            event.eventQuestion = decrypt_str(event.eventQuestion, private_key)
+
         VoteEventCount = VoteEventList.count()
         OngoingEvent = VoteEvent.objects.filter(createdBy_id=current_user, status='PC').count()
         CompletedEvent = VoteEventCount - OngoingEvent
@@ -222,12 +230,10 @@ class EventOwnerCreateNewVoteEvent(View):
             current_user = UserAccount.objects.get(email=request.user.username)
 
             new_vote_event = VoteEvent(
-                eventTitle = data['eventTitle'],
                 startDate = data['startDate'],
                 startTime = data['startTime'],
                 endDate = data['endDate'],
                 endTime = data['endTime'],
-                eventQuestion = data['eventQuestion'],
                 createdBy_id = current_user.id
             )
 
@@ -247,6 +253,11 @@ class EventOwnerCreateNewVoteEvent(View):
                 # generates the public key for the event and write it into the database
                 (public_key, _) = key_generation(current_user.id, new_vote_event.eventNo, 1024)
                 new_vote_event.publicKey = str(public_key["n"]) + "//" + str(public_key["e"])
+
+                # encrypt the event title and question 
+                new_vote_event.eventTitle = encrypt_str(data['eventTitle'], public_key)
+                new_vote_event.eventQuestion = encrypt_str(data['eventQuestion'], public_key)
+
                 new_vote_event.save()
 
                 for x in options_list:
@@ -305,11 +316,17 @@ class EventOwnerUpdateVoteEvent(View):
         options = VoteOption.objects.filter(eventNo=vote_event[0].eventNo)
         options_list = []
 
+        # get the private key and decrypt the information 
         (private_key, _) = read_private_key(current_user.id, eventNo)
+
         for item in options :
             options_list.append(decrypt_str(item.voteOption, private_key))
 
         data = vote_event.values()[0]
+
+        # decrypt the title and question 
+        data["eventTitle"] = decrypt_str(data["eventTitle"], private_key)
+        data["eventQuestion"] = decrypt_str(data["eventQuestion"], private_key)
 
         # reformat the date time object to be able recognise by HTML Form input element
         data["startDate"] = data["startDate"].strftime("%Y-%m-%d")
@@ -351,16 +368,20 @@ class EventOwnerUpdateVoteEvent(View):
 
             vote_event_status = vote_event.status
 
+            # get the public key 
+            public_key = vote_event.publicKey.split("//")
+            public_key = rsa.PublicKey(int(public_key[0]), int(public_key[1]))
+
             if vote_event_status == "PC" or vote_event_status == "PB":
                 """
                 Vote Event in PC status can modify any information 
                 status: Pending Confirmation (PC)
                 """
                 if vote_event_status == "PC":
-                    vote_event.eventTitle = data['eventTitle']
+                    vote_event.eventTitle = encrypt_str(data['eventTitle'], public_key)
                     vote_event.startDate = data['startDate']
                     vote_event.startTime = data['startTime']
-                    vote_event.eventQuestion = data['eventQuestion']
+                    vote_event.eventQuestion = encrypt_str(data['eventQuestion'], public_key)
 
                 """
                 Vote Event in PC or Published, PB can modify the end datetime 
@@ -389,9 +410,6 @@ class EventOwnerUpdateVoteEvent(View):
                         # remove the existing options from the database 
                         VoteOption.objects.filter(eventNo_id=vote_event.eventNo).delete()
 
-                        # get the public key 
-                        public_key = vote_event.publicKey.split("//")
-                        public_key = rsa.PublicKey(int(public_key[0]), int(public_key[1]))
                         for x in options_list:
                             if(len(x.strip()) > 0):
                                 vote_option = VoteOption(
@@ -461,6 +479,10 @@ class EventOwnerViewVoteEvent(View):
         (private_key, _) = read_private_key(current_user.id, vote_event.eventNo)
         for option in vote_options:
             option.voteOption = decrypt_str(option.voteOption, private_key)
+
+        # decrypt the vote event title and question
+        vote_event.eventTitle = decrypt_str(vote_event.eventTitle, private_key)
+        vote_event.eventQuestion = decrypt_str(vote_event.eventQuestion, private_key)
 
         participants = Voter.objects.filter(eventNo_id=vote_event)
 
@@ -570,17 +592,20 @@ class EventOwnerViewVoteEventFinalResult(View):
                 error_message = "Final Result Is Not Ready !"
                 raise Exception
 
+            # get the private key
+            (private_key, salt) = read_private_key(current_user.id, vote_event.eventNo)
+
             final_result_data = {}
             final_result_data["vote_event_id"] = vote_event.eventNo
             final_result_data["vote_event_status"] = vote_event.status
-            final_result_data["vote_event_name"] = vote_event.eventTitle
-            final_result_data["vote_event_question"] = vote_event.eventQuestion
+            final_result_data["vote_event_name"] = decrypt_str(vote_event.eventTitle, private_key)
+            final_result_data["vote_event_question"] = decrypt_str(vote_event.eventQuestion, private_key)
             final_result_data["vote_options"] = []
             final_result_data["voters"] = []
 
             vote_options = VoteOption.objects.filter(eventNo_id=int(eventNo))
             total_vote_counts = 0
-            (private_key, salt) = read_private_key(current_user.id, vote_event.eventNo)
+
             for option in vote_options:
                 vote_counts = int(decrypt_int(int(option.voteTotalCount), private_key) / salt)
                 total_vote_counts = total_vote_counts + vote_counts
@@ -674,6 +699,14 @@ class EventOwnerViewCompletedVoteEvents(View):
         current_user = UserAccount.objects.get(email=request.user.username)
         VoteEventList = VoteEvent.objects.filter(createdBy_id=current_user).filter(Q(status="FR") | Q(status="RP")).order_by('eventNo')
         VoteEventCount = VoteEventList.count()
+
+        # decrypt the event title and question 
+        for event in VoteEventList:
+            # get the private key information 
+            (private_key, _) = read_private_key(current_user.id, event.eventNo)
+            event.eventTitle = decrypt_str(event.eventTitle, private_key)
+            event.eventQuestion = decrypt_str(event.eventQuestion, private_key)
+
         CompletedEvent = VoteEvent.objects.filter(createdBy_id=current_user, status='FR').count()
         PublishedEvent = VoteEvent.objects.filter(createdBy_id=current_user, status='RP').count()
         EventCount = [VoteEventCount, CompletedEvent, PublishedEvent]

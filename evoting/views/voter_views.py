@@ -62,8 +62,8 @@ class VoterVoteForm(View):
 
 			# organise the vote event information to be rendered on the page 
 			vote_event_info = {
-				"eventTitle" : vote_event.eventTitle,
-				"eventQuestion" : vote_event.eventQuestion,
+				"eventTitle" : decrypt_str(vote_event.eventTitle, private_key),
+				"eventQuestion" : decrypt_str(vote_event.eventQuestion, private_key),
 				"voteOptions" : [{"option" : decrypt_str(x.voteOption, private_key), "encoding" : x.voteEncoding} for x in vote_options]
 			}
 
@@ -202,8 +202,8 @@ class VoterViewFinalResult(View):
 
 			# organise the vote event information to be rendered on the page 
 			final_result_info = {
-				"eventTitle" : vote_event.eventTitle,
-				"eventQuestion" : vote_event.eventQuestion,
+				"eventTitle" : decrypt_str(vote_event.eventTitle, private_key),
+				"eventQuestion" : decrypt_str(vote_event.eventQuestion, private_key),
 				"voteOptions" : [{"option" : decrypt_str(x.voteOption, private_key), "counts" : int(decrypt_int(int(x.voteTotalCount), private_key) / int(salt))} for x in vote_options],
 			}
 			# get the majority vote option name

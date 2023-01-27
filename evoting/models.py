@@ -35,12 +35,12 @@ class OTPManagement(models.Model):
 
 class VoteEvent(models.Model):
     eventNo = models.BigAutoField(primary_key=True)
-    eventTitle = models.CharField(max_length=200)
+    eventTitle = models.BinaryField()
     startDate = models.DateField()
     startTime = models.TimeField()
     endDate = models.DateField()
     endTime = models.TimeField()
-    eventQuestion = models.CharField(max_length=200)
+    eventQuestion = models.BinaryField()
     status = models.CharField(max_length=2, default="PC")
     createdBy = models.ForeignKey("UserAccount", on_delete=models.CASCADE)
     publicKey = models.TextField(default="NOT APPLICABLE")
