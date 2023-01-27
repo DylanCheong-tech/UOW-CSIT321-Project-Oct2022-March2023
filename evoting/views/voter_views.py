@@ -16,16 +16,21 @@ class VoterVoteForm(View):
 	def get(self, request):
 
 		try :
+
+			# initialise the error message
+			error_message = "Something went wrong ... "
+			error_summary_message = "Bad Request Received"
+			error_code = 400
+
 			# check if the authentication infromation is provided 
 			if (len(request.GET.getlist("auth")) != 1):
 				error_message = "Access Link Invalid !"
+				error_summary_message = "Unauthorized Request Received"
+				error_code = 401
 				raise Exception
 
 			# get the voter authentication information 
 			auth_token = request.GET["auth"]
-
-			# initialise the error message
-			error_message = "Something went wrong ... "
 
 			# check the voter is exists, if not an exception will be raised 
 			voter = Voter.objects.get(token=auth_token)
@@ -79,15 +84,17 @@ class VoterVoteForm(View):
 		except Exception:
 			print("Error occurred !")
 
-		return render(request, "voter/vote_form.html", {"error_message" : error_message})
+		return render(request, "error_page.html", {"error_code" : error_code, "error_summary_message" : error_summary_message, "error_message" : error_message})
 	
 
 	def post(self, request):
 		# obtain the form data
 		form = VoteForm(request.POST)
 
-		# initialise the error messsage
+		# initialise the error message
 		error_message = "Something went wrong ... "
+		error_summary_message = "Bad Request Received"
+		error_code = 400
 
 		if form.is_valid():
 			data = form.cleaned_data
@@ -101,7 +108,7 @@ class VoterVoteForm(View):
 
 				# check if the voter is casted the vote before 
 				if voter.castedVote != "NOT APPLICABLE":
-					error_message = "Voter has been voted, no access allowed !"
+					error_message = "Voter Has Already Voted !"
 					raise Exception
 				
 				# get the vote event which the voter associated 
@@ -113,7 +120,7 @@ class VoterVoteForm(View):
 				# check if the vote event is in the Published state
 				# voter will not be get access the PC event, in this state, no auth token will be generated for the voters 
 				if (vote_event.status != "PB"):
-					error_message = "Vote Event has been ended !"
+					error_message = "Invitation Link Expired !"
 					raise Exception
 
 				# write the casted vote option to the system database 
@@ -124,11 +131,11 @@ class VoterVoteForm(View):
 
 			except Voter.DoesNotExist:
 				print("No Voter Information Founded !")
-				error_message = "Voter Information Not Founded !"
+				error_message = "Invitation Link Invalid !"
 
 			except VoteEvent.DoesNotExist:
 				print("No Vote Event Information Founded !")
-				error_message = "Vote Event Information Not Founded !"
+				error_message = "Invitation Link Expired !"
 
 			except Exception:
 				print("Error occurred !")
@@ -136,22 +143,25 @@ class VoterVoteForm(View):
 		else:
 			error_message = "Vote Submission Invalid !"
 
-		return render(request, "voter/vote_form.html", {"vote_status" : "fail", "error_message" : error_message})
+		return render(request, "error_page.html", {"error_code" : error_code, "error_summary_message" : error_summary_message, "error_message" : error_message})
 
 class VoterViewFinalResult(View):
 	def get(self, request):
 		
 		try:
-			# check if the authentication infromation is provided 
+
+			# chec# initialise the error message
+			error_message = "Something went wrong ... "
+			error_summary_message = "Bad Request Received"
+			error_code = 400
+
+			# if the authentication infromation is provided 
 			if (len(request.GET.getlist("auth")) != 1):
 				error_message = "Access Link Invalid !"
 				raise Exception
 
 			# get the voter authentication information 
 			auth_token = request.GET["auth"]
-
-			# initialise the error message
-			error_message = "Something went wrong ... "
 
 			# check the voter is exists, if not an exception will be raised 
 			voter = Voter.objects.get(token=auth_token) 
@@ -169,7 +179,7 @@ class VoterViewFinalResult(View):
 			# logically, the vote will not get pass to this point, 
 			# due to the authentication token will be generated iff the event owner published the final result
 			if (vote_event.status != "RP"):
-				error_message = "Vote Event Final Result No Ready !"
+				error_message = "Access Link Invalid !"
 				raise Exception
 
 			vote_options = VoteOption.objects.filter(eventNo_id=vote_event_id)
@@ -192,10 +202,10 @@ class VoterViewFinalResult(View):
 
 		except VoteEvent.DoesNotExist:
 			print("No Vote Event Information Founded !")
-			error_message = "Vote Event Information Not Founded !"
+			error_message = "Access Link Invalid !"
 
 		except Exception:
 			print("Error occurred !")
 
-		return render(request, "voter/result_page.html", {})
+		return render(request, "error_page.html", {"error_code" : error_code, "error_summary_message" : error_summary_message, "error_message" : error_message})
 
