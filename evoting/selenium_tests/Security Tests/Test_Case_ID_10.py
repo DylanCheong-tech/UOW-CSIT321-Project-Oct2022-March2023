@@ -64,4 +64,6 @@ result = cursor.fetchone()
 
 assert result[0] == 1
 
+print("Security Test 10 Passed !")
+
 driver.quit()

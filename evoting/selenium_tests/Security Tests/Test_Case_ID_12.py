@@ -44,4 +44,6 @@ driver.get("http://127.0.0.1:8000/evoting/eventowner/viewevent/78")
 # assert the redirection 
 assert driver.current_url == "http://127.0.0.1:8000/evoting/eventowner/homepage"
 
+print("Security Test 12 Passed !")
+
 driver.quit()

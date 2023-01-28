@@ -45,4 +45,6 @@ WebDriverWait(driver, timeout=11 * 60).until(lambda driver : driver.title == "Ev
 # assert the redirection 
 assert driver.current_url == "http://127.0.0.1:8000/evoting/eventowner/login"
 
+print("Security Test 3 Passed !")
+
 driver.quit()

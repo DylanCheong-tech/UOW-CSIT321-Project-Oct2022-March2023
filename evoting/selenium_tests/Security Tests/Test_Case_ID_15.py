@@ -1,13 +1,11 @@
-# Test_Case_ID_8.py 
+# Test_Case_ID_15.py 
 
 """
-Title: Access Control - Access the update vote event page without any login attempts by its URL
+Title: Access Control - Access the view completed vote events page without any login attempts by its URL
 
 Descriptions:
 Test the system to be able check the authenticate before allowing the user to access the resources. 
 When there is no user logged into the system, the system should be redirecting the user to the login page instead of rendering the authentication needed pages. 
-
-Before executing this security test, the vote event test data is loaded into the system database. 
 
 """
 import os 
@@ -26,12 +24,12 @@ from selenium.webdriver.support.ui import Select
 
 driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
-# direct access the Update Vote Event Page
-driver.get("http://127.0.0.1:8000/evoting/eventowner/updateevent/1")
+# direct access the Vote Event Final Result Page
+driver.get("http://127.0.0.1:8000/evoting/eventowner/completedevent")
 
 # assert the redirection 
 assert driver.current_url == "http://127.0.0.1:8000/evoting/eventowner/login"
 
-print("Security Test 8 Passed !")
+print("Security Test 15 Passed !")
 
 driver.quit()

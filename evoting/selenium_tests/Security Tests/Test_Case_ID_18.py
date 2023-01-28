@@ -1,10 +1,10 @@
-# Test_Case_ID_11.py 
+# Test_Case_ID_18.py 
 
 """
-Title: Access Control - Perform the update operation on the non-owned vote event object 
+Title: Access Control - Perform the view vote event final result operation on the non-owned vote event object 
 
 Descriptions:
-Test the system to be able check the ownership of the vote event before allowing the user to perform the update on it. 
+Test the system to be able check the ownership of the vote event before allowing the user to perform the view on it. 
 When the user tries to access the non-owned vote event, the system should be redirecting the user to the homepage. 
 
 In this test case, terms “Event Owner A” and “Event Owner B” will be denoted as two different User Account entities. 
@@ -39,11 +39,12 @@ driver.find_element(By.NAME, "password").send_keys("JamesSmith_1234")
 driver.find_element(By.ID, "form_submit_btn").click()
 WebDriverWait(driver, timeout=100).until(lambda driver : driver.title == "Overview")
 
-driver.get("http://127.0.0.1:8000/evoting/eventowner/updateevent/78")
+# Access the view vote event final result page on Event Owner B’s vote event
+driver.get("http://127.0.0.1:8000/evoting/eventowner/event/finalresult/19")
 
 # assert the redirection 
 assert driver.current_url == "http://127.0.0.1:8000/evoting/eventowner/homepage"
 
-print("Security Test 11 Passed !")
+print("Security Test 18 Passed !")
 
 driver.quit()
