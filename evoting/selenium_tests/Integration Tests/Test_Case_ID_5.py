@@ -36,4 +36,6 @@ driver.find_element(By.ID, "form_submit_btn").click()
 WebDriverWait(driver, timeout=100).until(lambda driver : driver.title != "Event Owner Login")
 assert driver.current_url == "http://127.0.0.1:8000/evoting/eventowner/homepage"
 
+print("Integration Test 5 Passed !")
+
 driver.quit()

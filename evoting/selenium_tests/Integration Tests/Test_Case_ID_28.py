@@ -1,10 +1,11 @@
-# Test_Case_ID_19.py 
+# Test_Case_ID_28.py 
 
 """
-Title: Event Owner View Vote Event successfully
+Title: Event Owner Views Final Vote Result on Vote Event in Voting Concluded (VC) status 
 
 Descriptions:
-Test the system to be able to provide and display the vote event information correctly. 
+Test the system to be able raise an error when the user tries to access the final result which is not ready to be presented yet. 
+
 """
 import os 
 from selenium import webdriver
@@ -36,14 +37,25 @@ WebDriverWait(driver, timeout=100).until(lambda driver : driver.title == "Overvi
 # navigate to the view vote event page
 rows = driver.find_elements(By.CSS_SELECTOR, "table tr:not(.header) td:nth-child(2)")
 for index, row in zip(range(len(rows)), rows):
-	if row.get_attribute("innerHTML") == "Vote Event Title 1":
+	if row.get_attribute("innerHTML") == "Vote Event Title 7":
 		buttons = driver.find_elements(By.CSS_SELECTOR, "table tr:nth-child(" + str(index + 1 + 1) + ") td:nth-child(6) button")
 		buttons[0].click()
 		break
 WebDriverWait(driver, timeout=100).until(lambda driver : driver.title == "View Vote Events")
 
-assert "/evoting/eventowner/viewevent" in driver.current_url
+driver.execute_script(
+	"""
+	view_result_bth = document.querySelector("div#action_buttons button:nth-child(2)");
+	view_result_bth.disabled = false;
+	view_result_bth.click();
 
-print("Integration Test 19 Passed !")
+	""")
+
+driver.implicitly_wait(5)
+error_message = driver.find_element(By.ID, "message_content").text
+
+assert error_message == "Final Result Is Not Ready !"
+
+print("Integration Test 28 Passed !")
 
 driver.quit()

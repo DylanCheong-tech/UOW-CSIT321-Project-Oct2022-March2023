@@ -63,6 +63,9 @@ assert driver.current_url == "http://127.0.0.1:8000/evoting/voter/vote"
 # assert the page title 
 assert driver.title == "Error"
 
+error_message = driver.find_element(By.ID, "error_message").text
+assert error_message == "Invitation Link Expired !"
+
 print("Security Test 19 Passed !")
 
 driver.quit()

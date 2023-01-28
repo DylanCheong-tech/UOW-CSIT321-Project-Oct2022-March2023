@@ -1,10 +1,12 @@
-# Test_Case_ID_19.py 
+# Test_Case_ID_25.py 
 
 """
-Title: Event Owner View Vote Event successfully
+Title: Event Owner Views Vote Event in Final Result Ready (FR) status
 
 Descriptions:
-Test the system to be able to provide and display the vote event information correctly. 
+Test the system’s ability to display all the completed vote event information to the event owner users. 
+The system will categorize the vote event with status of Final Result Ready (FR) and Result Published (RP) as the completed vote events. 
+
 """
 import os 
 from selenium import webdriver
@@ -33,10 +35,19 @@ driver.find_element(By.NAME, "password").send_keys("JamesSmith_1234")
 driver.find_element(By.ID, "form_submit_btn").click()
 WebDriverWait(driver, timeout=100).until(lambda driver : driver.title == "Overview")
 
+# navigate to the side menu bar and click the "Completed Vote Events"
+menu_items = driver.find_elements(By.CSS_SELECTOR, "span#side_menu_bar>span.menu_item")
+for menu_item in menu_items:
+	if menu_item.text == "Completed Vote Events":
+		menu_item.click()
+		break
+
+WebDriverWait(driver, timeout=100).until(lambda driver : driver.title == "Completed Vote Events")
+
 # navigate to the view vote event page
 rows = driver.find_elements(By.CSS_SELECTOR, "table tr:not(.header) td:nth-child(2)")
 for index, row in zip(range(len(rows)), rows):
-	if row.get_attribute("innerHTML") == "Vote Event Title 1":
+	if row.get_attribute("innerHTML") == "Vote Event Title 8":
 		buttons = driver.find_elements(By.CSS_SELECTOR, "table tr:nth-child(" + str(index + 1 + 1) + ") td:nth-child(6) button")
 		buttons[0].click()
 		break
@@ -44,6 +55,6 @@ WebDriverWait(driver, timeout=100).until(lambda driver : driver.title == "View V
 
 assert "/evoting/eventowner/viewevent" in driver.current_url
 
-print("Integration Test 19 Passed !")
+print("Integration Test 25 Passed !")
 
 driver.quit()

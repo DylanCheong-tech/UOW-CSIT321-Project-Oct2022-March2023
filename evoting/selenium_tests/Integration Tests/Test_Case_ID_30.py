@@ -1,10 +1,11 @@
-# Test_Case_ID_19.py 
+# Test_Case_ID_30.py 
 
 """
-Title: Event Owner View Vote Event successfully
+Title: Event Owner Publishes Vote Result on Vote Event not in Final Result Ready (FR) status
 
 Descriptions:
-Test the system to be able to provide and display the vote event information correctly. 
+Test the system’s ability to check the vote event status before the user makes the final result publication. 
+
 """
 import os 
 from selenium import webdriver
@@ -36,14 +37,32 @@ WebDriverWait(driver, timeout=100).until(lambda driver : driver.title == "Overvi
 # navigate to the view vote event page
 rows = driver.find_elements(By.CSS_SELECTOR, "table tr:not(.header) td:nth-child(2)")
 for index, row in zip(range(len(rows)), rows):
-	if row.get_attribute("innerHTML") == "Vote Event Title 1":
+	if row.get_attribute("innerHTML") == "Vote Event Title 7":
 		buttons = driver.find_elements(By.CSS_SELECTOR, "table tr:nth-child(" + str(index + 1 + 1) + ") td:nth-child(6) button")
 		buttons[0].click()
 		break
 WebDriverWait(driver, timeout=100).until(lambda driver : driver.title == "View Vote Events")
 
-assert "/evoting/eventowner/viewevent" in driver.current_url
+driver.execute_script(
+	"""
+	let form = document.createElement("form");
 
-print("Integration Test 19 Passed !")
+	let genuine_form_csrf_token = document.querySelector("span.logout_section form input[name=csrfmiddlewaretoken]");
+
+	form.action = "/evoting/eventowner/event/finalresult/publish/7";
+	form.method = "POST";
+	form.appendChild(genuine_form_csrf_token);
+
+	document.body.appendChild(form);
+	form.submit();
+
+	""")
+
+driver.implicitly_wait(5)
+error_message = driver.find_element(By.ID, "message_content").text
+
+assert error_message == "Final Result Published Failed !"
+
+print("Integration Test 30 Passed !")
 
 driver.quit()
