@@ -114,7 +114,7 @@ class EmailSender:
             "voter_name" : voter_name,
             "vote_event_name" : vote_event_name
         }
-        mail.template_id = " d-dbe55bedb15441a3a85fd462a96fb736";
+        mail.template_id = "d-dbe55bedb15441a3a85fd462a96fb736";
 
         response = my_sg.send(mail)
 

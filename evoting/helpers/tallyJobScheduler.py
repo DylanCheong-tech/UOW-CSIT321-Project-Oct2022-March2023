@@ -5,8 +5,10 @@ This module consists of the methods to schedule the future datetime by threading
 
 A class for the JobScheduler object need to be instantiated before calling the function methods. 
 Ths class will be consisting the follwing functions:
+- Process the datetime object and get the schedule time in seconds 
 - Schedule all the existing work (when the system boots up)
 - Schedule an event 
+- Get the scheduled event
 - Cancel a scheduled event 
 
 - tally process 
@@ -33,11 +35,11 @@ job_tracker = {}
 class JobScheduler:
 
 	# Parameter(s): python native datetime object 
-	def get_schedule_time(self, datetime):
+	def get_schedule_time(self, datetime) -> int:
 		return (datetime - datetime.now()).total_seconds()
 
 	# Parameter(s) : None
-	def schedule_existing_event(self):
+	def schedule_existing_event(self) -> bool :
 		# for vote event in PB
 		pb_vote_events = VoteEvent.objects.filter(status="PB")
 		for pb_event in pb_vote_events:
@@ -50,23 +52,36 @@ class JobScheduler:
 			self.schedule_event(vc_event.createdBy.id, vc_event.eventNo, 0)
 
 		print("System Boots Tally Schedule Done ...")
+		return True
 
 
 	# Parameter(s): int : event owner id, int: vote event id, int: scheule time in seconds 
-	def schedule_event(self, event_owner_id:int, event_id:int, schedule_time:int):
+	def schedule_event(self, event_owner_id:int, event_id:int, schedule_time:int) -> bool:
+		if (schedule_time < 0):
+			return False
+
 		event = threading.Timer(schedule_time, self.tally_task, [event_owner_id, event_id])
 		job_tracker[str(event_id)] = event
 		event.start()
+		return True
+
+	# Parameter(s): int : event owner id, int: vote event id, int: scheule time in seconds 
+	def get_schedule_event(self, event_id:int) -> threading.Timer:
+		event = job_tracker.get(str(event_id), None)
+
+		return event
 
 	# Parameter(s): int : vote event id
-	def cancel_scheduled_event(self, event_id:int):
+	def cancel_scheduled_event(self, event_id:int) -> bool :
 		event = job_tracker.get(str(event_id), None)
 		if (event is not None):
 			event.cancel()
 			del job_tracker[str(event_id)]
+			return True
+		return False
 
 	# Parameter(s): int : event owner id, int : vote event id
-	def tally_task(self, event_owner_id:int, event_id:int):
+	def tally_task(self, event_owner_id:int, event_id:int) -> bool :
 		try :
 			# Step 1: update the vote event status 
 			vote_event = VoteEvent.objects.get(eventNo=event_id)

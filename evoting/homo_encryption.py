@@ -7,6 +7,7 @@ We will be using RSA cryptosystem as the encryption scheme and utilize its key g
 This module covers the following functions:
 - Key Generation with writing the private key to the local file system 
 - Private Keys file reader 
+- Private Keys Remover 
 - Vote Option Encoding 
 - Encryption of vote encoding 
 - Decryption of vote encoding 
@@ -36,6 +37,8 @@ This function will write the private key and the salt to the localfile system as
 def key_generation(event_owner_id:int, vote_event_id:int, key_size:int) -> (rsa.PublicKey, int):
 	public, private = rsa.newkeys(key_size)
 
+	remove_private_key(event_owner_id, vote_event_id)
+
 	keys_file = open(os.getcwd() + "/evoting/.private", "a")
 	file_writer = csv.writer(keys_file)
 
@@ -62,7 +65,44 @@ def read_private_key(event_owner_id:int, vote_event_id:int) -> (rsa.PrivateKey, 
 
 	keys_file.close()
 
-	return None
+	return (None, None)
+
+"""
+Function : Private Key Remover
+Parameter(s) : int : event owner id, int : vote event id
+Return(s) : bool : status of removal, True as the record is found and deleted, False as there is no record to be deleted 
+"""
+def remove_private_key(event_owner_id:int, vote_event_id:int) -> bool:
+	keys_file = open(os.getcwd() + "/evoting/.private", "r")
+	file_reader = csv.reader(keys_file)
+	
+	# get the non-removal file contents
+	new_key_file_contents = []
+	remove_record_founded = False
+	for row in file_reader:
+		if (int(row[0]) == event_owner_id and int(row[1]) == vote_event_id):
+			remove_record_founded = True
+			continue
+		
+		new_key_file_contents.append(row)
+
+	keys_file.close()
+
+	# return as no need to proceed to rewrite the file
+	if not remove_record_founded:
+		return False
+
+	# open the file in write mode
+	keys_file = open(os.getcwd() + "/evoting/.private", "w")
+	file_writer = csv.writer(keys_file)
+
+	# write the non-removal content back to the file by overwriting the original content 
+	for row in new_key_file_contents:
+		file_writer.writerow(row)
+
+	keys_file.close()
+
+	return True
 
 """
 Function : Vote Option Encoding 
@@ -123,7 +163,6 @@ Return(s) : str : messsage/original value
 
 """
 def decrypt_str(cipher:bytes, private:rsa.PrivateKey) -> str:
-	# print(cipher)
 	value = rsa.decrypt(cipher, private)
 	return value.decode("utf8")
 
