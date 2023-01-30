@@ -26,6 +26,9 @@ from selenium.webdriver.common.by import By
 # UI Select Interaction
 from selenium.webdriver.support.ui import Select
 
+# MySQL connecter
+import mysql.connector
+
 driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
 # login to the system
@@ -57,6 +60,24 @@ driver.execute_script(
 # assert the redirection 
 assert driver.current_url == "http://127.0.0.1:8000/evoting/eventowner/homepage"
 
-# inspect the database see if the vote event is deleted
+# inspect the database see if the vote event is deleted 
+mydb = mysql.connector.connect(
+	host="127.0.0.1",
+	user="evoting_django",
+	password="django_password",
+	database="evoting"
+)
+
+mycursor = mydb.cursor()
+
+query = """SELECT COUNT(*) FROM evoting_voteevent WHERE eventNo = %s"""
+
+mycursor.execute(query, (78, ))
+
+result = mycursor.fetchone()
+
+assert int(result[0]) == 1
+
+print("Security Test 13 Passed !")
 
 driver.quit()

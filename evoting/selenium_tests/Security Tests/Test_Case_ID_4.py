@@ -49,4 +49,6 @@ driver.find_element(By.ID, "form_submit_btn").click()
 # assert the redirection 
 assert driver.current_url == "http://127.0.0.1:8000/evoting/eventowner/login"
 
+print("Security Test 4 Passed !")
+
 driver.quit()

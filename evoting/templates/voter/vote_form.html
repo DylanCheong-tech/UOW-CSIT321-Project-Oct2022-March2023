@@ -1,0 +1,52 @@
+<!-- vote_form.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voting Booth</title>
+
+    <script src="{% static 'voter/js/vote_form.js' %}"></script>
+
+    <link rel="stylesheet" href="{% static 'voter/css/vote_form.css' %}" />
+
+</head>
+
+<body>
+    {% if vote_status and vote_status == "success" %}
+    <div id="vote_acknowledge_page">
+        <h1>Vote Acknowledgement</h1>
+        <p>We have received you casted vote option. Thank you !</p>
+        <button type="button" onclick="window.location.href = '/evoting'">Return Home</button>
+    </div>
+    {% else %}
+    <div id="vote_booth">
+        <div id="booth_header">
+            <span> </span>
+            <span>Voting Booth</span>
+            <span>{{ voter_info.name }}</span>
+        </div>
+        <h1>{{ vote_event_info.eventTitle }}</h1>
+        <form action="/evoting/voter/vote" method="POST">
+            {% csrf_token %}
+            <label>Vote Question</label>
+            <span>{{ vote_event_info.eventQuestion }}</span>
+
+            <label>Vote Options</label>
+            {% for option in vote_event_info.voteOptions %}
+                <label class="options"><input type="radio" name="voteOption" value="{{option.encoding}}" required />{{option.option}}</label>
+            {% endfor %}
+
+            <input class="hidden" type="text" name="voterAuth" required />
+            <button type="submit" onclick="submitVoteForm()">Submit</button>
+        </form>
+    </div>
+
+    {% endif %}
+</body>
+
+</html>

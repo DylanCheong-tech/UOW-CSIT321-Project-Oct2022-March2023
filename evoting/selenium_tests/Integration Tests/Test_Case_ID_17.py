@@ -73,4 +73,6 @@ error_msg_ele = driver.find_element(By.CSS_SELECTOR, "p.error_msg")
 # Assert the Error Message
 assert error_msg_ele.get_attribute("innerHTML") == "At Least Two Vote Options Are Needed !"
 
+print("Integration Test 17 Passed !")
+
 driver.quit()

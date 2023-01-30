@@ -70,4 +70,6 @@ error_msg_ele = driver.find_element(By.CSS_SELECTOR, "p.error_msg")
 # Assert the Error Message
 assert error_msg_ele.get_attribute("innerHTML") == "Date Time Settings Invalid !"
 
+print("Integration Test 16 Passed !")
+
 driver.quit()

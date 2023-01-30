@@ -32,4 +32,6 @@ driver.get("http://127.0.0.1:8000/evoting/eventowner/updateevent/1")
 # assert the redirection 
 assert driver.current_url == "http://127.0.0.1:8000/evoting/eventowner/login"
 
+print("Security Test 8 Passed !")
+
 driver.quit()

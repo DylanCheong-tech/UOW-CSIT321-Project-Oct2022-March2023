@@ -71,4 +71,6 @@ table_contents = driver.find_elements(By.CSS_SELECTOR, "table tr td")
 for column in table_contents:
 	assert column.get_attribute("innerHTML") in enrolled_namelist
 
+print("Integration Test 13 Passed !")
+
 driver.quit()

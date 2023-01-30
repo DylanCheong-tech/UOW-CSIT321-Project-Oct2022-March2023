@@ -49,4 +49,6 @@ error_msg_ele = driver.find_element(By.CSS_SELECTOR, "p.error_msg")
 # Assert the Error Message
 assert error_msg_ele.get_attribute("innerHTML") == "Passwords Do Not Match !"
 
+print("Integration Test 3 Passed !")
+
 driver.quit()

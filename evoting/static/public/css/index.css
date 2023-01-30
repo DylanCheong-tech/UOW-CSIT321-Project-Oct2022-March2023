@@ -1,0 +1,76 @@
+/* index.css */
+
+div#content_pane {
+    display: flex;
+    flex-flow: column;
+    min-height: 96vh;
+}
+
+div#content_pane div#header {
+    display: flex;
+    flex-flow: row;
+    column-gap: 1vw;
+    padding: 1vw 4vw 1vw 4vw;
+    align-items: center;
+}
+
+div#content_pane div#header :first-child {
+    margin-right: auto;
+}
+
+div#content_pane div#header span.menu_items {
+    font-size: 1.4em;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 15px;
+    padding: 1vh 2vw 1vh 2vw;
+    transition: all 1s ease-in-out;
+}
+
+div#content_pane div#header span.menu_items:hover {
+    background-color: #D9DCF0;
+}
+
+div#content_pane div#banner {
+    background-color: #ECECEC;
+    display: grid;
+    justify-content: center;
+    grid-template-columns: repeat(2, 40vw);
+    padding: 2vh 0 2vh 0;
+    column-gap: 5vw;
+}
+
+div#content_pane div#banner div#banner_left {
+    display: flex;
+    flex-flow: column;
+    row-gap: 4vh;
+    align-items: flex-start;
+    text-align: justify;
+}
+
+div#content_pane div#banner img {
+    width: 100%;
+    align-self: center;
+    justify-self: center;
+}
+
+div#content_pane div#main_content_pane {
+    display: flex;
+    flex-flow: column;
+    text-align: center;
+}
+
+div#content_pane div#main_content_pane>div {
+    display: flex;
+    flex-flow: row;
+    justify-content: space-evenly;
+}
+
+div#content_pane div#main_content_pane>div>span {
+    width: 25vw;
+}
+
+div#content_pane footer {
+    margin-top: auto;
+    text-align: right;
+}

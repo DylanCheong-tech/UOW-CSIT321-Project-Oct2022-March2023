@@ -49,4 +49,6 @@ error_msg_ele = driver.find_element(By.CSS_SELECTOR, "p.error_msg")
 # Assert the Error Message
 assert error_msg_ele.get_attribute("innerHTML") == "OTP Value Invalid!"
 
+print("Integration Test 4 Passed !")
+
 driver.quit()

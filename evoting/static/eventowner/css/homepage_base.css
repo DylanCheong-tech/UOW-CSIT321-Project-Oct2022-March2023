@@ -29,6 +29,7 @@ div#content_pane>div#left_pane span#side_menu_bar * {
 
 div#content_pane>div#left_pane span#side_menu_bar span.menu_item {
     padding: 4vh 3vw 4vh 3vw;
+    cursor: pointer;
 }
 
 div#content_pane>div#left_pane span#side_menu_bar span.last_item {

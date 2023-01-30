@@ -48,4 +48,6 @@ for row in driver.find_elements(By.CSS_SELECTOR, "table tr:not(.header) td:nth-c
 
 assert "Vote Event Title 1" not in event_list
 
+print("Integration Test 20 Passed !")
+
 driver.quit()

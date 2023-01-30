@@ -35,14 +35,15 @@ class OTPManagement(models.Model):
 
 class VoteEvent(models.Model):
     eventNo = models.BigAutoField(primary_key=True)
-    eventTitle = models.CharField(max_length=200)
+    eventTitle = models.BinaryField()
     startDate = models.DateField()
     startTime = models.TimeField()
     endDate = models.DateField()
     endTime = models.TimeField()
-    eventQuestion = models.CharField(max_length=200)
+    eventQuestion = models.BinaryField()
     status = models.CharField(max_length=2, default="PC")
     createdBy = models.ForeignKey("UserAccount", on_delete=models.CASCADE)
+    publicKey = models.TextField(default="NOT APPLICABLE")
 
     def is_event_datetime_valid(self):
         start_datetime = dateparse.parse_datetime(str(self.startDate) + " " + str(self.startTime))
@@ -61,16 +62,20 @@ class VoteEvent(models.Model):
 
 
 class VoteOption(models.Model):
-    voteOption = models.CharField(max_length=100)
+    voteOption = models.BinaryField()
     eventNo = models.ForeignKey("VoteEvent", on_delete=models.CASCADE)
+    voteEncoding = models.TextField(default=0)
+    voteTotalCount = models.TextField(default=0)
 
     def __str__(self):
         return self.id
 
-class VoterEmail(models.Model):
+class Voter(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField()
     eventNo = models.ForeignKey("VoteEvent", on_delete=models.CASCADE)
+    token = models.CharField(max_length=64, default="NOT APPLICABLE")
+    castedVote = models.TextField(default="NOT APPLICABLE")
 
     def __str__(self):
         return self.id

@@ -3,12 +3,22 @@ from django.utils import timezone
 
 from .helpers.hasher import Hasher
 from .helpers.otpGenerator import OTPGenerator
-from .helpers.sendOTPEmail import EmailSender
+from .helpers.emailSender import EmailSender
 from .helpers.passwordChecker import PasswordChecker
 from .helpers.voterEmailChecker import VoterEmailChecker
+from .helpers.tallyJobScheduler import JobScheduler
+from .helpers.voterAuthentication import VoterAuthentication
 
 from .models import OTPManagement
 from .models import VoteEvent
+
+from .homo_encryption import *
+
+import rsa
+import random
+from datetime import datetime
+import mysql.connector
+import threading 
 
 # Sprint 1 Unit Tests
 class ModelOTPManagementTest(TestCase):
@@ -497,9 +507,6 @@ class HelperVoterEmailCheckerTest(TestCase):
 
 		valid_emails, non_valid_emails = VoterEmailChecker.checkEmails(emails)
 
-		print(valid_emails)
-		print(non_valid_emails)
-
 		self.assertEqual(len(valid_emails.items()), 3)
 		self.assertEqual(len(non_valid_emails.items()), 4)
 
@@ -518,3 +525,559 @@ class HelperVoterEmailCheckerTest(TestCase):
 
 		self.assertEqual(valid_emails, assert_valid_emails)
 		self.assertEqual(non_valid_emails, assert_non_valid_emails)
+
+
+# Sprint 3 Unit Tests
+
+class HomomorphicEncryptionModuleTest(TestCase):
+	"""
+	This homomorphic module consists the core functions for security encryption on the voting information. 
+	There are 10 functions within this module
+	"""
+
+	def testReadExistingPrivateKey(self):
+		"""
+		Test Data:
+		- event owner id : 4
+		- vote event id : 35
+
+		Expected Result:
+			The Private Key and salt value will be returned to the caller
+		"""
+
+		(private, salt) = read_private_key(4, 35)
+
+		self.assertIsInstance(private, rsa.PrivateKey)
+		self.assertIsInstance(salt, int)
+
+	def testReadNonExistingPrivateKey(self):
+		"""
+		Test Data:
+		- event owner id : 4
+		- vote event id : 45
+
+		Expected Result:
+			A tuple of None will be return 
+		"""
+
+		(private, salt) = read_private_key(4, 45)
+
+		self.assertEqual(private, None)
+		self.assertEqual(salt, None)
+
+	def testKeyGeneration(self):
+		"""
+		Test Data:
+		- event owner id : 999
+		- vote event id : 259
+		- key_size : 1024
+
+		Expected Result: 
+			A pair of cryptographic keys, salt value are generates. 
+			Private key and salt value will be written into the key file.
+			Public key and salt value will be returned to the caller 
+		"""
+
+		(public, salt) = key_generation(999, 259, 1024)
+
+		self.assertIsInstance(public, rsa.PublicKey)
+		self.assertIsInstance(salt, int)
+
+		(_, salt_from_file) = read_private_key(999, 259)
+
+		self.assertEqual(salt, salt_from_file)
+
+
+	def testRemoveExistingPrivateKey(self):
+		"""
+		Test Data:
+		- event owner id : 999
+		- vote event id : 259
+
+		Expected Result : The private key and salt value will be removed from the key file, no value can be retreiveid after removal
+		"""
+
+		remove_status = remove_private_key(999, 259)
+
+		self.assertIs(remove_status, True)
+
+		(private, salt) = read_private_key(999, 259)
+
+		self.assertEqual(private, None)
+		self.assertEqual(salt, None)
+
+
+	def testRemoveNonExistingPrivateKey(self):
+		"""
+		Test Data:
+		- event owner id : 998
+		- vote event id : 234
+
+		Expected Result : No removal action will be taken 
+		"""
+
+		remove_status = remove_private_key(998, 234)
+
+		self.assertIs(remove_status, False)
+
+		(private, salt) = read_private_key(998, 234)
+
+		self.assertEqual(private, None)
+		self.assertEqual(salt, None)
+
+
+	def testGenerateOptionEncoding(self):
+		"""
+		Test Data:
+		- Number of Vote Options : 3
+		- Salt value : based on the key generation 
+
+		A pair of keys will be generated before generate the vote option, in the end of this test, the generated keys will be removed
+
+		Expected Result: 
+			Return a list of specified number of vote options encoding values
+			All the option (prime) value are multiplied by salt value
+		"""
+
+		(public, salt) = key_generation(567, 567, 1024)
+		(private, _) = read_private_key(567, 567)
+
+		option_encodings = vote_option_encoding_generation(3, salt)
+		self.assertEqual(len(option_encodings), 3)
+
+		prime_list = [11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]
+
+		for encoding in option_encodings:
+			prime = int(encoding / salt)
+			self.assertIs(prime in prime_list, True)
+
+		remove_private_key(567, 567)
+
+
+	def testIntegerEncryptionAndDecryptionOnSameKeys(self):
+		"""
+		Test Data:
+		- Value : 18
+		- public key : based on the key generation 
+		- private key : based on the key generation 
+
+		Exoected Result : 
+			The Encryption should produce a cipher as integer (a bunch of digits)
+			The Decryption should be able to reveal back the original value as integer from the cipher 
+		"""
+
+		(public, _) = key_generation(567, 567, 1024)
+		(private, _) = read_private_key(567, 567)
+
+		cipher = encrypt_int(18, public)
+
+		self.assertIsInstance(cipher, int)
+
+		plaintext = decrypt_int(cipher, private)
+		
+		self.assertIsInstance(plaintext, int)
+		self.assertEqual(plaintext, 18)
+
+		remove_private_key(567, 567)
+
+
+	def testIntegerEncryptionAndDecryptionOnDifferentKeys(self):
+		"""
+		Test Data:
+		- Value : 45
+		- public key : based on the key generation 
+		- private key : based on the key generation 
+
+		Exoected Result : 
+			The Encryption should produce a cipher as integer (a bunch of digits)
+			The Decryption will be produced a integer value 
+			The Decryption would not be able to reveal back the original value from the cipher 
+		"""
+
+		(public_1, _) = key_generation(567, 567, 1024)
+
+		key_generation(234, 234, 1024)
+		(private_2, _) = read_private_key(234, 234)
+
+		cipher = encrypt_int(18, public_1)
+
+		self.assertIsInstance(cipher, int)
+
+		plaintext = decrypt_int(cipher, private_2)
+
+		self.assertIsInstance(plaintext, int)
+		self.assertNotEqual(plaintext, 45)
+
+		remove_private_key(567, 567)
+		remove_private_key(234, 234)
+
+
+	def testStringEncryptionAndDecryptionOnSameKeys(self):
+		"""
+		Test Data:
+		- Value : Secret Message !
+		- public key : based on the key generation 
+		- private key : based on the key generation 
+
+		Exoected Result : 
+			The Encryption should produce a cipher as bytes
+			The Decryption should be able to reveal back the original value as string from the cipher 
+		"""
+
+		(public, _) = key_generation(567, 567, 1024)
+		(private, _) = read_private_key(567, 567)
+
+		cipher = encrypt_str("Secret Message !", public)
+
+		self.assertIsInstance(cipher, bytes)
+
+		plaintext = decrypt_str(cipher, private)
+		
+		self.assertIsInstance(plaintext, str)
+		self.assertEqual(plaintext, "Secret Message !")
+
+		remove_private_key(567, 567)
+
+
+	def testStringEncryptionAndDecryptionOnDifferentKeys(self):
+		"""
+		Test Data:
+		- Value : Another Secret Message !
+		- public key : based on the key generation 
+		- private key : based on the key generation 
+
+		Exoected Result : 
+			The Encryption should produce a cipher as bytes 
+			The Decryption will be produced a string value 
+			The Decryption would not be able to reveal back the original value from the cipher 
+		"""
+
+		(public_1, _) = key_generation(567, 567, 1024)
+
+		key_generation(234, 234, 1024)
+		(private_2, _) = read_private_key(234, 234)
+
+		cipher = encrypt_str("Another Secret Message !", public_1)
+
+		self.assertIsInstance(cipher, bytes)
+
+		self.assertRaisesMessage(rsa.pkcs1.DecryptionError, "Decryption failed", decrypt_str, cipher, private_2,)
+
+		remove_private_key(567, 567)
+		remove_private_key(234, 234)
+
+
+	def testTallyCastedVote(self):
+		"""
+		Test Data:
+		- vote options : 3
+		- voted_list : 23, value based on the encryption key
+
+		Expected Result:
+			Return a list with three encrypted subresult, as each for 10 votes, and a number of tallied votes
+		"""
+
+		(public, salt) = key_generation(567, 567, 1024)
+
+		# generate the vote options encodings
+		vote_options = vote_option_encoding_generation(3, salt)
+
+		voted_list = [encrypt_int(random.choice(vote_options), public) for x in range(23)]
+
+		result_list, tallied_votes = homo_counting(voted_list)
+
+		self.assertEqual(len(result_list), 3)
+		self.assertEqual(tallied_votes, 23)
+
+		remove_private_key(567, 567)
+
+
+	def testResultCountingWithMatchingKeys(self):
+		"""
+		Test Data:
+		- vote options list (in primes) : [3, 5, 7]
+		- voted list : 13 x "3", 15 x "5", and 9 x "7"
+		- subresult list : value depended on the encryption key 
+		- total tallied votes : 23
+
+		Expected Result: 
+			Resutl a dictionary for each counting of vote option 
+		"""
+
+		(public, salt) = key_generation(567, 567, 1024)
+		(private, _) = read_private_key(567, 567)
+
+		vote_options = [encrypt_int(x * salt, public) for x in [3, 5, 7]]
+
+		# create a voted data list and shuffle 
+		voted_list = [vote_options[0]] * 13 + [vote_options[1]] * 15 + [vote_options[2]] * 9
+		random.shuffle(voted_list)
+
+		result_list, tallied_votes = homo_counting(voted_list)
+
+		result_dict = result_counting(vote_options, result_list, tallied_votes, private, salt)
+
+		self.assertEqual(len(result_dict.items()), 3)
+		self.assertEqual(result_dict[str(vote_options[0])], 13)
+		self.assertEqual(result_dict[str(vote_options[1])], 15)
+		self.assertEqual(result_dict[str(vote_options[2])], 9)
+
+
+class HelperJobSchedulerTest(TestCase):
+	"""
+	This helper module responsible to perform the tally job based on the given time (future)
+
+	"""
+
+	def testGetAScheduleTimeByProvidingAFutureTime(self):
+		"""
+		Test Data:
+		- datetime : (python datetime object) 12-10-2024 15:00
+
+		Expected Result:
+			return a value of seconds as positive integer from the current running datetime 
+		"""
+
+		future_datetime = datetime(2024, 10, 12, 15, 0)
+		scheduled_seconds = JobScheduler().get_schedule_time(future_datetime)
+
+		self.assertIs(scheduled_seconds > 0, True)
+
+
+	def testGetAScheduleTimeByProvidingAPassedTime(self):
+		"""
+		Test Data:
+		- datetime : (python datetime object) 21-08-2020 18:00
+
+		Expected Result:
+			return a invalid value of seconds as negative integer from the current running datetime 
+		"""
+
+		future_datetime = datetime(2020, 8, 21, 18, 0)
+		scheduled_seconds = JobScheduler().get_schedule_time(future_datetime)
+
+		self.assertIs(scheduled_seconds > 0, False)
+
+
+	def testScheduleATaskEventWithValidDateTime(self):
+		"""
+		Test Data : 
+		- event owner id : 123
+		- Event ID : 45
+		- schedule time : 2023-09-14 15:00 (future date)
+
+		Expected Result:
+			A scheduled task will be created and added into the job tracker dictionary object 
+		"""
+
+		job_scheduler = JobScheduler()
+		schedule_time = job_scheduler.get_schedule_time(datetime(2023, 9, 14, 15, 0))
+		status = job_scheduler.schedule_event(123, 45, schedule_time)
+
+		# the job_tracker is from the module itself
+		self.assertIs(status, True)
+		self.assertIsInstance(job_scheduler.get_schedule_event(45), threading.Timer)
+		self.assertIs(job_scheduler.get_schedule_event(45).is_alive(), True)
+
+		job_scheduler.cancel_scheduled_event(45)
+
+
+	def testScheduleATaskEventWithNonValidDateTime(self):
+		"""
+		Test Data : 
+		- event owner id : 123
+		- Event ID : 45
+		- schedule time : 2020-09-14 15:00 (future date)
+
+		Expected Result:
+			A scheduled task will be created and added into the job tracker dictionary object 
+		"""
+
+		job_scheduler = JobScheduler()
+		schedule_time = job_scheduler.get_schedule_time(datetime(2020, 9, 14, 15, 0))
+		status = job_scheduler.schedule_event(123, 45, schedule_time)
+
+		# the job_tracker is from the module itself
+		self.assertIs(status, False)
+		self.assertEqual(job_scheduler.get_schedule_event(45), None)
+
+	def testGetAnExistingScheduledTaskEvent(self):
+		"""
+		Test Data : 
+		- Event ID : 134
+		- The Schedule Task is created 
+
+		Expected Result:
+			Returns a Timer object of the scheduled task event 
+		"""
+
+		job_scheduler = JobScheduler()
+		schedule_time = job_scheduler.get_schedule_time(datetime(2023, 9, 14, 15, 0))
+		status = job_scheduler.schedule_event(123, 134, schedule_time)
+
+		# make sure the taks event is created
+		self.assertIs(status, True)
+
+		self.assertIsInstance(job_scheduler.get_schedule_event(134), threading.Timer)
+
+		job_scheduler.cancel_scheduled_event(134)
+
+
+	def testGetANonExistingScheduledTaskEvent(self):
+		"""
+		Test Data : 
+		- Event ID : 145
+		- The Schedule Task is not created 
+
+		Expected Result:
+			Returns a Timer object of the scheduled task event 
+		"""
+
+		job_scheduler = JobScheduler()
+
+		self.assertEqual(job_scheduler.get_schedule_event(134), None)
+
+
+	def testCancelAnExistingScheduledTaskEvent(self):
+		"""
+		Test Data : 
+		- Event ID : 45
+		- The event is created for the purpose to cancel 
+
+		Expected Result : 
+			A Scheduled task will be cancel and removed from the job tracker list 
+			Return a boolean True value indicates as successful cancellation 
+		"""
+
+		job_scheduler = JobScheduler()
+		schedule_time = job_scheduler.get_schedule_time(datetime(2023, 9, 14, 15, 0))
+		status = job_scheduler.schedule_event(123, 45, schedule_time)
+
+		# make sure the taks event is created
+		self.assertIs(status, True)
+
+		cancel_status = job_scheduler.cancel_scheduled_event(45)
+
+		self.assertIs(cancel_status, True)
+		self.assertEqual(job_scheduler.get_schedule_event(45), None)
+
+
+	def testCancelANonExistingScheduledTaskEvent(self):
+		"""
+		Test Data : 
+		- Event ID : 45
+		- The event is not created
+
+		Expected Result : 
+			No actions are taken 
+			Return a boolean False value indicates as fail cancellation 
+		"""
+
+		job_scheduler = JobScheduler()
+
+		cancel_status = job_scheduler.cancel_scheduled_event(45)
+
+		self.assertIs(cancel_status, False)
+		self.assertEqual(job_scheduler.get_schedule_event(45), None)
+
+
+class HelperVoterAuthenticationHelperTest(TestCase):
+	"""
+	This helper module responsible to generate the authentication string for voter to access the voting booth and final result booth 
+
+	"""
+
+	def testGenerateTokenString(self):
+		"""
+		Test Data : None
+
+		Expected Results:
+			Returns a random string with length of 64
+		"""
+
+		token = VoterAuthentication.generateTokenString()
+
+		self.assertEqual(len(token), 64)
+
+
+class HelperEmailSenderTest(TestCase):
+	"""
+	In this sprint increment, the Email Sender helper class added two new functions.
+	- Send out the vote invitation link 
+	- Send out the view final result access link 
+	"""
+
+	def testSendInvitationEmailWithProvidedEmail(self):
+		"""
+		Test Data : 
+		- email : cheongwaihong44@gmail.com
+		- host : www.evoting.com
+		- auth : 123456789
+		- voter name : Dylan
+		- event owner name : James Smith
+		- vote event name : Are you a vegetarian or vegan ? 
+
+		Expected Result: A response object with a status_code of 202
+		"""
+
+		emailSender = EmailSender("cheongwaihong44@gmail.com")
+		response = emailSender.sendInvitation("www.evoting.com", "123456789", "Dylan", "James Smith", "Are you a vegetarian or vegan ?");
+
+		self.assertEqual(response.status_code, 202)
+
+	def testSendInvitationEmailWithProvidedEmailAsEmptyString(self):
+		"""
+		Test Data : 
+		- email : cheongwaihong44@gmail.com
+		- host : www.evoting.com
+		- auth : 123456789
+		- voter name : Dylan
+		- event owner name : James Smith
+		- vote event name : Are you a vegetarian or vegan ? 
+
+		Expected Result: A response with False 
+		"""
+
+		emailSender = EmailSender("")
+		response = emailSender.sendInvitation("www.evoting.com", "123456789", "Dylan", "James Smith", "Are you a vegetarian or vegan ?");
+
+		self.assertIs(response, False)
+
+
+	def testSendFinalResultAccessLinkEmailWithProvidedEmail(self):
+		"""
+		Test Data : 
+		- email : cheongwaihong44@gmail.com
+		- host : www.evoting.com
+		- auth : 123456789
+		- voter name : Dylan
+		- event owner name : James Smith
+
+		Expected Result: A response object with a status_code of 202
+		"""
+
+		emailSender = EmailSender("cheongwaihong44@gmail.com")
+		response = emailSender.sendFinalResult("www.evoting.com", "123456789", "Dylan", "Are you a vegetarian or vegan ?");
+
+		self.assertEqual(response.status_code, 202)
+
+	def testSendFinalResultAccessLinkEmailWithProvidedEmailAsEmptyString(self):
+		"""
+		Test Data : 
+		- email : cheongwaihong44@gmail.com
+		- host : www.evoting.com
+		- auth : 123456789
+		- voter name : Dylan
+		- event owner name : James Smith
+
+		Expected Result: A response with False 
+		"""
+
+		emailSender = EmailSender("")
+		response = emailSender.sendFinalResult("www.evoting.com", "123456789", "Dylan", "Are you a vegetarian or vegan ?");
+
+		self.assertIs(response, False)
+
+
+
+

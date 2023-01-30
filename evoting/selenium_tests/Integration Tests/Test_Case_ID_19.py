@@ -33,7 +33,7 @@ driver.find_element(By.NAME, "password").send_keys("JamesSmith_1234")
 driver.find_element(By.ID, "form_submit_btn").click()
 WebDriverWait(driver, timeout=100).until(lambda driver : driver.title == "Overview")
 
-# navigate to the update vote event page
+# navigate to the view vote event page
 rows = driver.find_elements(By.CSS_SELECTOR, "table tr:not(.header) td:nth-child(2)")
 for index, row in zip(range(len(rows)), rows):
 	if row.get_attribute("innerHTML") == "Vote Event Title 1":
@@ -42,6 +42,8 @@ for index, row in zip(range(len(rows)), rows):
 		break
 WebDriverWait(driver, timeout=100).until(lambda driver : driver.title == "View Vote Events")
 
-assert "http://127.0.0.1:8000/evoting/eventowner/viewevent" in driver.current_url
+assert "/evoting/eventowner/viewevent" in driver.current_url
+
+print("Integration Test 19 Passed !")
 
 driver.quit()
