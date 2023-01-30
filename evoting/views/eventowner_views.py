@@ -173,8 +173,9 @@ class EventOwnerHomePage(View):
 
         # render the overview page with information
         current_user = UserAccount.objects.get(email=request.user.username)
-        VoteEventList = VoteEvent.objects.filter(createdBy_id=current_user).filter(~Q(status="FR") & ~Q(status="RP")).order_by('eventNo')
-        
+
+        VoteEventList = VoteEvent.objects.filter(createdBy_id=current_user).order_by('eventNo')        
+
         # decrypt the event title and question 
         for event in VoteEventList:
             # get the private key information 
@@ -692,6 +693,35 @@ class EventOwnerPublishVoteEventFinalResult(View):
             print(error_message)
 
         return redirect("/evoting/eventowner/viewevent/" + str(eventNo) + "?publish_status=fail")
+
+class EventOwnerViewOnGoingVoteEvents(View):
+    def get(self, request):
+        # check authentication 
+        if not request.user.is_authenticated:
+            return redirect("/evoting/eventowner/login")
+        
+        #  get the current authenticated user
+        current_user = UserAccount.objects.get(email=request.user.username)
+        VoteEventList = VoteEvent.objects.filter(createdBy_id=current_user).filter(~Q(status="FR") & ~Q(status="RP")).order_by('eventNo')
+        VoteEventCount = VoteEventList.count()
+
+        # decrypt the event title and question 
+        for event in VoteEventList:
+            # get the private key information 
+            (private_key, salt) = read_private_key(current_user.id, event.eventNo)
+            event.eventTitle = decrypt_str(event.eventTitle, private_key, salt)
+            event.eventQuestion = decrypt_str(event.eventQuestion, private_key, salt)
+
+        PendingConfirmationEvent = VoteEvent.objects.filter(createdBy_id=current_user, status='PC').count()
+        PublishedEvent = VoteEvent.objects.filter(createdBy_id=current_user, status='PB').count()
+        VoteConcludedEvent = VoteEvent.objects.filter(createdBy_id=current_user, status='VC').count()
+        EventCount = [VoteEventCount, PendingConfirmationEvent, PublishedEvent, VoteConcludedEvent]
+        EventLabels = ["Total Ongoing Events : ", "Pending Confirmation Events : ","Published Vote Events : ","Vote Concluded Vote Events : "]
+        EventDetails = zip(EventCount, EventLabels)
+
+        current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName}
+
+        return render(request, "eventowner/ongoing_voteevent.html", {"title": "Ongoing Vote Events", 'VoteEvents': VoteEventList,'UserDetails': current_user,'EventDetail': EventDetails})
 
 class EventOwnerViewCompletedVoteEvents(View):
     def get(self, request):

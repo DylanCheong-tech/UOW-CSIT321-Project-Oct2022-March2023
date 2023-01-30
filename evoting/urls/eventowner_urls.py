@@ -17,5 +17,6 @@ urlpatterns = [
     path('confirmevent/<int:eventNo>', views.EventOwnerConfirmVoteEvent.as_view()),
     path('event/finalresult/<int:eventNo>', views.EventOwnerViewVoteEventFinalResult.as_view()),
     path('event/finalresult/publish/<int:eventNo>', views.EventOwnerPublishVoteEventFinalResult.as_view()),
-    path('completedevent', views.EventOwnerViewCompletedVoteEvents.as_view())
+    path('completedevent', views.EventOwnerViewCompletedVoteEvents.as_view()),
+    path('ongoingevent', views.EventOwnerViewOnGoingVoteEvents.as_view())
 ]
