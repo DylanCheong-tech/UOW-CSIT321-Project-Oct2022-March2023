@@ -58,7 +58,7 @@ class VoteEvent(models.Model):
         return True        
 
     def __str__(self):
-        return self.seqNo
+        return self.eventNo
 
 
 class VoteOption(models.Model):
