@@ -24,6 +24,7 @@ An dictionary object will keep track the scheduled events and subject to be modi
 from ..models import VoteEvent
 from ..models import VoteOption
 from ..models import Voter
+from ..models import VotingPool
 from ..homo_encryption import *
 
 from datetime import datetime
@@ -94,7 +95,8 @@ class JobScheduler:
 			voters = Voter.objects.filter(eventNo_id=event_id)
 
 			# integer array of the casted vote result
-			casted_vote = [int(x.castedVote) for x in voters if x.castedVote != "NOT APPLICABLE"]
+			vote_event_voted_pool = VotingPool.objects.filter(eventNo_id=event_id)
+			casted_vote = [int(x.castedVote) for x in vote_event_voted_pool]
 
 			(tallied_result_list, tallied_vote_count) = homo_counting(casted_vote)
 

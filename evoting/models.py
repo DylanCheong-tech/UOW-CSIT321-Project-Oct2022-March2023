@@ -75,8 +75,15 @@ class Voter(models.Model):
     email = models.EmailField()
     eventNo = models.ForeignKey("VoteEvent", on_delete=models.CASCADE)
     token = models.CharField(max_length=64, default="NOT APPLICABLE")
-    castedVote = models.TextField(default="NOT APPLICABLE")
 
     def __str__(self):
         return self.id
+
+
+class VotingPool(models.Model):
+    eventNo = models.ForeignKey("VoteEvent", on_delete=models.CASCADE)
+    voter = models.ForeignKey("Voter", on_delete=models.CASCADE)
+    castedVote = models.TextField(default="NOT APPLICABLE")
+
+
    

@@ -4,10 +4,13 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views import View
 
+from django.db.models import Q
+
 # Models imports
 from ..models import VoteEvent
 from ..models import VoteOption
 from ..models import Voter
+from ..models import VotingPool
 
 # Forms imports 
 from ..forms.voter import VoteForm
@@ -55,7 +58,8 @@ class VoterVoteForm(View):
 				raise Exception
 
 			# check if the voter is casted the vote before 
-			if voter.castedVote != "NOT APPLICABLE":
+			voter_voted_count = VotingPool.objects.filter(Q(eventNo_id=vote_event_id) & Q(voter_id=voter.id)).count()
+			if voter_voted_count > 0:
 				error_message = "Voter has been voted, no access allowed !"
 				error_summary_message = "Forbidden Request Received"
 				error_code = 403
@@ -130,15 +134,20 @@ class VoterVoteForm(View):
 					raise Exception
 
 				# check if the voter is casted the vote before 
-				if voter.castedVote != "NOT APPLICABLE":
+				voter_voted_count = VotingPool.objects.filter(Q(eventNo_id=vote_event_id) & Q(voter_id=voter.id)).count()
+				if voter_voted_count > 0:
 					error_message = "Voter Has Already Voted !"
 					error_summary_message = "Forbidden Request Received"
 					error_code = 403
 					raise Exception
 
 				# write the casted vote option to the system database 
-				voter.castedVote = data["voteOption"]
-				voter.save()
+				vote_record = VotingPool(
+					eventNo_id = vote_event_id,
+					voter_id = voter.id,
+					castedVote = data["voteOption"]
+				)
+				vote_record.save()
 
 				return render(request, "voter/vote_form.html", {"vote_status" : "success"})
 
