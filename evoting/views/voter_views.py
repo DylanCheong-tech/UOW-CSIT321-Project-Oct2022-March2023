@@ -68,13 +68,13 @@ class VoterVoteForm(View):
 			vote_options = VoteOption.objects.filter(eventNo_id=vote_event_id)
 
 			# get the private keys to decrypt the option name
-			(private_key, _) = read_private_key(vote_event.createdBy_id, vote_event_id)
+			(private_key, salt) = read_private_key(vote_event.createdBy_id, vote_event_id)
 
 			# organise the vote event information to be rendered on the page 
 			vote_event_info = {
-				"eventTitle" : decrypt_str(vote_event.eventTitle, private_key),
-				"eventQuestion" : decrypt_str(vote_event.eventQuestion, private_key),
-				"voteOptions" : [{"option" : decrypt_str(x.voteOption, private_key), "encoding" : x.voteEncoding} for x in vote_options]
+				"eventTitle" : decrypt_str(vote_event.eventTitle, private_key, salt),
+				"eventQuestion" : decrypt_str(vote_event.eventQuestion, private_key, salt),
+				"voteOptions" : [{"option" : decrypt_str(x.voteOption, private_key, salt), "encoding" : x.voteEncoding} for x in vote_options]
 			}
 
 			# organise the voter information to be rendered on the page 
@@ -218,9 +218,9 @@ class VoterViewFinalResult(View):
 
 			# organise the vote event information to be rendered on the page 
 			final_result_info = {
-				"eventTitle" : decrypt_str(vote_event.eventTitle, private_key),
-				"eventQuestion" : decrypt_str(vote_event.eventQuestion, private_key),
-				"voteOptions" : [{"option" : decrypt_str(x.voteOption, private_key), "counts" : int((decrypt_int(int(x.voteTotalCount), private_key) - salt) / int(salt))} for x in vote_options],
+				"eventTitle" : decrypt_str(vote_event.eventTitle, private_key, salt),
+				"eventQuestion" : decrypt_str(vote_event.eventQuestion, private_key, salt),
+				"voteOptions" : [{"option" : decrypt_str(x.voteOption, private_key, salt), "counts" : int((decrypt_int(int(x.voteTotalCount), private_key) - salt) / int(salt))} for x in vote_options],
 			}
 			# get the majority vote option name
 			final_result_info["majorVoteOption"] = max(final_result_info["voteOptions"], key=lambda k : k["counts"], default="None")["option"]
