@@ -609,7 +609,7 @@ class EventOwnerViewVoteEventFinalResult(View):
             total_vote_counts = 0
 
             for option in vote_options:
-                vote_counts = int(decrypt_int(int(option.voteTotalCount), private_key) / salt)
+                vote_counts = int((decrypt_int(int(option.voteTotalCount), private_key) - salt) / salt)
                 total_vote_counts = total_vote_counts + vote_counts
                 final_result_data["vote_options"].append({"option" : decrypt_str(option.voteOption, private_key), "result" : vote_counts })
 

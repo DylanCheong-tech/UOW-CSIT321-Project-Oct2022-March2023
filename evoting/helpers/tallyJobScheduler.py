@@ -109,7 +109,7 @@ class JobScheduler:
 			public_key = vote_event.publicKey.split("//")
 			public_key = rsa.PublicKey(int(public_key[0]), int(public_key[1]))
 			for vote_option in vote_options:
-				vote_option.voteTotalCount = encrypt_int(vote_option_counts.get(str(vote_option.voteEncoding), 0) * salt, public_key)
+				vote_option.voteTotalCount = encrypt_int((vote_option_counts.get(str(vote_option.voteEncoding), 0) * salt) + salt, public_key)
 				vote_option.save()
 
 			# Step 5: update to cote event status

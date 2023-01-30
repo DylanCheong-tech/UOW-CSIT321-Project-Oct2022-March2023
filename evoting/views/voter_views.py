@@ -211,7 +211,7 @@ class VoterViewFinalResult(View):
 			final_result_info = {
 				"eventTitle" : decrypt_str(vote_event.eventTitle, private_key),
 				"eventQuestion" : decrypt_str(vote_event.eventQuestion, private_key),
-				"voteOptions" : [{"option" : decrypt_str(x.voteOption, private_key), "counts" : int(decrypt_int(int(x.voteTotalCount), private_key) / int(salt))} for x in vote_options],
+				"voteOptions" : [{"option" : decrypt_str(x.voteOption, private_key), "counts" : int((decrypt_int(int(x.voteTotalCount), private_key) - salt) / int(salt))} for x in vote_options],
 			}
 			# get the majority vote option name
 			final_result_info["majorVoteOption"] = max(final_result_info["voteOptions"], key=lambda k : k["counts"], default="None")["option"]
