@@ -506,6 +506,8 @@ class EventOwnerDeleteVoteEvent(View):
 
             vote_event.delete()
 
+            remove_private_key(vote_event.createdBy_id, eventNo)
+
         except VoteEvent.DoesNotExist:
             print("Error On Deleting a Vote Event, eventNo = " + str(eventNo))
 
