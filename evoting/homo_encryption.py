@@ -97,7 +97,7 @@ def remove_private_key(event_owner_id:int, vote_event_id:int) -> bool:
 		return False
 
 	# open the file in write mode
-	keys_file = open(os.getcwd() + "/evoting/.private", "w")
+	keys_file = open(os.getcwd() + "/evoting/.private", "w", newline='')
 	file_writer = csv.writer(keys_file)
 
 	# write the non-removal content back to the file by overwriting the original content 
