@@ -19,7 +19,7 @@
         <div id="left_pane">
             <h1>Sign up</h1>
             <p class="{% if status %} error_msg {% endif %}">{{ status }}</p>
-            <form action="/evoting/eventowner/createaccount" method="POST">
+            <form action="/harpocryption/eventowner/createaccount" method="POST">
                 {% csrf_token %}
                 <span class="field">
                     <label>First Name</label>
@@ -80,7 +80,7 @@
             </form>
 
             <span id="annotation">
-                Have an account ? <a href="/evoting/eventowner/login">Login</a>
+                Have an account ? <a href="/harpocryption/eventowner/login">Login</a>
             </span>
         </div>
 

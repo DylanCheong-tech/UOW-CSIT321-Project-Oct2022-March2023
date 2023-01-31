@@ -18,9 +18,9 @@ from django.urls import include, path, re_path
 from .url_fallback_views import URLsFallBackView
 
 urlpatterns = [
-    path('evoting/', include("evoting.urls.public_urls")),
-    path('evoting/eventowner/', include("evoting.urls.eventowner_urls")),
-    path('evoting/voter/', include("evoting.urls.voter_urls")),
+    path('harpocryption/', include("evoting.urls.public_urls")),
+    path('harpocryption/eventowner/', include("evoting.urls.eventowner_urls")),
+    path('harpocryption/voter/', include("evoting.urls.voter_urls")),
     path('admin/', admin.site.urls),
     re_path(r'^.*$', URLsFallBackView.as_view()),
 ]
