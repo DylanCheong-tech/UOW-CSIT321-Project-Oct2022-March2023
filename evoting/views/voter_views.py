@@ -224,6 +224,11 @@ class VoterViewFinalResult(View):
 			}
 			# get the majority vote option name
 			final_result_info["majorVoteOption"] = max(final_result_info["voteOptions"], key=lambda k : k["counts"], default="None")["option"]
+            
+            # compute the response rate 
+			total_vote_counts = sum([x["counts"] for x in final_result_info["voteOptions"]])
+			participated_voters = Voter.objects.filter(eventNo_id=int(vote_event_id))
+			final_result_info["response_rate"] = {"responded" : round(total_vote_counts / participated_voters.count() * 100), "total_voters" : participated_voters.count()}
 
 			return render(request, "voter/result_page.html", {"final_result_info": final_result_info})
 

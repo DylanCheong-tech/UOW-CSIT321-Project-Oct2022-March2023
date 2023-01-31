@@ -52,15 +52,15 @@
             </tr>
             {% endfor %}
         </table>
+
+        <label>Voter Turnout</label>
+        <span>{{FinalResultData.response_rate}} %</span>
+
     </div>
 
     <div id="right_content_pane">
         <div id="vote_count_chart">
             <h2>Statistic - Vote Option Counts</h2>
-        </div>
-
-        <div id="response_rate_chart">
-            <h2>Statistic - Response Rate</h2>
         </div>
     </div>
 </div>
@@ -84,6 +84,5 @@
 
 <script>
     renderPieChart("vote_count_chart", preprocess_vote_data({{ FinalResultData.vote_options | safe }}))
-    renderPieChart("response_rate_chart", {{ FinalResultData.response_rate | safe }})
 </script>
 {% endblock %}
