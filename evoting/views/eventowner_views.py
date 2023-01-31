@@ -621,7 +621,7 @@ class EventOwnerViewVoteEventFinalResult(View):
             for voter in voters :
                 final_result_data["voters"].append({"name" : voter.name, "email" : voter.email})
 
-            final_result_data["response_rate"] = {"Responded" : total_vote_counts / voters.count(), "Non-Responded" : abs((voters.count() - total_vote_counts) / voters.count())}
+            final_result_data["response_rate"] = round(total_vote_counts / voters.count() * 100)
 
             current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName} 
 

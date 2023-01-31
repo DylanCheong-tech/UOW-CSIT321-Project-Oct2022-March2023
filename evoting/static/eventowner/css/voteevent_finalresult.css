@@ -26,6 +26,10 @@ div#vote_final_result_page div#left_content_pane label {
     font-weight: bold;
 }
 
+div#vote_final_result_page div#left_content_pane span {
+    color: #828282;
+}
+
 div#vote_final_result_page div#left_content_pane label:not(:first-child) {
     margin-top: 5vh;
 }
@@ -57,20 +61,30 @@ div#vote_final_result_page div#left_content_pane table th, div#vote_final_result
 div#right_content_pane {
     display: flex;
     flex-flow: column;
-    justify-content: center;
+    justify-content: flex-start;
+    margin-top: 5vh;
     row-gap: 5vh;
 }
 
 div#right_content_pane>div {
-    min-height: 30vh;
     border: 1px solid #000000;
     text-align: center;
+    display: flex;
+    flex-flow: column;
+    justify-content: flex-start;
+    row-gap: 3vh;
+    align-items: center;
 }
 
 div#right_content_pane>div svg {
     width: 90%;
     height: 40vh;
+    overflow-x: scroll;
     text-align: center;
+}
+
+div#right_content_pane>div svg g {
+    overflow-x: scroll;
 }
 
 div#publish_button_bar {

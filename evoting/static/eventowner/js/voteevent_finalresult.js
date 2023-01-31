@@ -2,18 +2,19 @@
 
 // parameter: frame_id : DOM ID, data : JSON object 
 function renderPieChart(frame_id, data) {
-    let width = 300
-    let height = 300
-    let margin = 40
+    let width = 200
+    let height = 200
+    let margin = 20
 
     let pie_radius = Math.min(width, height) / 2 - margin
 
     var svg = d3.select("#" + frame_id)
         .append("svg")
-        .attr("width", width)
-        .attr("height", height)
+        .attr("display", "inline-block")
+        .attr("width", "20vw")
+        .attr("height", "25vh")
         .append("g")
-        .attr("transform", "translate(" + width * 3 / 4 + "," + height / 2 + ")");
+        .attr("transform", "translate(" + width + "," + height / 2 + ")");
 
     var color = d3.scaleOrdinal()
         .domain(data)
@@ -33,26 +34,35 @@ function renderPieChart(frame_id, data) {
         .attr("stroke", "black")
         .style("stroke-width", "1px")
         .attr("opacity", 0.7)
+        .attr("transform", "translate(" + width / 2 + "," + 0 + ")");
 
-    svg.selectAll("slices")
+    const legend = svg
+        .append('g')
+        .attr('transform', `translate(-${pie_radius * 2 + 20},-${pie_radius})`)
+
+    legend
+        .selectAll(null)
         .data(data_ready)
         .enter()
-        .append("text")
-        .text(function (d) { return "Option " + d.data.key })
-        .attr("max-width", "10vw")
-        .attr("transform", function (d) { return "translate(" + arc_generator.centroid(d)[0] * 3.3 + ", " + arc_generator.centroid(d)[1] * 2.6 + ")"; })
-        .style("text-anchor", "middle")
-        .style("font-size", ".8em")
+        .append('rect')
+        .attr('y', d => 10 * d.index * 2.5)
+        .attr('width', 12)
+        .attr('height', 12)
+        .attr('fill', d => color(d.data.key))
+        .attr('stroke', 'grey')
+        .style('stroke-width', '1px');
 
-    svg.selectAll("slices")
+    legend
+        .selectAll(null)
         .data(data_ready)
         .enter()
-        .append("text")
-        .attr("dy", "1.2em")
-        .text(function (d) { return "Count : " + d.data.value })
-        .attr("transform", function (d) { return "translate(" + arc_generator.centroid(d)[0] * 3 + ", " + arc_generator.centroid(d)[1] * 2.6 + ")"; })
-        .style("text-anchor", "middle")
-        .style("font-size", ".8em")
+        .append('text')
+        .text(d => (d.data.key + " : Votes : " + d.data.value))
+        .attr('x', 12 * 1.5)
+        .attr('y', d => 12 * d.index * 2.2 + 10)
+        .style('font-size', `${.8}em`);
+
+        
 }
 
 function preprocess_vote_data(data) {
