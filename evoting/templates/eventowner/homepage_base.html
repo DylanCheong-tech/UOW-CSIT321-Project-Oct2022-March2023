@@ -8,6 +8,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.png' %}"/>
     <title>{% block tab_title %}{% endblock %}</title>
     <script src="{% static 'eventowner/js/homepage_base.js' %}"></script>
 
@@ -21,7 +22,7 @@
     <div id="content_pane">
         <div id="left_pane">
             <span id="logo">
-                logo here
+                <img src="{% static 'eventowner/img/logo.png' %}" />
             </span>
             <span id="side_menu_bar">
                 <span class="menu_item" onclick="window.location.href='/harpocryption/eventowner/homepage'">Overview</span>

@@ -8,6 +8,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.png' %}"/>
     <title>Homomorphic Encryption</title>
 
     <script src="{% static 'public/js/index.js' %}"></script>
@@ -18,7 +19,7 @@
 <body>
     <div id="content_pane">
         <div id="header">
-            <span>Logo here</span>
+            <span><img src="{% static 'public/img/logo.png' %}" /></span>
             <span class="menu_items">About</span>
             <span class="menu_items" onclick="window.location.href = '/harpocryption/eventowner/createaccount'">Get Started</span>
             <span class="menu_items" onclick="window.location.href = '/harpocryption/eventowner/login'">Login</span>
@@ -34,7 +35,7 @@
                 </p>
                 <button type="button" onclick="window.location.href = '/harpocryption/eventowner/createaccount'">GET STARTED</button>
             </div>
-            <img src="{% static 'public/img/sample.png' %}" />
+            <img src="{% static 'public/img/landingpic.png' %}" />
         </div>
         <div id="main_content_pane">
             <h2>E-voting has been so simple with us</h2>

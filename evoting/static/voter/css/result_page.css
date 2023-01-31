@@ -1,5 +1,12 @@
 /* result_page.css */
 
+#logo {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 20px
+}
+
 div#result_booth {
     display: flex;
     flex-flow: column;
@@ -7,7 +14,7 @@ div#result_booth {
     min-height: 60vh;
     justify-content: space-evenly;
     margin-left: 15vw;
-    margin-top: 20vh;
+    margin-top: 5vh;
     padding: 2vh 0 2vh 0;
     background-color: #ECECEC;
     border-radius: 15px;

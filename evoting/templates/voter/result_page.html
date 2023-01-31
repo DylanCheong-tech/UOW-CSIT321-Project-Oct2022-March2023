@@ -8,12 +8,14 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.png' %}"/>
     <title>Vote Results</title>
 
     <link rel="stylesheet" href="{% static 'voter/css/result_page.css' %}" />
 </head>
 
 <body>
+    <img id="logo" src="{% static 'public/img/logo.png' %}" />
     <div id="result_booth">
         <span>Vote Result Booth</span>
         <h1>{{final_result_info.eventTitle}}</h1>

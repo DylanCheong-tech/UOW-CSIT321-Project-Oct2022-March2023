@@ -1,5 +1,12 @@
 /* vote_form.css */
 
+#logo {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 20px
+}
+
 div:is(#vote_booth, #vote_acknowledge_page) {
     display: flex;
     flex-flow: column;
@@ -7,7 +14,7 @@ div:is(#vote_booth, #vote_acknowledge_page) {
     min-height: 60vh;
     justify-content: space-evenly;
     margin-left: 15vw;
-    margin-top: 20vh;
+    margin-top: 5vh;
     background-color: #ECECEC;
     border-radius: 15px;
 }

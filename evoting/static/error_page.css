@@ -1,7 +1,14 @@
 /* error_page.css */
 
+#logo {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 20px
+}
+
 div#error_content {
-    margin: 15vh 0 0 20vw;
+    margin: 5vh 0 0 20vw;
     min-height: 50vh;
     width: 60vw;
     text-align: center;

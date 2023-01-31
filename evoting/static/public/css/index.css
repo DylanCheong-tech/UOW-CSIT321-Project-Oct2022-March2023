@@ -32,7 +32,7 @@ div#content_pane div#header span.menu_items:hover {
 }
 
 div#content_pane div#banner {
-    background-color: #ECECEC;
+    background: #ECECEC;
     display: grid;
     justify-content: center;
     grid-template-columns: repeat(2, 40vw);

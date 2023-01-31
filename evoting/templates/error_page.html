@@ -8,6 +8,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.png' %}"/>
     <title>Error</title>
 
     <link rel="stylesheet" href="{% static 'error_page.css' %}" />
@@ -15,6 +16,7 @@
 </head>
 
 <body>
+    <img id="logo" src="{% static 'public/img/logo.png' %}" />
     <div id="error_content">
        <h1 id="error_code">{{error_code}}</h1>
        <h1 id="error_summary_message">{{error_summary_message}}</h1>
