@@ -2,6 +2,7 @@
 
 from threading import Timer 
 import csv
+import requests
 from ..helpers.tallyJobScheduler import JobScheduler
 
 from django.shortcuts import render, redirect
@@ -10,6 +11,7 @@ from django.views import View
 from django.contrib import auth
 from django.forms.models import model_to_dict
 from django.db.models import Q
+from django.conf import settings
 
 # Form imports
 from ..forms.eventowner import SignupForm
@@ -44,51 +46,67 @@ class EventOwnerCreateAccountView(View):
 
         error_message = "Field Values Invalid !"
         status_flag = True
-        if form.is_valid():
-            # access the form data
-            data = form.cleaned_data
 
-            # check if the account is registered here 
-            count = UserAccount.objects.filter(email=data['email']).count()
-            if (count > 0):
-                error_message = "User Account Existed !"
-                status_flag = False
-            else: 
-                try:
-                    # check otp value
-                    otp_from_db = OTPManagement.objects.get(email=data['email'])
-                    if otp_from_db.is_expired() or otp_from_db.check_otp_matching(data['otp']):
-                        error_message = "OTP Value Invalid!"
-                        status_flag = False
+        ''' Begin reCAPTCHA validation '''
+        recaptcha_response = request.POST.get('g-recaptcha-response')
+        url = 'https://www.google.com/recaptcha/api/siteverify'
+        captcha = {
+            'secret': settings.RECAPTCHA_KEY,
+            'response': recaptcha_response
+        }
+        r = requests.post(url, data=captcha)
+        result = r.json()
+        ''' End reCAPTCHA validation '''
 
-                    elif(data['password'] != data['repeat_password']):
-                        error_message = "Passwords Do Not Match !"
-                        status_flag = False
+        if result['success']:
+            if form.is_valid():
+                # access the form data
+                data = form.cleaned_data
 
-                    elif not PasswordChecker.validate_password(data['password']):
-                        error_message = "Password Format Invalid !"
-                        status_flag = False
-
-                    else:
-                        new_account = UserAccount(
-                            email=data['email'],
-                            password=Hasher(data['password']).messageDigest(),
-                            firstName=data['firstname'],
-                            lastName=data['lastname'],
-                            gender=data['gender'].upper(),
-                        )
-
-                        new_account.save()
-                        user = auth.models.User(username=data['email'])
-                        user.set_password(Hasher(data['password']).messageDigest())
-                        user.save()
-
-                except OTPManagement.DoesNotExist:
-                    error_message = "No OTP Generated !"
+                # check if the account is registered here 
+                count = UserAccount.objects.filter(email=data['email']).count()
+                if (count > 0):
+                    error_message = "User Account Existed !"
                     status_flag = False
+                else: 
+                    try:
+                        # check otp value
+                        otp_from_db = OTPManagement.objects.get(email=data['email'])
+                        if otp_from_db.is_expired() or otp_from_db.check_otp_matching(data['otp']):
+                            error_message = "OTP Value Invalid!"
+                            status_flag = False
 
+                        elif(data['password'] != data['repeat_password']):
+                            error_message = "Passwords Do Not Match !"
+                            status_flag = False
+
+                        elif not PasswordChecker.validate_password(data['password']):
+                            error_message = "Password Format Invalid !"
+                            status_flag = False
+
+                        else:
+                            new_account = UserAccount(
+                                email=data['email'],
+                                password=Hasher(data['password']).messageDigest(),
+                                firstName=data['firstname'],
+                                lastName=data['lastname'],
+                                gender=data['gender'].upper(),
+                            )
+
+                            new_account.save()
+                            user = auth.models.User(username=data['email'])
+                            user.set_password(Hasher(data['password']).messageDigest())
+                            user.save()
+
+                    except OTPManagement.DoesNotExist:
+                        error_message = "No OTP Generated !"
+                        status_flag = False
+
+            else:
+                status_flag = False
         else:
             status_flag = False
+            error_message = "Captcha Failed, Try again!"
 
         if status_flag:
             # redirect to login page if success
@@ -121,34 +139,48 @@ class EventOwnerLogin(View):
         error_message = "Incorrect Credentials"
         status_flag = True
 
-        if form.is_valid():
-            data = form.cleaned_data
-            user = auth.authenticate(username=data["email"], password=data["password"])
+        ''' Begin reCAPTCHA validation '''
+        recaptcha_response = request.POST.get('g-recaptcha-response')
+        url = 'https://www.google.com/recaptcha/api/siteverify'
+        captcha = {
+            'secret': settings.RECAPTCHA_KEY,
+            'response': recaptcha_response
+        }
+        r = requests.post(url, data=captcha)
+        result = r.json()
+        ''' End reCAPTCHA validation '''
+        if result['success']:
+            if form.is_valid():
+                data = form.cleaned_data
+                user = auth.authenticate(username=data["email"], password=data["password"])
 
-            if user is not None and user.is_active:
-                auth.login(request, user)
+                if user is not None and user.is_active:
+                    auth.login(request, user)
+                else:
+                    self.user_login_failed_attempts[data["email"]] = self.user_login_failed_attempts.get(data["email"], 0) + 1
+                    if self.user_login_failed_attempts[data["email"]] > 4 :
+                        try :
+                            deactivate_user = auth.models.User.objects.get(username=data["email"])
+                            deactivate_user.is_active = False
+                            deactivate_user.save()
+                            error_message = "Login Failed Attempts Exceed. Please Try Again in 5 Minutes !"
+
+                            # schedule the timeout task once only
+                            if self.user_login_failed_attempts[data["email"]] == 5:
+                                # unclock the accoount in 5 minutes 
+                                unlock_timer = Timer(300, self.unlock_user_account, (data["email"],))
+                                unlock_timer.start()
+                            
+                        except auth.models.User.DoesNotExist:
+                            print("No User Account Existed !")
+
+                    status_flag = False
+                print(self.user_login_failed_attempts)
             else:
-                self.user_login_failed_attempts[data["email"]] = self.user_login_failed_attempts.get(data["email"], 0) + 1
-                if self.user_login_failed_attempts[data["email"]] > 4 :
-                    try :
-                        deactivate_user = auth.models.User.objects.get(username=data["email"])
-                        deactivate_user.is_active = False
-                        deactivate_user.save()
-                        error_message = "Login Failed Attempts Exceed. Please Try Again in 5 Minutes !"
-
-                        # schedule the timeout task once only
-                        if self.user_login_failed_attempts[data["email"]] == 5:
-                            # unclock the accoount in 5 minutes 
-                            unlock_timer = Timer(300, self.unlock_user_account, (data["email"],))
-                            unlock_timer.start()
-                        
-                    except auth.models.User.DoesNotExist:
-                        print("No User Account Existed !")
-
                 status_flag = False
-            print(self.user_login_failed_attempts)
         else:
             status_flag = False
+            error_message = "Captcha Failed, Try again!"
 
         if status_flag:
             # redirect to home page if success
