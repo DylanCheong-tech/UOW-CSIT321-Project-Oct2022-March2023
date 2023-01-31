@@ -44,12 +44,39 @@ div#vote_booth form label:nth-child(3) {
     margin-top: 3vh;
 }
 
+div#vote_booth form label.options {
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    column-gap: 2vw;
+    padding: 1vh 1vw 1vh 1vw;
+    border: 1px solid #000000;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+div#vote_booth form label.options input[type=radio] {
+    display: none;
+}
+
+div#vote_booth form label.options:is(:hover, :has(input[type=radio]:checked)){
+    background: linear-gradient(180deg, #CDE7C8, #A1E994);
+}
+
 div#vote_booth form>:is(:not(label, button), label.options) {
     margin-left: 3vw;
 }
 
 div#vote_booth form button {
     align-self: flex-end;
+    margin-top: 5vh;
+    cursor: pointer;
+    background: linear-gradient(180deg, #78B8E9, #3997E6);
+    border: 1px solid #455f85;
+    border-radius: 5px;
+    color: #FFFFFF;
+    font-weight: bold;
+    padding: .8vh 1vw .8vh 1vw;
 }
 
 div#vote_booth form .hidden {

@@ -78,12 +78,12 @@
                         <span class="fields">
                             <input type="text" name="voteOption" placeholder="Vote Option" value="{{ item }}" {% if event_status and event_status == "PB" %} readonly {% else %} required {% endif %} />
                             {% if event_status and event_status == "PC" and forloop.counter > 2 %}
-                            <button type="button" onclick="removeOptions(event)">Remove</button>
+                            <button class="button_2" type="button" onclick="removeOptions(event)">Remove</button>
                             {% endif %}
                         </span>
                     {% endfor %}
                 {% endif %}
-                {% if not event_status or event_status == "PC" %}<button type="button" onclick="addOptions()" >Add More Options</button>{% endif %}
+                {% if not event_status or event_status == "PC" %}<button class="button_2" type="button" onclick="addOptions()" >Add More Options</button>{% endif %}
             </span>
 
             <span class="row_flex_flow voter_emails">
@@ -95,8 +95,8 @@
 
 
         <span class="row_flex_flow right_align">
-            <button type="button" onclick="backToHomepage()">Cancel</button>
-            <button id="submit_vote_event_btn" type="submit">Confirm</button>
+            <button class="button_2" type="button" onclick="backToHomepage()">Cancel</button>
+            <button class="button_4" id="submit_vote_event_btn" type="submit">Confirm</button>
         </span>
     </form>
 </div>

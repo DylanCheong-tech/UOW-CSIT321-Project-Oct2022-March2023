@@ -40,20 +40,9 @@ div#content_pane>div#left_pane span#side_menu_bar span.logout_section {
     align-items: center;
 }
 
-div#content_pane>div#left_pane span#side_menu_bar span.logout_section button {
-    cursor: pointer;
-    background-color: #3F54BE;
-    border: none;
-    border-radius: 1em;
-    color: #FFFFFF;
-    padding: 1.2vh 2.5vw 1.2vh 2.5vw;
-    margin: 2vh 0 5vh 0;
-}
-
 div#content_pane>div#left_pane span:not(#logo) {
     display: flex;
     flex-direction: column;
-    /* margin-left: 1.5vw; */
 }
 
 /* right pane styling */
@@ -62,6 +51,8 @@ div#content_pane>div#right_pane {
     width: 80vw;
     padding: 0 2vw 0 2vw;
     background-color: #F5F5F5;
+    max-height: 98vh;
+    overflow-y: scroll;
 }
 
 div#content_pane>div#right_pane div#header {
@@ -85,4 +76,67 @@ span#session_timeout_alert {
     background-color: #C9D3E2;
     margin: 1em;
     box-shadow: .5vw .8vh #CCCCCC;
+}
+
+/* buttons styling */
+
+button {
+    cursor: pointer;
+}
+
+.button_1 {
+    background-color: #3F54BE;
+    border: none;
+    border-radius: 1em;
+    color: #FFFFFF;
+    padding: 1.2vh 2.5vw 1.2vh 2.5vw;
+    margin: 2vh 0 5vh 0;
+}
+
+.button_2 {
+    background: linear-gradient(180deg, #ECECEC, #D7D7D7 75%);
+    border: 1px solid #C9D3E2;
+    border-radius: 5px;
+    color: #000000;
+    padding: .8vh 1vw .8vh 1vw;
+}
+
+.button_2:disabled {
+    cursor: not-allowed;
+    background: linear-gradient(180deg, #ECECEC, #FFFFFF 75%);
+    color: #C9D3E2;
+    padding: .8vh 1vw .8vh 1vw;
+}
+
+/* the file input button */
+input[type=file]::file-selector-button {
+    cursor: pointer;
+    background: linear-gradient(180deg, #ECECEC, #D7D7D7 75%);
+    border: 1px solid #C9D3E2;
+    border-radius: 5px;
+    color: #000000;
+    padding: .8vh 1vw .8vh 1vw;
+}
+
+.button_3 {
+    background: linear-gradient(180deg, #C9D3E2, #7DA6E4 75%);
+    border: 1px solid #455f85;
+    border-radius: 10px;
+    width: 5vw;
+    color: #000000;
+    padding: .8vh 0 .8vh 0;
+}
+
+.button_4 {
+    background: linear-gradient(180deg, #78B8E9, #3997E6);
+    border: 1px solid #455f85;
+    border-radius: 5px;
+    color: #FFFFFF;
+    font-weight: bold;
+    padding: .8vh 1vw .8vh 1vw;
+}
+
+/* input boxes ans drop down list styling */
+input:is([type=text], [type=date], [type=time]), select{
+    padding: .5vh 0 .5vh .5vw;
 }
