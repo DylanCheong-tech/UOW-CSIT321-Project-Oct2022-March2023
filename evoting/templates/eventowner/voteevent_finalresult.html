@@ -1,0 +1,89 @@
+<!-- voteevent_finalresult.html -->
+
+{% extends "eventowner/homepage_base.html" %}
+{% load static %}
+
+{% block tab_title %} {{ title }} {% endblock %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block js_scripts %}
+<script src="https://d3js.org/d3.v4.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<script src="{% static 'eventowner/js/voteevent_finalresult.js' %}"></script>
+{% endblock %}
+
+{% block stylesheet_links %}
+<link rel="stylesheet" href="{% static 'eventowner/css/voteevent_finalresult.css' %}" />
+{% endblock %}
+
+{% block email %}
+<span> {{UserDetails.email}}</span>
+{% endblock %}
+
+{% block introduction %}
+<span> Welcome, {{UserDetails.lastName}} {{UserDetails.firstName}}</span>
+{% endblock %}
+
+{% block content %}
+<div id="vote_final_result_page">
+    <div id="left_content_pane">
+        <label>Vote Event Name</label>
+        <span>{{FinalResultData.vote_event_name}}</span>
+
+        <label>Vote Question</label>
+        <span>{{FinalResultData.vote_event_question}}</span>
+
+        <label>Vote Option</label>
+        {% for option in FinalResultData.vote_options %}
+            <span>{{option.option}}</span>
+        {% endfor %}
+
+        <label>Participants : {{FinalResultData.voter_counts}}</label>
+        <table>
+            <tr class="header">
+                <th>Name</th>
+                <th>Email</th>
+            </tr>
+            {% for participants in FinalResultData.voters %}
+            <tr>
+                <td>{{participants.name}}</td>
+                <td>{{participants.email}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div id="right_content_pane">
+        <div id="vote_count_chart">
+            <h2>Statistic - Vote Option Counts</h2>
+        </div>
+
+        <div id="response_rate_chart">
+            <h2>Statistic - Response Rate</h2>
+        </div>
+    </div>
+</div>
+
+<div id="publish_button_bar">
+    <button type="button" onclick="window.history.back()">Back</button>
+    <form action="/evoting/eventowner/event/finalresult/publish/{{FinalResultData.vote_event_id}}" method="POST">
+        {% csrf_token %}
+        <button type="submit" onclick="publishFinalResult(event)" {% if FinalResultData.vote_event_status == "RP" %} disabled {% endif %}>Publish Final Result</button>
+    </form>
+</div>
+
+<span id="pop_out_message_box">
+    <h3>evoting.com</h3>
+    <p id="message_content"></p>
+    <p class="buttons">
+        <button id="cancel_btn" type="button" onclick="hide_pop_out_message_box()">Cancel</button>
+        <button id="confirm_btn" type="button">OK</button>
+    </p>
+</span>
+
+<script>
+    renderPieChart("vote_count_chart", preprocess_vote_data({{ FinalResultData.vote_options | safe }}))
+    renderPieChart("response_rate_chart", {{ FinalResultData.response_rate | safe }})
+</script>
+{% endblock %}

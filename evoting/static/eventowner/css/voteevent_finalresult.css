@@ -1,0 +1,104 @@
+/* voteevent_finalresult.css */
+
+/* left pane */
+div#vote_final_result_page {
+    display: flex;
+    flex-flow: row;
+    background-color: #FFFFFF;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    min-height: 80vh;
+    padding: 2vh 2vw 2vh 2vw;
+}
+
+div#vote_final_result_page>div {
+    width: 50%;
+}
+
+div#vote_final_result_page div#left_content_pane {
+    display: flex;
+    flex-flow: column;
+    justify-content: flex-start;
+    margin-top: 5vh;
+}
+
+div#vote_final_result_page div#left_content_pane label {
+    font-weight: bold;
+}
+
+div#vote_final_result_page div#left_content_pane label:not(:first-child) {
+    margin-top: 5vh;
+}
+
+div#vote_final_result_page div#left_content_pane table {
+    display: block;
+    align-self: center;
+    height: 20vh;
+    width: 30vw;
+    border-collapse: collapse;
+    overflow-y: scroll;
+}
+
+div#vote_final_result_page div#left_content_pane table tr.header {
+    position: sticky;
+    top: 0;
+}
+
+div#vote_final_result_page div#left_content_pane table tr th {
+    background-color: #CCCCCC;
+    width: 25vw;
+}
+
+div#vote_final_result_page div#left_content_pane table th, div#vote_final_result_page div#left_content_pane table td {
+    border: 0.5px solid #000000;
+}
+
+/* right pane */
+div#right_content_pane {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    row-gap: 5vh;
+}
+
+div#right_content_pane>div {
+    min-height: 30vh;
+    border: 1px solid #000000;
+    text-align: center;
+}
+
+div#right_content_pane>div svg {
+    width: 90%;
+    height: 40vh;
+    text-align: center;
+}
+
+div#publish_button_bar {
+    display: flex;
+    flex-flow: row;
+    justify-content: center;
+    column-gap: 5vw;
+    align-items: center;
+    background-color: #FFFFFF;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    min-height: 10vh;
+    padding: 2vh 2vw 2vh 2vw;
+    margin-bottom: 3vh;
+}
+
+/* pop_out_message_box */
+span#pop_out_message_box {
+    border: 1px #000000;
+    border-style: dashed;
+    border-radius: 12px;
+    text-align: center;
+    position: fixed;
+    width: 40vw;
+    top: 50vh;
+    left: 35vw;
+    background-color: #C9D3E2;
+    margin: 1em;
+    box-shadow: 1vw 1vh #CCCCCC;
+    display: none;
+}

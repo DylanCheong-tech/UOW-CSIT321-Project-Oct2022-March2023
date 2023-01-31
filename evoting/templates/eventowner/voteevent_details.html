@@ -98,18 +98,25 @@
                         </tr>
                         {% for participants in Voter %}
                         <tr>
-                            <td>{{participants.voter}}</td>
-                            <td>{{participants.voterEmail}}</td>
+                            <td>{{participants.name}}</td>
+                            <td>{{participants.email}}</td>
                         </tr>
                         {% endfor %}
                     </table>
             </div>
         </span>
         <div id="action_buttons">
-            <button type="button" onclick="backToHomepage()">Back</button>
-            <button type="button">View Final Result</button>
+            <button type="button" onclick="window.history.back()">Back</button>
+            <button type="button" {% if VoteDetails.status != "FR" and VoteDetails.status != "RP" %} disabled {% endif %} onclick="window.location.href='/evoting/eventowner/event/finalresult/' + '{{VoteDetails.eventNo}}'" >View Final Result</button>
         </div>
     </div>
 </div>
 
+<span id="pop_out_message_box">
+    <h3>evoting.com</h3>
+    <p id="message_content"></p>
+    <p class="buttons">
+        <button id="confirm_btn" type="button">OK</button>
+    </p>
+</span>
 {% endblock %}

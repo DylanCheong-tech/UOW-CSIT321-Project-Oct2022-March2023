@@ -1,0 +1,36 @@
+<!-- result_page.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vote Results</title>
+
+    <link rel="stylesheet" href="{% static 'voter/css/result_page.css' %}" />
+</head>
+
+<body>
+    <div id="result_booth">
+        <span>Vote Result Booth</span>
+        <h1>{{final_result_info.eventTitle}}</h1>
+        <div id="result_pane">
+            <label class="span2">Vote Question</label>
+            <span class="span2">{{final_result_info.eventQuestion}}</span>
+
+            <label class="span2 top_space">Vote Options</label>
+            {% for option in final_result_info.voteOptions %}
+                <span>{{option.option}}</span>
+                <span class="counts">{{option.counts}}</span>
+            {% endfor %}
+
+            <label class="span2 center">Vote Winner</label>
+            <span class="span2 center">{{final_result_info.majorVoteOption}}</span>
+        </div>
+    </div>
+</body>
+
+</html>

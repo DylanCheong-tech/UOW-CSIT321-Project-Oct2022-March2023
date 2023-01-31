@@ -1,0 +1,75 @@
+<!-- completed_voteevent.html -->
+
+{% extends "eventowner/homepage_base.html" %}
+{% load static %}
+{% load extrahelper %}
+
+{% block tab_title %} {{ title }} {% endblock %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block js_scripts %}
+<script src="{% static 'eventowner/js/completed_voteevent.js' %}"></script>
+{% endblock %}
+
+{% block stylesheet_links %}
+<link rel="stylesheet" href="{% static 'eventowner/css/completed_voteevent.css' %}" />
+{% endblock %}
+
+{% block email %}
+<span> {{UserDetails.email}}</span>
+{% endblock %}
+
+{% block introduction %}
+<span> Welcome, {{UserDetails.lastName}} {{UserDetails.firstName}}</span>
+{% endblock %}
+
+{% block content %}
+<div id="completed_vote_event_page">
+    <div id="summary">
+        <h2>Summary</h2>
+        {% for countitem, labelitem in EventDetail %}
+            {{labelitem}}{{countitem}} <br/>
+        {% endfor %}
+    </div>
+
+    <div id="completed_vote_events">
+        <span>
+            <h2>Completed Vote Events</h2>
+            <input type="text" placeholder="Search" />
+            <select>
+                <option>Seq No.</option>
+            </select>
+        </span>
+    
+        <table>
+            <tr class="header">
+                <th>Seq No</th>
+                <th>Name</th>
+                <th>Event Date</th>
+                <th>Event Time</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+            {% if not VoteEvents %}
+            <tr class="no_records">
+                <td colspan="6">You have no Vote Event records, let's create one !</td>
+            </tr>
+            {% endif %}
+            {% for event in VoteEvents %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{event.eventTitle}}</td>
+                <td>{{event|concat_period:'date'|linebreaks}}</td>
+                <td>{{event|concat_period:'time'|linebreaks}}</td>
+                <td>{{event|status_abbreviation}}</td>
+                <td class="buttons_col">
+                    <button type="button" onclick="window.location.href='/evoting/eventowner/viewevent/' + '{{event.eventNo}}'">View</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+{% endblock %}

@@ -14,9 +14,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, re_path
+from .url_fallback_views import URLsFallBackView
 
 urlpatterns = [
-    path('evoting/', include("evoting.urls")),
+    path('evoting/', include("evoting.urls.public_urls")),
+    path('evoting/eventowner/', include("evoting.urls.eventowner_urls")),
+    path('evoting/voter/', include("evoting.urls.voter_urls")),
     path('admin/', admin.site.urls),
+    re_path(r'^.*$', URLsFallBackView.as_view()),
 ]

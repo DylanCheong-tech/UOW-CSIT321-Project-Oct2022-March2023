@@ -1,0 +1,28 @@
+<!-- error_page.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+
+    <link rel="stylesheet" href="{% static 'error_page.css' %}" />
+
+</head>
+
+<body>
+    <div id="error_content">
+       <h1 id="error_code">{{error_code}}</h1>
+       <h1 id="error_summary_message">{{error_summary_message}}</h1>
+       <p id="error_message">
+            {{error_message}}
+       </p>
+       <button type="button" onclick="window.location.href = '/evoting'">Return Home</button>
+    </div>
+</body>
+
+</html>

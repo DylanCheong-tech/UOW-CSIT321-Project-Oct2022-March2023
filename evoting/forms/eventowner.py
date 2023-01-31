@@ -26,5 +26,5 @@ class VoteEventForm(forms.Form):
     endTime = forms.TimeField(label="End Time")
     eventQuestion = forms.CharField(label="Event Question")
     voteOption = forms.CharField(label="Vote Option")
-    voterEmail = forms.FileField()
+    voterEmail = forms.FileField(required=False)
 

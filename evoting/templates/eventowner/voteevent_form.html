@@ -32,12 +32,12 @@
         {% csrf_token %}
         <label>Vote Event Name<span class="red_asterisk">*</span></label>
         <input type="text" name="eventTitle" placeholder="Vote Event Name" value="{{ form.eventTitle.value }}" 
-            {% if event_status and event_status == "PB" %} disabled {% else %} required {% endif %}/>
+            {% if event_status and event_status == "PB" %} readonly {% else %} required {% endif %}/>
 
         <span class="row_flex_flow">
             <label>
                 Vote Start Date<span class="red_asterisk">*</span>:
-                <input type="date" name="startDate" value="{{ form.startDate.value }}" {% if event_status and event_status == "PB" %} disabled {% else %} required {% endif %} />
+                <input type="date" name="startDate" value="{{ form.startDate.value }}" {% if event_status and event_status == "PB" %} readonly {% else %} required {% endif %} />
             </label>
 
             <label>
@@ -49,7 +49,7 @@
         <span class="row_flex_flow">
             <label>
                 Vote Start Time<span class="red_asterisk">*</span>:
-                <input type="time" name="startTime" value="{{ form.startTime.value }}" {% if event_status and event_status == "PB" %} disabled {% else %} required {% endif %} />
+                <input type="time" name="startTime" value="{{ form.startTime.value }}" {% if event_status and event_status == "PB" %} readonly {% else %} required {% endif %} />
 
             </label>
 
@@ -61,7 +61,7 @@
 
 
         <label>Vote Question<span class="red_asterisk">*</span></label>
-        <input type="text" name="eventQuestion" placeholder="Vote Question" value="{{ form.eventQuestion.value }}" {% if event_status and event_status == "PB" %} disabled {% else %} required {% endif %} />
+        <input type="text" name="eventQuestion" placeholder="Vote Question" value="{{ form.eventQuestion.value }}" {% if event_status and event_status == "PB" %} readonly {% else %} required {% endif %} />
 
         <span class="row_flex_flow options_and_file">
             <span id="vote_options">
@@ -76,19 +76,19 @@
                 {% else%}
                     {% for item in voteOptions %}
                         <span class="fields">
-                            <input type="text" name="voteOption" placeholder="Vote Option" value="{{ item }}" {% if event_status and event_status == "PB" %} disabled {% else %} required {% endif %} />
+                            <input type="text" name="voteOption" placeholder="Vote Option" value="{{ item }}" {% if event_status and event_status == "PB" %} readonly {% else %} required {% endif %} />
                             {% if event_status and event_status == "PC" and forloop.counter > 2 %}
                             <button type="button" onclick="removeOptions(event)">Remove</button>
                             {% endif %}
                         </span>
                     {% endfor %}
                 {% endif %}
-                <button type="button" onclick="addOptions()" {% if event_status and event_status == "PB" %} disabled {% endif %}>Add More Options</button>
+                {% if not event_status or event_status == "PC" %}<button type="button" onclick="addOptions()" >Add More Options</button>{% endif %}
             </span>
 
             <span class="row_flex_flow voter_emails">
-                <label>Participants<span class="red_asterisk">*</span>:</label>
-                <input type="file" name="voterEmail" accept=".csv" required />
+                <label>Participants {% if not event_status %} <span class="red_asterisk">*</span> {% endif %}:</label>
+                <input type="file" name="voterEmail" accept=".csv" {% if not event_status %} required {% endif %} />
                 <a id="csv_downloader" href="" target="_blank" download="Voter_Email_CSV">Download CSV Template</a>
             </span>
         </span>
@@ -96,7 +96,7 @@
 
         <span class="row_flex_flow right_align">
             <button type="button" onclick="backToHomepage()">Cancel</button>
-            <button type="submit">Confirm</button>
+            <button id="submit_vote_event_btn" type="submit">Confirm</button>
         </span>
     </form>
 </div>

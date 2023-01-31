@@ -36,6 +36,16 @@ div#content div#vote_event_form form>input {
     margin-bottom: 3vh;
 }
 
+div#content div#vote_event_form form input:read-only:not([type=file]) {
+    background-color: transparent;
+    color: #535353;
+    border: none;
+}
+
+div#content div#vote_event_form form input:read-only:not([type=file]):focus {
+    outline: none;
+}
+
 div#content div#vote_event_form form span.red_asterisk {
     color: #800000;
 }
