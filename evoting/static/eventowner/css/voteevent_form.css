@@ -57,8 +57,17 @@ div#content div#vote_event_form form span.row_flex_flow {
     margin-bottom: 3vh;
 }
 
+div#content div#vote_event_form form span.row_flex_flow label {
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    width: 30vw;
+}
+
 div#content div#vote_event_form form span.row_flex_flow label input:not([type=file]) {
     width: 12vw;
+    margin-left: auto;
+    margin-right: 5vw;
 }
 
 div#content div#vote_event_form form span.options_and_file {

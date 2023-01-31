@@ -66,10 +66,10 @@
 </div>
 
 <div id="publish_button_bar">
-    <button type="button" onclick="window.history.back()">Back</button>
+    <button class="button_2" type="button" onclick="window.history.back()">Back</button>
     <form action="/harpocryption/eventowner/event/finalresult/publish/{{FinalResultData.vote_event_id}}" method="POST">
         {% csrf_token %}
-        <button type="submit" onclick="publishFinalResult(event)" {% if FinalResultData.vote_event_status == "RP" %} disabled {% endif %}>Publish Final Result</button>
+        <button class="button_2" type="submit" onclick="publishFinalResult(event)" {% if FinalResultData.vote_event_status == "RP" %} disabled {% endif %}>Publish Final Result</button>
     </form>
 </div>
 
@@ -77,8 +77,8 @@
     <h3>harpocryption.com</h3>
     <p id="message_content"></p>
     <p class="buttons">
-        <button id="cancel_btn" type="button" onclick="hide_pop_out_message_box()">Cancel</button>
-        <button id="confirm_btn" type="button">OK</button>
+        <button class="button_3" id="cancel_btn" type="button" onclick="hide_pop_out_message_box()">Cancel</button>
+        <button class="button_3" id="confirm_btn" type="button">OK</button>
     </p>
 </span>
 

@@ -19,3 +19,13 @@ div#error_content {
     justify-content: space-evenly;
     align-items: center;
 }
+
+button {
+    cursor: pointer;
+    background-color: #3F54BE;
+    border: none;
+    border-radius: 1em;
+    color: #FFFFFF;
+    padding: 1.2vh 2.5vw 1.2vh 2.5vw;
+    margin: 2vh 0 5vh 0;
+}

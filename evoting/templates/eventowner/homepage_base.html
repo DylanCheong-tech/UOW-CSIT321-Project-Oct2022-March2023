@@ -35,7 +35,7 @@
                     {% endblock %}
                     <form action="/harpocryption/eventowner/logout" method="POST">
                         {% csrf_token %}
-                        <button id="logout_btn" type="submit" onclick="logout()">Log out</button>
+                        <button class="button_1" id="logout_btn" type="submit" onclick="logout()">Log out</button>
                     </form>
                 </span>
             </span>
@@ -57,7 +57,7 @@
     </div>
     <span id="session_timeout_alert">
         <p>You session is going to expire. Please confirm your session by clicking "OK" button</p>
-        <button type="button" onclick="confirming_session()">OK</button>
+        <button class="button_3" type="button" onclick="confirming_session()">OK</button>
     </span>
 </body>
 

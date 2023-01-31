@@ -17,6 +17,7 @@ function addOptions() {
 
     newRemoveButton = document.createElement("button");
     newRemoveButton.type = "button";
+    newRemoveButton.classList.add("button_2");
     newRemoveButton.innerHTML = "Remove";
     newRemoveButton.onclick = removeOptions.bind(event);
 
