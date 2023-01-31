@@ -1,4 +1,4 @@
-/* completed_voteevent.css */
+/* ongoing_completed_voteevent.css */
 
 div#completed_vote_event_page {
     display: flex;
@@ -22,7 +22,7 @@ div#completed_vote_event_page div#completed_vote_events>span h2 {
 
 div#completed_vote_event_page div#completed_vote_events table {
     display: block;
-    height: 50vh;
+    max-height: 45vh;
     border-collapse: collapse;
     overflow-y: scroll;
 }

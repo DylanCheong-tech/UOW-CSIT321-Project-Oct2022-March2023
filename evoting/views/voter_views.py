@@ -4,10 +4,13 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views import View
 
+from django.db.models import Q
+
 # Models imports
 from ..models import VoteEvent
 from ..models import VoteOption
 from ..models import Voter
+from ..models import VotingPool
 
 # Forms imports 
 from ..forms.voter import VoteForm
@@ -55,7 +58,8 @@ class VoterVoteForm(View):
 				raise Exception
 
 			# check if the voter is casted the vote before 
-			if voter.castedVote != "NOT APPLICABLE":
+			voter_voted_count = VotingPool.objects.filter(Q(eventNo_id=vote_event_id) & Q(voter_id=voter.id)).count()
+			if voter_voted_count > 0:
 				error_message = "Voter has been voted, no access allowed !"
 				error_summary_message = "Forbidden Request Received"
 				error_code = 403
@@ -64,13 +68,13 @@ class VoterVoteForm(View):
 			vote_options = VoteOption.objects.filter(eventNo_id=vote_event_id)
 
 			# get the private keys to decrypt the option name
-			(private_key, _) = read_private_key(vote_event.createdBy_id, vote_event_id)
+			(private_key, salt) = read_private_key(vote_event.createdBy_id, vote_event_id)
 
 			# organise the vote event information to be rendered on the page 
 			vote_event_info = {
-				"eventTitle" : decrypt_str(vote_event.eventTitle, private_key),
-				"eventQuestion" : decrypt_str(vote_event.eventQuestion, private_key),
-				"voteOptions" : [{"option" : decrypt_str(x.voteOption, private_key), "encoding" : x.voteEncoding} for x in vote_options]
+				"eventTitle" : decrypt_str(vote_event.eventTitle, private_key, salt),
+				"eventQuestion" : decrypt_str(vote_event.eventQuestion, private_key, salt),
+				"voteOptions" : [{"option" : decrypt_str(x.voteOption, private_key, salt), "encoding" : x.voteEncoding} for x in vote_options]
 			}
 
 			# organise the voter information to be rendered on the page 
@@ -130,15 +134,20 @@ class VoterVoteForm(View):
 					raise Exception
 
 				# check if the voter is casted the vote before 
-				if voter.castedVote != "NOT APPLICABLE":
+				voter_voted_count = VotingPool.objects.filter(Q(eventNo_id=vote_event_id) & Q(voter_id=voter.id)).count()
+				if voter_voted_count > 0:
 					error_message = "Voter Has Already Voted !"
 					error_summary_message = "Forbidden Request Received"
 					error_code = 403
 					raise Exception
 
 				# write the casted vote option to the system database 
-				voter.castedVote = data["voteOption"]
-				voter.save()
+				vote_record = VotingPool(
+					eventNo_id = vote_event_id,
+					voter_id = voter.id,
+					castedVote = data["voteOption"]
+				)
+				vote_record.save()
 
 				return render(request, "voter/vote_form.html", {"vote_status" : "success"})
 
@@ -209,9 +218,9 @@ class VoterViewFinalResult(View):
 
 			# organise the vote event information to be rendered on the page 
 			final_result_info = {
-				"eventTitle" : decrypt_str(vote_event.eventTitle, private_key),
-				"eventQuestion" : decrypt_str(vote_event.eventQuestion, private_key),
-				"voteOptions" : [{"option" : decrypt_str(x.voteOption, private_key), "counts" : int(decrypt_int(int(x.voteTotalCount), private_key) / int(salt))} for x in vote_options],
+				"eventTitle" : decrypt_str(vote_event.eventTitle, private_key, salt),
+				"eventQuestion" : decrypt_str(vote_event.eventQuestion, private_key, salt),
+				"voteOptions" : [{"option" : decrypt_str(x.voteOption, private_key, salt), "counts" : int((decrypt_int(int(x.voteTotalCount), private_key) - salt) / int(salt))} for x in vote_options],
 			}
 			# get the majority vote option name
 			final_result_info["majorVoteOption"] = max(final_result_info["voteOptions"], key=lambda k : k["counts"], default="None")["option"]

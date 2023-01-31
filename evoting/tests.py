@@ -17,7 +17,6 @@ from .homo_encryption import *
 import rsa
 import random
 from datetime import datetime
-import mysql.connector
 import threading 
 
 # Sprint 1 Unit Tests
@@ -654,6 +653,20 @@ class HomomorphicEncryptionModuleTest(TestCase):
 		remove_private_key(567, 567)
 
 
+	def testGeneratePaddingValues(self):
+		"""
+		Test Data :
+		- salt : 564
+
+		Expected Resuts:
+			Resutl a string with length of (564 % 8) = 4 random characters and digits value
+		"""
+
+		padding_value = padding_values_generation(564)
+
+		self.assertEqual(len(padding_value), 4)
+
+
 	def testIntegerEncryptionAndDecryptionOnSameKeys(self):
 		"""
 		Test Data:
@@ -724,14 +737,14 @@ class HomomorphicEncryptionModuleTest(TestCase):
 			The Decryption should be able to reveal back the original value as string from the cipher 
 		"""
 
-		(public, _) = key_generation(567, 567, 1024)
-		(private, _) = read_private_key(567, 567)
+		(public, salt_1) = key_generation(567, 567, 1024)
+		(private, salt_2) = read_private_key(567, 567)
 
-		cipher = encrypt_str("Secret Message !", public)
+		cipher = encrypt_str("Secret Message !", public, salt_1)
 
 		self.assertIsInstance(cipher, bytes)
 
-		plaintext = decrypt_str(cipher, private)
+		plaintext = decrypt_str(cipher, private, salt_2)
 		
 		self.assertIsInstance(plaintext, str)
 		self.assertEqual(plaintext, "Secret Message !")
@@ -752,16 +765,16 @@ class HomomorphicEncryptionModuleTest(TestCase):
 			The Decryption would not be able to reveal back the original value from the cipher 
 		"""
 
-		(public_1, _) = key_generation(567, 567, 1024)
+		(public_1, salt_1) = key_generation(567, 567, 1024)
 
 		key_generation(234, 234, 1024)
-		(private_2, _) = read_private_key(234, 234)
+		(private_2, salt_2) = read_private_key(234, 234)
 
-		cipher = encrypt_str("Another Secret Message !", public_1)
+		cipher = encrypt_str("Another Secret Message !", public_1, salt_1)
 
 		self.assertIsInstance(cipher, bytes)
 
-		self.assertRaisesMessage(rsa.pkcs1.DecryptionError, "Decryption failed", decrypt_str, cipher, private_2,)
+		self.assertRaisesMessage(rsa.pkcs1.DecryptionError, "Decryption failed", decrypt_str, cipher, private_2, salt_2, )
 
 		remove_private_key(567, 567)
 		remove_private_key(234, 234)

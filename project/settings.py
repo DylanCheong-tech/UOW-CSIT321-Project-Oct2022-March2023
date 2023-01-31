@@ -13,7 +13,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv, find_dotenv
 
-# Get environment variables
+# Get and load environment variables
 load_dotenv(find_dotenv())
 RECAPTCHA_KEY = str(os.getenv("recaptcha-secret"))
 DJANGO_KEY = os.getenv("django-secret")
@@ -87,11 +87,11 @@ WSGI_APPLICATION = 'project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'evoting',
-        'USER': 'evoting_django',
-        'PASSWORD': 'django_password',
-        'HOST':'127.0.0.1',
-        'PORT':'3306',
+        'NAME': os.getenv("MYSQL_DATABASE_NAME"),
+        'USER': os.getenv("MYSQL_USER"),
+        'PASSWORD': os.getenv("MYSQL_PASSWORD"),
+        'HOST': os.getenv("MYSQL_HOST"),
+        'PORT': os.getenv("MYSQL_PORT"),
     }
 }
 
