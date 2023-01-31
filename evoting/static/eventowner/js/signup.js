@@ -15,7 +15,7 @@ function requestOTP() {
     }
     else {
         message_box_ele.firstElementChild.innerHTML = "Requested OTP has been sent to your mailbox !"
-        fetch("/evoting/eventowner/getOTP?email=" + email_ele.value)
+        fetch("/harpocryption/eventowner/getOTP?email=" + email_ele.value)
             .then(console.log)
     }
     

@@ -24,15 +24,15 @@
                 logo here
             </span>
             <span id="side_menu_bar">
-                <span class="menu_item" onclick="window.location.href='/evoting/eventowner/homepage'">Overview</span>
-                <span class="menu_item" onclick="window.location.href='/evoting/eventowner/ongoingevent'">Ongoing Vote Events</span>
-                <span class="menu_item" onclick="window.location.href='/evoting/eventowner/completedevent'">Completed Vote Events</span>
+                <span class="menu_item" onclick="window.location.href='/harpocryption/eventowner/homepage'">Overview</span>
+                <span class="menu_item" onclick="window.location.href='/harpocryption/eventowner/ongoingevent'">Ongoing Vote Events</span>
+                <span class="menu_item" onclick="window.location.href='/harpocryption/eventowner/completedevent'">Completed Vote Events</span>
                 <span class="menu_item last_item">FAQ</span>
 
                 <span class="logout_section">
                     {% block email %}
                     {% endblock %}
-                    <form action="/evoting/eventowner/logout" method="POST">
+                    <form action="/harpocryption/eventowner/logout" method="POST">
                         {% csrf_token %}
                         <button class="button_1" id="logout_btn" type="submit" onclick="logout()">Log out</button>
                     </form>

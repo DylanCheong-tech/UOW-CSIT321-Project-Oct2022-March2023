@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // back to home page button
 function backToHomepage(){
-    window.location.href = "/evoting/eventowner/homepage"
+    window.location.href = "/harpocryption/eventowner/homepage"
 }
 
 // preprocess the form data before submit 

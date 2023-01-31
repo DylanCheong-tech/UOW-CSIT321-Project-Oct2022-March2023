@@ -92,7 +92,7 @@ class EventOwnerCreateAccountView(View):
 
         if status_flag:
             # redirect to login page if success
-            return redirect("/evoting/eventowner/login")
+            return redirect("/harpocryption/eventowner/login")
         else:
             return render(request, "eventowner/signup.html", {"status": error_message, "form": form}, status=400)
 
@@ -152,7 +152,7 @@ class EventOwnerLogin(View):
 
         if status_flag:
             # redirect to home page if success
-            return redirect("/evoting/eventowner/homepage")
+            return redirect("/harpocryption/eventowner/homepage")
         else:
             return render(request, "eventowner/login.html", {"status": error_message, "form": form},status=401)
 
@@ -169,7 +169,7 @@ class EventOwnerHomePage(View):
     def get(self, request):
         # check authentication 
         if not request.user.is_authenticated:
-            return redirect("/evoting/eventowner/login")
+            return redirect("/harpocryption/eventowner/login")
 
         # render the overview page with information
         current_user = UserAccount.objects.get(email=request.user.username)
@@ -198,25 +198,25 @@ class EventOwnerLogout(View):
     def post(self, request):
         # redirect back to the login page
         auth.logout(request)
-        return redirect("/evoting/eventowner/login")
+        return redirect("/harpocryption/eventowner/login")
 
 class EventOwnerCreateNewVoteEvent(View):
     def get(self, request):
         # check authentication 
         if not request.user.is_authenticated:
-            return redirect("/evoting/eventowner/login")
+            return redirect("/harpocryption/eventowner/login")
 
         #  get the current authenticated user
         current_user = UserAccount.objects.get(email=request.user.username)
         current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName}
 
         # render the static page
-        return render(request, "eventowner/voteevent_form.html", {"title" : "Create New Vote Event", "form_action" : "/evoting/eventowner/createevent", "UserDetails":current_user})
+        return render(request, "eventowner/voteevent_form.html", {"title" : "Create New Vote Event", "form_action" : "/harpocryption/eventowner/createevent", "UserDetails":current_user})
 
     def post(self,request):
         # check authentication 
         if not request.user.is_authenticated:
-            return redirect("/evoting/eventowner/login")
+            return redirect("/harpocryption/eventowner/login")
 
         form = VoteEventForm(request.POST, request.FILES)
 
@@ -291,15 +291,15 @@ class EventOwnerCreateNewVoteEvent(View):
 
         if status_flag:
             # redirect to home page if success
-            return redirect("/evoting/eventowner/homepage")
+            return redirect("/harpocryption/eventowner/homepage")
         else:
-            return render(request, "eventowner/voteevent_form.html", {"title" : "Create New Vote Event", "form_action" : "/evoting/eventowner/createevent", "status": error_message, "form": form, "voteOptions" : options_list},status=400)  
+            return render(request, "eventowner/voteevent_form.html", {"title" : "Create New Vote Event", "form_action" : "/harpocryption/eventowner/createevent", "status": error_message, "form": form, "voteOptions" : options_list},status=400)  
 
 class EventOwnerUpdateVoteEvent(View):
     def get(self, request, eventNo):
         # check authentication 
         if not request.user.is_authenticated:
-            return redirect("/evoting/eventowner/login")
+            return redirect("/harpocryption/eventowner/login")
 
         #  get the current authenticated user
         current_user = UserAccount.objects.get(email=request.user.username)
@@ -312,7 +312,7 @@ class EventOwnerUpdateVoteEvent(View):
         This may happened when the user access the other user vote event objects
         """
         if (vote_event.count() == 0):
-            return redirect("/evoting/eventowner/homepage")
+            return redirect("/harpocryption/eventowner/homepage")
 
         options = VoteOption.objects.filter(eventNo=vote_event[0].eventNo)
         options_list = []
@@ -339,13 +339,13 @@ class EventOwnerUpdateVoteEvent(View):
         current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName}
 
         # render the static page
-        return render(request, "eventowner/voteevent_form.html", {"title" : "Update Vote Event", "form_action" : "/evoting/eventowner/updateevent/" + str(eventNo), "form": form, "voteOptions" : options_list, "event_status" : data["status"], "UserDetails":current_user})
+        return render(request, "eventowner/voteevent_form.html", {"title" : "Update Vote Event", "form_action" : "/harpocryption/eventowner/updateevent/" + str(eventNo), "form": form, "voteOptions" : options_list, "event_status" : data["status"], "UserDetails":current_user})
 
 
     def post(self, request, eventNo):
         # check authentication 
         if not request.user.is_authenticated:
-            return redirect("/evoting/eventowner/login")
+            return redirect("/harpocryption/eventowner/login")
 
         form = VoteEventForm(request.POST, request.FILES)
 
@@ -365,7 +365,7 @@ class EventOwnerUpdateVoteEvent(View):
                 """
                 This may happened when the user access the other user vote event objects
                 """
-                return redirect("/evoting/eventowner/homepage")
+                return redirect("/harpocryption/eventowner/homepage")
 
             vote_event_status = vote_event.status
 
@@ -452,15 +452,15 @@ class EventOwnerUpdateVoteEvent(View):
 
         if status_flag:
             # redirect to home page if success
-            return redirect("/evoting/eventowner/homepage")
+            return redirect("/harpocryption/eventowner/homepage")
         else:
-            return render(request, "eventowner/voteevent_form.html", {"title" : "Update Vote Event", "form_action" : "/evoting/eventowner/updateevent/" + str(eventNo), "status": error_message, "form": form, "voteOptions" : options_list})  
+            return render(request, "eventowner/voteevent_form.html", {"title" : "Update Vote Event", "form_action" : "/harpocryption/eventowner/updateevent/" + str(eventNo), "status": error_message, "form": form, "voteOptions" : options_list})  
 
 class EventOwnerViewVoteEvent(View):
     def get(self, request, eventNo):
         # check authentication 
         if not request.user.is_authenticated:
-            return redirect("/evoting/eventowner/login")
+            return redirect("/harpocryption/eventowner/login")
         
         #  get the current authenticated user
         current_user = UserAccount.objects.get(email=request.user.username)
@@ -474,7 +474,7 @@ class EventOwnerViewVoteEvent(View):
             """
             This may happened when the user access the other user vote event objects
             """
-            return redirect("/evoting/eventowner/homepage")
+            return redirect("/harpocryption/eventowner/homepage")
 
         # get the current vote event details
         vote_options = VoteOption.objects.filter(eventNo_id=vote_event)
@@ -498,7 +498,7 @@ class EventOwnerDeleteVoteEvent(View):
     def post(self, request, eventNo):
         # check authentication 
         if not request.user.is_authenticated:
-            return redirect("/evoting/eventowner/login")
+            return redirect("/harpocryption/eventowner/login")
 
         # get the current authenticated user
         current_user = UserAccount.objects.get(email=request.user.username)
@@ -515,14 +515,14 @@ class EventOwnerDeleteVoteEvent(View):
             print("Error On Deleting a Vote Event, eventNo = " + str(eventNo))
 
         # redirect to the same page as a refresh 
-        return redirect("/evoting/eventowner/homepage")
+        return redirect("/harpocryption/eventowner/homepage")
 
 
 class EventOwnerConfirmVoteEvent(View):
     def post(self, request, eventNo):
         # check authentication 
         if not request.user.is_authenticated:
-            return redirect("/evoting/eventowner/login")
+            return redirect("/harpocryption/eventowner/login")
 
         # get the current authenticated user
         current_user = UserAccount.objects.get(email=request.user.username)
@@ -553,7 +553,7 @@ class EventOwnerConfirmVoteEvent(View):
                 option.save()
 
             # send out the invitation email to the voters
-            host_origin = "http://" + request.get_host() + "/evoting/voter"
+            host_origin = "http://" + request.get_host() + "/harpocryption/voter"
             event_owner_name = current_user.firstName + " " + current_user.lastName
             vote_event_name = vote_event.eventTitle
 
@@ -577,13 +577,13 @@ class EventOwnerConfirmVoteEvent(View):
             print("Vote Event is published or not applicable to be published.")
 
         # redirect to the same page as a refresh 
-        return redirect("/evoting/eventowner/homepage")
+        return redirect("/harpocryption/eventowner/homepage")
 
 class EventOwnerViewVoteEventFinalResult(View):
     def get(self, request, eventNo):
         # check authentication 
         if not request.user.is_authenticated:
-            return redirect("/evoting/eventowner/login")
+            return redirect("/harpocryption/eventowner/login")
         
         #  get the current authenticated user
         current_user = UserAccount.objects.get(email=request.user.username)
@@ -634,18 +634,18 @@ class EventOwnerViewVoteEventFinalResult(View):
             This may happened when the user access the other user vote event objects
             """
             print("Vote Ecent Does Not Exists !")
-            return redirect("/evoting/eventowner/homepage")
+            return redirect("/harpocryption/eventowner/homepage")
 
         except Exception:
             print(error_message)
-            return redirect("/evoting/eventowner/viewevent/" + str(eventNo) + "?view_final=fail")
+            return redirect("/harpocryption/eventowner/viewevent/" + str(eventNo) + "?view_final=fail")
             
 
 class EventOwnerPublishVoteEventFinalResult(View):
     def post(self, request, eventNo):
         # check authentication 
         if not request.user.is_authenticated:
-            return redirect("/evoting/eventowner/login")
+            return redirect("/harpocryption/eventowner/login")
         
         #  get the current authenticated user
         current_user = UserAccount.objects.get(email=request.user.username)
@@ -660,7 +660,7 @@ class EventOwnerPublishVoteEventFinalResult(View):
                 raise Exception
 
             # send out the invitation email to the voters
-            host_origin = "http://" + request.get_host() + "/evoting/voter/finalresult"
+            host_origin = "http://" + request.get_host() + "/harpocryption/voter/finalresult"
             vote_event_name = vote_event.eventTitle
 
             # generate authentication token for each voter and save it into the database 
@@ -680,7 +680,7 @@ class EventOwnerPublishVoteEventFinalResult(View):
             vote_event.status = "RP";
             vote_event.save()
 
-            return redirect("/evoting/eventowner/event/finalresult/" + str(eventNo) + "?publish_status=success")
+            return redirect("/harpocryption/eventowner/event/finalresult/" + str(eventNo) + "?publish_status=success")
 
         except VoteEvent.DoesNotExist:
             # if no object retreive from the database, redirect to the homepage
@@ -692,13 +692,13 @@ class EventOwnerPublishVoteEventFinalResult(View):
         except Exception:
             print(error_message)
 
-        return redirect("/evoting/eventowner/viewevent/" + str(eventNo) + "?publish_status=fail")
+        return redirect("/harpocryption/eventowner/viewevent/" + str(eventNo) + "?publish_status=fail")
 
 class EventOwnerViewOnGoingVoteEvents(View):
     def get(self, request):
         # check authentication 
         if not request.user.is_authenticated:
-            return redirect("/evoting/eventowner/login")
+            return redirect("/harpocryption/eventowner/login")
         
         #  get the current authenticated user
         current_user = UserAccount.objects.get(email=request.user.username)
@@ -727,7 +727,7 @@ class EventOwnerViewCompletedVoteEvents(View):
     def get(self, request):
         # check authentication 
         if not request.user.is_authenticated:
-            return redirect("/evoting/eventowner/login")
+            return redirect("/harpocryption/eventowner/login")
         
         #  get the current authenticated user
         current_user = UserAccount.objects.get(email=request.user.username)

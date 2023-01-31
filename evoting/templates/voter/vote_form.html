@@ -21,7 +21,7 @@
     <div id="vote_acknowledge_page">
         <h1>Vote Acknowledgement</h1>
         <p>We have received you casted vote option. Thank you !</p>
-        <button type="button" onclick="window.location.href = '/evoting'">Return Home</button>
+        <button type="button" onclick="window.location.href = '/harpocryption'">Return Home</button>
     </div>
     {% else %}
     <div id="vote_booth">
@@ -31,7 +31,7 @@
             <span>{{ voter_info.name }}</span>
         </div>
         <h1>{{ vote_event_info.eventTitle }}</h1>
-        <form action="/evoting/voter/vote" method="POST">
+        <form action="/harpocryption/voter/vote" method="POST">
             {% csrf_token %}
             <label>Vote Question</label>
             <span>{{ vote_event_info.eventQuestion }}</span>

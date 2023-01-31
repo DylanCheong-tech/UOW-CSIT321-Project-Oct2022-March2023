@@ -58,7 +58,7 @@ MIDDLEWARE = [
 
 SESSION_EXPIRE_SECONDS = 10 * 60 # 10 minutes 
 SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
-SESSION_TIMEOUT_REDIRECT = '/evoting/eventowner/login'
+SESSION_TIMEOUT_REDIRECT = '/harpocryption/eventowner/login'
 
 ROOT_URLCONF = 'project.urls'
 

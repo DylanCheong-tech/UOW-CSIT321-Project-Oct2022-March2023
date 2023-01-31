@@ -21,7 +21,7 @@ function confirming_session() {
     document.getElementById("session_timeout_alert").style.display = "none";
 
     // make any request to refresh the session 
-    fetch("/evoting/eventowner/homepage")
+    fetch("/harpocryption/eventowner/homepage")
         .then(console.log)
 
     idle_time = 0;

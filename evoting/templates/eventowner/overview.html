@@ -41,7 +41,7 @@
         <a>About</a>
     </span>
 
-    <span id="annotation">&copy; evoting.com 2022</span>
+    <span id="annotation">&copy; harpocryption.com 2022</span>
 </div>
 
 
@@ -49,7 +49,7 @@
     <span>
         <h2>Your Vote Events</h2>
         <span class="createevent_section">
-            <button class="button_2" id="create_vote_event_btn" type="button" onclick="window.location.href = '/evoting/eventowner/createevent'">Create New Vote Event</button>
+            <button class="button_2" id="create_vote_event_btn" type="button" onclick="window.location.href = '/harpocryption/eventowner/createevent'">Create New Vote Event</button>
             <button class="button_2" type="button" onclick="searchEvents(event)">Search Event</button>
         </span>
         <select>
@@ -79,14 +79,14 @@
             <td>{{event|concat_period:'time'|linebreaks}}</td>
             <td>{{event|status_abbreviation}}</td>
             <td class="buttons_col">
-                <button class="button_2" type="button" onclick="window.location.href='/evoting/eventowner/viewevent/' + '{{event.eventNo}}'">View</button>
-                <form action="/evoting/eventowner/deleteevent/{{event.eventNo}}" method="POST">
+                <button class="button_2" type="button" onclick="window.location.href='/harpocryption/eventowner/viewevent/' + '{{event.eventNo}}'">View</button>
+                <form action="/harpocryption/eventowner/deleteevent/{{event.eventNo}}" method="POST">
                     {% csrf_token %}
                     <button class="button_2" type="button" onclick="display_pop_out_message_box(event, 'Do you want to delete this vote event ?')">Delete</button>
                 </form>
                 <br />
-                <button class="button_2" type="button" {% if event.status != "PC" and event.status != "PB" %} disabled {% endif %} onclick="window.location.href='/evoting/eventowner/updateevent/' + '{{event.eventNo}}'">Modify</button>
-                <form action="/evoting/eventowner/confirmevent/{{event.eventNo}}" method="POST">
+                <button class="button_2" type="button" {% if event.status != "PC" and event.status != "PB" %} disabled {% endif %} onclick="window.location.href='/harpocryption/eventowner/updateevent/' + '{{event.eventNo}}'">Modify</button>
+                <form action="/harpocryption/eventowner/confirmevent/{{event.eventNo}}" method="POST">
                     {% csrf_token %}
                     <button class="button_2" type="button" {% if event.status != "PC" %} disabled {% endif %} onclick="display_pop_out_message_box(event, 'Are you confirmed to publish this vote event ?')">Confirm</button>
                 </form>
@@ -97,7 +97,7 @@
 </div>
 
 <span id="pop_out_message_box">
-    <h3>evoting.com</h3>
+    <h3>harpocryption.com</h3>
     <p id="message_content"></p>
     <p class="buttons">
         <button class="button_3" id="cancel_btn" type="button" onclick="hide_pop_out_message_box()">Cancel</button>
