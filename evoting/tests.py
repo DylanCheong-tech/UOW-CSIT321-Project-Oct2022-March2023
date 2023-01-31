@@ -17,7 +17,6 @@ from .homo_encryption import *
 import rsa
 import random
 from datetime import datetime
-import mysql.connector
 import threading 
 
 # Sprint 1 Unit Tests
