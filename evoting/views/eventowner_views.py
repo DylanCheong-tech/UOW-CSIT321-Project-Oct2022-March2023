@@ -57,7 +57,7 @@ class EventOwnerCreateAccountView(View):
                 try:
                     # check otp value
                     otp_from_db = OTPManagement.objects.get(email=data['email'])
-                    if otp_from_db.is_expired() or otp_from_db.check_otp_matching(data['otp']):
+                    if otp_from_db.is_expired() or not(otp_from_db.check_otp_matching(data['otp'])):
                         error_message = "OTP Value Invalid!"
                         status_flag = False
 
