@@ -92,7 +92,6 @@ class JobScheduler:
 			print("Tally Process Starts")
 
 			# Step 2: start the tally process 
-			voters = Voter.objects.filter(eventNo_id=event_id)
 
 			# integer array of the casted vote result
 			vote_event_voted_pool = VotingPool.objects.filter(eventNo_id=event_id)

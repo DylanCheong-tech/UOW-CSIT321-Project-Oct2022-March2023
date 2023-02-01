@@ -14,8 +14,15 @@ div#content_pane>div#left_pane {
 }
 
 div#content_pane>div#left_pane span#logo {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
     background-color: #000000;
     height: 10vh;
+}
+
+div#content_pane>div#left_pane span#logo img {
+    width: 100%;
 }
 
 div#content_pane>div#left_pane span#side_menu_bar {
@@ -137,6 +144,6 @@ input[type=file]::file-selector-button {
 }
 
 /* input boxes ans drop down list styling */
-input:is([type=text], [type=date], [type=time]), select{
+input:is([type=text], [type=date], [type=time]), select {
     padding: .5vh 0 .5vh .5vw;
 }

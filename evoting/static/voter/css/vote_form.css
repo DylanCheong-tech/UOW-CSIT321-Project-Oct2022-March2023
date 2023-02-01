@@ -93,3 +93,13 @@ div#vote_booth form .hidden {
 div#vote_acknowledge_page {
     align-items: center;
 }
+
+div#vote_acknowledge_page button {
+    cursor: pointer;
+    background-color: #3F54BE;
+    border: none;
+    border-radius: 1em;
+    color: #FFFFFF;
+    padding: 1.2vh 2.5vw 1.2vh 2.5vw;
+    margin: 2vh 0 5vh 0;
+}
