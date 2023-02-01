@@ -273,7 +273,7 @@ class EventOwnerCreateNewVoteEvent(View):
                 emailList = []
                 for row in reader:
                     emailList.append(row)
-                
+                    
                 valid_email, invalid_email = VoterEmailChecker.checkEmails(emailList)
 
                 for x, y in valid_email.items():
