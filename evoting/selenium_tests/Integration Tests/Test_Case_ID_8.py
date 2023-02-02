@@ -24,7 +24,7 @@ from selenium.webdriver.support.ui import Select
 driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
 # login the user first 
-driver.get("http://127.0.0.1:8000/evoting/eventowner/login")
+driver.get("http://127.0.0.1:8000/harpocryption/eventowner/login")
 
 # fill in the form data 
 driver.find_element(By.NAME, "email").send_keys("jamessmith@mail.com")
@@ -38,7 +38,7 @@ driver.find_element(By.ID, "logout_btn").click()
 
 # Assert the application will redirect to the login page
 WebDriverWait(driver, timeout=100).until(lambda driver : driver.title != "Home Page")
-assert driver.current_url == "http://127.0.0.1:8000/evoting/eventowner/login"
+assert driver.current_url == "http://127.0.0.1:8000/harpocryption/eventowner/login"
 
 print("Integration Test 8 Passed !")
 

@@ -24,7 +24,7 @@ from selenium.webdriver.support.ui import Select
 driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
 # login to the system
-driver.get("http://127.0.0.1:8000/evoting/voter/vote?auth=HsCEGsZ9mT6tDJvgGxYloya59ycwwOQcIm2hPlfJPtxZvXiMOklXbYrAH52Y3beB")
+driver.get("http://127.0.0.1:8000/harpocryption/voter/vote?auth=HsCEGsZ9mT6tDJvgGxYloya59ycwwOQcIm2hPlfJPtxZvXiMOklXbYrAH52Y3beB")
 
 WebDriverWait(driver, timeout=100).until(lambda driver : driver.title == "Voting Booth")
 

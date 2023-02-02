@@ -26,7 +26,7 @@ from selenium.webdriver.support.ui import Select
 driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
 # login to the system
-driver.get("http://127.0.0.1:8000/evoting/voter/finalresult?auth=xluM9uOOiimONEjObFBmgtns1JbNB31tXGVCKEKtEdyPBHHPfYVSLhPwtpTnLLS3")
+driver.get("http://127.0.0.1:8000/harpocryption/voter/finalresult?auth=xluM9uOOiimONEjObFBmgtns1JbNB31tXGVCKEKtEdyPBHHPfYVSLhPwtpTnLLS3")
 
 assert driver.title == "Vote Results"
 

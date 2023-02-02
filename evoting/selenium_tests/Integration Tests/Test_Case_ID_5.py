@@ -23,7 +23,7 @@ from selenium.webdriver.support.ui import Select
 
 driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
-driver.get("http://127.0.0.1:8000/evoting/eventowner/login")
+driver.get("http://127.0.0.1:8000/harpocryption/eventowner/login")
 
 # fill in the form data 
 driver.find_element(By.NAME, "email").send_keys("jamessmith@mail.com")
@@ -34,7 +34,7 @@ driver.find_element(By.ID, "form_submit_btn").click()
 
 # If success the application will redirect to the homepgae page
 WebDriverWait(driver, timeout=100).until(lambda driver : driver.title != "Event Owner Login")
-assert driver.current_url == "http://127.0.0.1:8000/evoting/eventowner/homepage"
+assert driver.current_url == "http://127.0.0.1:8000/harpocryption/eventowner/homepage"
 
 print("Integration Test 5 Passed !")
 

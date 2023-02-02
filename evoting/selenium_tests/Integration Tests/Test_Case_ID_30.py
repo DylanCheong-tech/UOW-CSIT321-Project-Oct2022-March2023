@@ -24,7 +24,7 @@ from selenium.webdriver.support.ui import Select
 driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
 # login to the system
-driver.get("http://127.0.0.1:8000/evoting/eventowner/login")
+driver.get("http://127.0.0.1:8000/harpocryption/eventowner/login")
 
 # fill in the form data 
 driver.find_element(By.NAME, "email").send_keys("jamessmith@mail.com")
@@ -49,7 +49,7 @@ driver.execute_script(
 
 	let genuine_form_csrf_token = document.querySelector("span.logout_section form input[name=csrfmiddlewaretoken]");
 
-	form.action = "/evoting/eventowner/event/finalresult/publish/7";
+	form.action = "/harpocryption/eventowner/event/finalresult/publish/7";
 	form.method = "POST";
 	form.appendChild(genuine_form_csrf_token);
 

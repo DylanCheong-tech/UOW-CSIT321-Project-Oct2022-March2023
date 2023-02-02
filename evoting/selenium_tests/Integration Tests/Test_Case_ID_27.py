@@ -24,7 +24,7 @@ from selenium.webdriver.support.ui import Select
 driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
 # login to the system
-driver.get("http://127.0.0.1:8000/evoting/eventowner/login")
+driver.get("http://127.0.0.1:8000/harpocryption/eventowner/login")
 
 # fill in the form data 
 driver.find_element(By.NAME, "email").send_keys("jamessmith@mail.com")
@@ -56,7 +56,7 @@ WebDriverWait(driver, timeout=100).until(lambda driver : driver.title == "View V
 driver.find_element(By.CSS_SELECTOR, "div#action_buttons button:nth-child(2)").click()
 
 assert "Vote Event Final Result" == driver.title
-assert "/evoting/eventowner/event/finalresult/8" in driver.current_url
+assert "/harpocryption/eventowner/event/finalresult/8" in driver.current_url
 
 print("Integration Test 27 Passed !")
 

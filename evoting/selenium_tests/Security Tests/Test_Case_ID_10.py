@@ -32,7 +32,7 @@ load_dotenv()
 driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
 # access the login page
-driver.get("http://127.0.0.1:8000/evoting/eventowner/login")
+driver.get("http://127.0.0.1:8000/harpocryption/eventowner/login")
 
 driver.execute_script(
 	"""
@@ -40,7 +40,7 @@ driver.execute_script(
 
 	let genuine_form_csrf_token = document.querySelector("div#left_pane form>input[name=csrfmiddlewaretoken]")
 
-	form.action = "/evoting/eventowner/deleteevent/12";
+	form.action = "/harpocryption/eventowner/deleteevent/12";
 	form.method = "POST"
 	form.appendChild(genuine_form_csrf_token)
 
@@ -50,7 +50,7 @@ driver.execute_script(
 	""")
 
 # assert the redirection 
-assert driver.current_url == "http://127.0.0.1:8000/evoting/eventowner/login"
+assert driver.current_url == "http://127.0.0.1:8000/harpocryption/eventowner/login"
 
 # inspect the database see if the vote event is deleted
 mydb = mysql.connector.connect(

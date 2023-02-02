@@ -1,11 +1,14 @@
-# Test_Case_ID_2.py 
+# Test_Case_ID_38.py 
 
 """
-Title: Session Management - Login Session Termination After Logout 
+Title: Event Owner Accesses Vote Event Information in Homepage when private key file is missing 
 
 Descriptions:
-Test the system to be able to terminate the logged in session after the user performs the logout. 
-After the login session is terminated, there is no way to access the authentication needed resources from the system. 
+Test the system to be able to provide and display the vote event information correctly. Test the system’s ability to handle the error when the required private keys information is not found. 
+
+The system should be able to catch the error and display the “Server Internal Error” to the end user instead of system halts. 
+
+Make sure the private keys file (.private) is removed when executing this test cases. 
 
 """
 import os 
@@ -33,17 +36,12 @@ driver.find_element(By.NAME, "password").send_keys("JamesSmith_1234")
 
 # submit the login form
 driver.find_element(By.ID, "form_submit_btn").click()
-WebDriverWait(driver, timeout=100).until(lambda driver : driver.title == "Overview")
+WebDriverWait(driver, timeout=100).until(lambda driver : driver.title == "Error")
 
-# logout the system
-driver.find_element(By.ID, "logout_btn").click()
+error_message = driver.find_element(By.ID, "error_message").text
 
-# direct access the homepage
-driver.get("http://127.0.0.1:8000/harpocryption/eventowner/homepage")
+assert error_message == "Private Key Information Lost !"
 
-# assert the redirection 
-assert driver.current_url == "http://127.0.0.1:8000/harpocryption/eventowner/login"
-
-print("Security Test 2 Passed !")
+print("Integration Test 38 Passed !")
 
 driver.quit()
