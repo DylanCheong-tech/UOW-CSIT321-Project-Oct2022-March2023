@@ -294,7 +294,7 @@ class EventOwnerCreateNewVoteEvent(View):
 
         if status_flag:
             # redirect to home page if success
-            return redirect("/harpocryption/eventowner/homepage")
+            return redirect("/harpocryption/eventowner/homepage?create_status=success")
         else:
             return render(request, "eventowner/voteevent_form.html", {"title" : "Create New Vote Event", "form_action" : "/harpocryption/eventowner/createevent", "status": error_message, "form": form, "voteOptions" : options_list},status=400)  
 
@@ -459,7 +459,7 @@ class EventOwnerUpdateVoteEvent(View):
 
         if status_flag:
             # redirect to home page if success
-            return redirect("/harpocryption/eventowner/homepage")
+            return redirect("/harpocryption/eventowner/homepage?update_status=success")
         else:
             return render(request, "eventowner/voteevent_form.html", {"title" : "Update Vote Event", "form_action" : "/harpocryption/eventowner/updateevent/" + str(eventNo), "status": error_message, "form": form, "voteOptions" : options_list})  
 
