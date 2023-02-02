@@ -58,6 +58,10 @@ Parameter(s) : int : event owner id, int : vote event id
 Return(s) : rsa.PrivateKey and the salt number
 """
 def read_private_key(event_owner_id:int, vote_event_id:int) -> (rsa.PrivateKey, int):
+	# guard check the file if existed 
+	if not os.path.exists(os.getcwd() + "/evoting/.private"):
+		return (None, None)
+
 	keys_file = open(os.getcwd() + "/evoting/.private", "r")
 	file_reader = csv.reader(keys_file)
 

@@ -180,6 +180,9 @@ class EventOwnerHomePage(View):
         for event in VoteEventList:
             # get the private key information 
             (private_key, salt) = read_private_key(current_user.id, event.eventNo)
+            if private_key is None:
+                return render(request, "error_page.html", {"error_code" : 500, "error_summary_message" : "Internal Server Error", "error_message" : "Private Key Information Lost !"})
+
             event.eventTitle = decrypt_str(event.eventTitle, private_key, salt)
             event.eventQuestion = decrypt_str(event.eventQuestion, private_key, salt)
 
@@ -319,6 +322,8 @@ class EventOwnerUpdateVoteEvent(View):
 
         # get the private key and decrypt the information 
         (private_key, salt) = read_private_key(current_user.id, eventNo)
+        if private_key is None:
+            return render(request, "error_page.html", {"error_code" : 500, "error_summary_message" : "Internal Server Error", "error_message" : "Private Key Information Lost !"})
 
         for item in options :
             options_list.append(decrypt_str(item.voteOption, private_key, salt))
@@ -374,6 +379,8 @@ class EventOwnerUpdateVoteEvent(View):
             public_key = rsa.PublicKey(int(public_key[0]), int(public_key[1]))
             # get the salt 
             (_, salt) = read_private_key(current_user.id, eventNo)
+            if salt is None:
+                return render(request, "error_page.html", {"error_code" : 500, "error_summary_message" : "Internal Server Error", "error_message" : "Private Key Information Lost !"})
 
             if vote_event_status == "PC" or vote_event_status == "PB":
                 """
@@ -480,6 +487,9 @@ class EventOwnerViewVoteEvent(View):
         vote_options = VoteOption.objects.filter(eventNo_id=vote_event)
         # decrypt the vote option 
         (private_key, salt) = read_private_key(current_user.id, vote_event.eventNo)
+        if private_key is None:
+            return render(request, "error_page.html", {"error_code" : 500, "error_summary_message" : "Internal Server Error", "error_message" : "Private Key Information Lost !"})
+
         for option in vote_options:
             option.voteOption = decrypt_str(option.voteOption, private_key, salt)
 
@@ -541,6 +551,9 @@ class EventOwnerConfirmVoteEvent(View):
 
             # get the salt and public key values 
             (_, salt) = read_private_key(current_user.id, vote_event.eventNo)
+            if salt is None:
+                return render(request, "error_page.html", {"error_code" : 500, "error_summary_message" : "Internal Server Error", "error_message" : "Private Key Information Lost !"})
+                
             public_key = vote_event.publicKey.split("//")
             public_key = rsa.PublicKey(int(public_key[0]), int(public_key[1]))
 
@@ -599,6 +612,8 @@ class EventOwnerViewVoteEventFinalResult(View):
 
             # get the private key
             (private_key, salt) = read_private_key(current_user.id, vote_event.eventNo)
+            if private_key is None:
+                return render(request, "error_page.html", {"error_code" : 500, "error_summary_message" : "Internal Server Error", "error_message" : "Private Key Information Lost !"})
 
             final_result_data = {}
             final_result_data["vote_event_id"] = vote_event.eventNo
@@ -709,6 +724,9 @@ class EventOwnerViewOnGoingVoteEvents(View):
         for event in VoteEventList:
             # get the private key information 
             (private_key, salt) = read_private_key(current_user.id, event.eventNo)
+            if private_key is None:
+                return render(request, "error_page.html", {"error_code" : 500, "error_summary_message" : "Internal Server Error", "error_message" : "Private Key Information Lost !"})
+
             event.eventTitle = decrypt_str(event.eventTitle, private_key, salt)
             event.eventQuestion = decrypt_str(event.eventQuestion, private_key, salt)
 
@@ -738,6 +756,9 @@ class EventOwnerViewCompletedVoteEvents(View):
         for event in VoteEventList:
             # get the private key information 
             (private_key, salt) = read_private_key(current_user.id, event.eventNo)
+            if private_key is None:
+                return render(request, "error_page.html", {"error_code" : 500, "error_summary_message" : "Internal Server Error", "error_message" : "Private Key Information Lost !"})
+
             event.eventTitle = decrypt_str(event.eventTitle, private_key, salt)
             event.eventQuestion = decrypt_str(event.eventQuestion, private_key, salt)
 

@@ -66,6 +66,11 @@ class VoterVoteForm(View):
 
 			# get the private keys to decrypt the option name
 			(private_key, salt) = read_private_key(vote_event.createdBy_id, vote_event_id)
+			if private_key is None:
+				error_code = 500
+				error_summary_message = "Internal Server Error"
+				error_message = "Private Key Information Lost !"
+				raise Exception
 
 			# organise the vote event information to be rendered on the page 
 			vote_event_info = {
@@ -214,6 +219,11 @@ class VoterViewFinalResult(View):
 			vote_options = VoteOption.objects.filter(eventNo_id=vote_event_id)
 
 			(private_key, salt) = read_private_key(event_owner_id, vote_event_id)
+			if private_key is None:
+				error_code = 500
+				error_summary_message = "Internal Server Error"
+				error_message = "Private Key Information Lost !"
+				raise Exception
 
 			# organise the vote event information to be rendered on the page 
 			final_result_info = {
