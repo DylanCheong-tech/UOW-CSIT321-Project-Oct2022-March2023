@@ -451,7 +451,8 @@ class EventOwnerUpdateVoteEvent(View):
             # redirect to home page if success
             return redirect("/evoting/eventowner/homepage")
         else:
-            return render(request, "eventowner/voteevent_form.html", {"title" : "Update Vote Event", "form_action" : "/evoting/eventowner/updateevent/" + str(eventNo), "status": error_message, "form": form, "voteOptions" : options_list})  
+            current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName}
+            return render(request, "eventowner/voteevent_form.html", {"title" : "Update Vote Event", "form_action" : "/evoting/eventowner/updateevent/" + str(eventNo), "status": error_message, "form": form, "voteOptions" : options_list, "event_status" : vote_event_status, "UserDetails":current_user}) 
 
 class EventOwnerViewVoteEvent(View):
     def get(self, request, eventNo):
