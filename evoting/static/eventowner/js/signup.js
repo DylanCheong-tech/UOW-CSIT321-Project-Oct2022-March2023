@@ -5,25 +5,38 @@ function requestOTP() {
     let message_box_ele = document.getElementById("message_box");
     let btn = document.getElementById("otp_request_btn");
     btn.disabled = true;
-    //alert("OTP is sent to your email. You can request new OTP after 2 minutes.")
-    setTimeout(()=>{
+    setTimeout(() => {
         btn.disabled = false;
-        console.log('Button Activated')}, 120000)
+        console.log('Button Activated')
+    }, 120000)
 
     if (!email_ele.value.match(/^[A-Za-z0-9]+([_\.-][A-za-z0-9]+)*@[A-Za-z0-9]+(-[A-Za-z0-9]+)*(\.[A-Za-z0-9]+(-[A-Za-z0-9]+)*)*(\.[A-Za-z]{2,})$/)) {
         message_box_ele.firstElementChild.innerHTML = "Invalid Email !"
+        message_box_ele.style.display = "block";
+
+        setTimeout(() => {
+            message_box_ele.style.animation = "fadeout 2s ease forwards";
+        }, 6000);
     }
     else {
-        message_box_ele.firstElementChild.innerHTML = "Requested OTP has been sent to your mailbox !"
         fetch("/harpocryption/eventowner/getOTP?email=" + email_ele.value)
-            .then(console.log)
-    }
-    
-    message_box_ele.style.display = "block";
+            .then(response => {
+                res_status = response.status
 
-    setTimeout(() => {
-        message_box_ele.style.animation = "fadeout 2s ease forwards";
-    }, 6000);
+                if (res_status == "200")
+                    message_box_ele.firstElementChild.innerHTML = "Requested OTP has been sent to your mailbox !"
+                else if (res_status == "404")
+                    message_box_ele.firstElementChild.innerHTML = "No Email Address Is Provided"
+                else if (res_status == "500")
+                    message_box_ele.firstElementChild.innerHTML = "Server Internal Error ... Please Try Again Later ..."
+
+                message_box_ele.style.display = "block";
+
+                setTimeout(() => {
+                    message_box_ele.style.animation = "fadeout 2s ease forwards";
+                }, 6000);
+            })
+    }
 }
 
 // password checker
