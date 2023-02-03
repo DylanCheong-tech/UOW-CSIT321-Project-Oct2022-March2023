@@ -19,6 +19,8 @@ from ..helpers.hasher import Hasher
 # Homomorphic Encryption Module 
 from ..homo_encryption import *
 
+from datetime import datetime 
+
 class VoterVoteForm(View):
 	def get(self, request):
 
@@ -51,6 +53,13 @@ class VoterVoteForm(View):
 			# voter will not be get access the PC event, in this state, no auth token will be generated for the voters 
 			if (vote_event.status != "PB"):
 				error_message = "Vote Event has been ended !"
+				error_summary_message = "Forbidden Request !"
+				error_code = 403
+				raise Exception
+
+			# check if the vote event is started 
+			if datetime.now() < vote_event.get_start_datetime():
+				error_message = "Vote Event Has Not Started !"
 				error_summary_message = "Forbidden Request !"
 				error_code = 403
 				raise Exception

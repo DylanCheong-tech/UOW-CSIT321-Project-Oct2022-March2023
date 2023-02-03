@@ -411,6 +411,26 @@ class ModelVoteEventTest(TestCase):
 
 		self.assertIs(vote_event.is_event_datetime_valid(), False)
 
+	def testGetVoteEventStartDateTime(self):
+		"""
+		Test Data: 
+		- Start Date: 2024-06-18
+		- Start Time: 18:00
+		- End Date: 2024-06-30
+		- End Time: 18:00
+
+		Expected Result:
+		- return a python native datetime object 
+		"""
+
+		vote_event = VoteEvent()
+		vote_event.startDate = "2024-06-18"
+		vote_event.startTime = "18:00"
+		vote_event.endDate = "2024-06-30"
+		vote_event.endTime = "18:00"
+
+		self.assertIsInstance(vote_event.get_start_datetime(), datetime)
+
 
 class HelperVoterEmailCheckerTest(TestCase):
 	"""

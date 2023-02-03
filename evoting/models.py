@@ -55,7 +55,12 @@ class VoteEvent(models.Model):
         if start_datetime > end_datetime:
             return False
 
-        return True        
+        return True   
+
+    def get_start_datetime(self):
+        start_datetime = dateparse.parse_datetime(str(self.startDate) + " " + str(self.startTime))
+
+        return start_datetime
 
     def __str__(self):
         return self.eventNo
