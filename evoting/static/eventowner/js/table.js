@@ -3,6 +3,9 @@ $(document).ready( function () {
         paging: false,
         scrollY: '40vh',
         scrollCollapse: true,
+        "search": {
+            "smart": false
+        }
     });
 } );
 
