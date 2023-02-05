@@ -104,9 +104,16 @@ class EventOwnerCreateAccountGetOTP(View):
 
         generator = OTPGenerator(request.GET['email'])
         otp = generator.generateOTP()
+
+        if not otp:
+            return HttpResponse("Server Internal Error ... Please Try Again Later ...", status=500)
+
         email_sender = EmailSender(request.GET['email'])
-        email_sender.sendOTP(otp)
-        return HttpResponse("Requested OTP sent to mailbox")
+        email_status = email_sender.sendOTP(otp)
+        if not email_status:
+            return HttpResponse("Server Internal Error ... Please Try Again Later ...", status=500)
+
+        return HttpResponse("Requested OTP sent to mailbox", status=200)
 
 class EventOwnerLogin(View):
     user_login_failed_attempts = {}
