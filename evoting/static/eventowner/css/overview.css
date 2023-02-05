@@ -36,7 +36,7 @@ div#content_pane>div#right_pane div#content div#vote_events {
     background-color: #FFFFFF;
     padding: 0 1.5vw 0 1.5vw;
     margin-top: 5vh;
-    height: 60vh;
+    height: 62vh;
 }
 
 div#content_pane>div#right_pane div#content div#vote_events>span {
@@ -50,7 +50,6 @@ div#content_pane>div#right_pane div#content div#vote_events table {
     display: block;
     height: 80%;
     border-collapse: collapse;
-    overflow-y: scroll;
 }
 
 div#content_pane>div#right_pane div#content div#vote_events table tr.header {
@@ -111,4 +110,9 @@ span#pop_out_message_box {
     margin: 1em;
     box-shadow: 1vw 1vh #CCCCCC;
     display: none;
+}
+
+/*special for datatables*/
+button.create_button {
+    margin-right: 50vh;
 }

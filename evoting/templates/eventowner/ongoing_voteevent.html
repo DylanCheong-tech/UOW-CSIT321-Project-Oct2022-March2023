@@ -8,8 +8,16 @@
 
 {% block title %} {{ title }} {% endblock %}
 
+{% block js_scripts %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.2/js/jquery.dataTables.js"></script>
+<script src="{% static 'eventowner/js/table.js' %}"></script>
+{% endblock %}
+
 {% block stylesheet_links %}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.css">
 <link rel="stylesheet" href="{% static 'eventowner/css/ongoing_completed_voteevent.css' %}" />
+<link rel="stylesheet" href="{% static 'eventowner/css/table.css' %}" />
 {% endblock %}
 
 {% block email %}
@@ -32,48 +40,48 @@
     <div id="completed_vote_events">
         <span>
             <h2>Ongoing Vote Events</h2>
-            <input type="text" placeholder="Search" />
-            <select>
-                <option>Seq No.</option>
-            </select>
         </span>
     
-        <table>
-            <tr class="header">
-                <th>Seq No</th>
-                <th>Name</th>
-                <th>Event Date</th>
-                <th>Event Time</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-            {% if not VoteEvents %}
-            <tr class="no_records">
-                <td colspan="6">You have no Vote Event records, let's create one !</td>
-            </tr>
-            {% endif %}
-            {% for event in VoteEvents %}
-            <tr>
-                <td>{{forloop.counter}}</td>
-                <td>{{event.eventTitle}}</td>
-                <td>{{event|concat_period:'date'|linebreaks}}</td>
-                <td>{{event|concat_period:'time'|linebreaks}}</td>
-                <td>{{event|status_abbreviation}}</td>
-                <td class="buttons_col">
-                    <button class="button_2" type="button" onclick="window.location.href='/harpocryption/eventowner/viewevent/' + '{{event.eventNo}}'">View</button>
-                    <form action="/harpocryption/eventowner/deleteevent/{{event.eventNo}}" method="POST">
-                        {% csrf_token %}
-                        <button class="button_2" type="button" onclick="display_pop_out_message_box(event, 'Do you want to delete this vote event ?')">Delete</button>
-                    </form>
-                    <br />
-                    <button class="button_2" type="button" {% if event.status != "PC" and event.status != "PB" %} disabled {% endif %} onclick="window.location.href='/harpocryption/eventowner/updateevent/' + '{{event.eventNo}}'">Modify</button>
-                    <form action="/harpocryption/eventowner/confirmevent/{{event.eventNo}}" method="POST">
-                        {% csrf_token %}
-                        <button class="button_2" type="button" {% if event.status != "PC" %} disabled {% endif %} onclick="display_pop_out_message_box(event, 'Are you confirmed to publish this vote event ?')">Confirm</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
+        <table id='votetable'>
+            <thead>
+                <tr class="header">
+                    <th>Seq No</th>
+                    <th>Name</th>
+                    <th>Event Date</th>
+                    <th>Event Time</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>    
+            <tbody>
+                {% if not VoteEvents %}
+                <tr class="no_records">
+                    <td colspan="6">You have no Vote Event records, let's create one !</td>
+                </tr>
+                {% endif %}
+                {% for event in VoteEvents %}
+                <tr>
+                    <td>{{forloop.counter}}</td>
+                    <td>{{event.eventTitle}}</td>
+                    <td>{{event|concat_period:'date'|linebreaks}}</td>
+                    <td>{{event|concat_period:'time'|linebreaks}}</td>
+                    <td>{{event|status_abbreviation}}</td>
+                    <td class="buttons_col">
+                        <button class="button_2" type="button" onclick="window.location.href='/harpocryption/eventowner/viewevent/' + '{{event.eventNo}}'">View</button>
+                        <form action="/harpocryption/eventowner/deleteevent/{{event.eventNo}}" method="POST">
+                            {% csrf_token %}
+                            <button class="button_2" type="button" onclick="display_pop_out_message_box(event, 'Do you want to delete this vote event ?')">Delete</button>
+                        </form>
+                        <br />
+                        <button class="button_2" type="button" {% if event.status != "PC" and event.status != "PB" %} disabled {% endif %} onclick="window.location.href='/harpocryption/eventowner/updateevent/' + '{{event.eventNo}}'">Modify</button>
+                        <form action="/harpocryption/eventowner/confirmevent/{{event.eventNo}}" method="POST">
+                            {% csrf_token %}
+                            <button class="button_2" type="button" {% if event.status != "PC" %} disabled {% endif %} onclick="display_pop_out_message_box(event, 'Are you confirmed to publish this vote event ?')">Confirm</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
     </div>
 </div>

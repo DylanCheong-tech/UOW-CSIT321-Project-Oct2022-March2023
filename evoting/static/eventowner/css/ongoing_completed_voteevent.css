@@ -24,7 +24,6 @@ div#completed_vote_event_page div#completed_vote_events table {
     display: block;
     max-height: 45vh;
     border-collapse: collapse;
-    overflow-y: scroll;
 }
 
 div#completed_vote_event_page div#completed_vote_events table tr.header {
