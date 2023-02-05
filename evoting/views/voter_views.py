@@ -240,8 +240,6 @@ class VoterViewFinalResult(View):
 				"eventQuestion" : decrypt_str(vote_event.eventQuestion, private_key, salt),
 				"voteOptions" : [{"option" : decrypt_str(x.voteOption, private_key, salt), "counts" : int((decrypt_int(int(x.voteTotalCount), private_key) - salt) / int(salt))} for x in vote_options],
 			}
-			# get the majority vote option name
-			final_result_info["majorVoteOption"] = max(final_result_info["voteOptions"], key=lambda k : k["counts"], default="None")["option"]
             
             # compute the response rate 
 			total_vote_counts = sum([x["counts"] for x in final_result_info["voteOptions"]])

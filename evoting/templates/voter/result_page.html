@@ -29,11 +29,8 @@
                 <span class="counts">{{option.counts}}</span>
             {% endfor %}
 
-            <label class="center top_space">Vote Winner</label>
-            <label class="center top_space">Voter Turnout</label>
-
-            <span class="center">{{final_result_info.majorVoteOption}}</span>
-            <span class="center">{{final_result_info.response_rate.responded}} % out of {{final_result_info.response_rate.total_voters}} voters</span>
+            <label class="span2 center top_space">Voter Turnout</label>
+            <span class="span2 center">{{final_result_info.response_rate.responded}} % out of {{final_result_info.response_rate.total_voters}} voters</span>
         </div>
     </div>
 </body>
