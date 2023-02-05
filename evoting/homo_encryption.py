@@ -41,7 +41,7 @@ def key_generation(event_owner_id:int, vote_event_id:int, key_size:int) -> (rsa.
 
 	remove_private_key(event_owner_id, vote_event_id)
 
-	keys_file = open(os.getcwd() + "/evoting/.private", "a")
+	keys_file = open(os.getcwd() + "/evoting/.private", "a", newline="")
 	file_writer = csv.writer(keys_file)
 
 	salt = random.randint(10, 999)
