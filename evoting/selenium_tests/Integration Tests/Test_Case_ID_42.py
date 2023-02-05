@@ -1,7 +1,7 @@
 # Test_Case_ID_42.py 
 
 """
-Title: Voter Accesses Voting booth when private key file is missing
+Title: Event Owner View Vote Event Final Result when private key file is missing
 
 Descriptions:
 Test the system to be able to provide and display the vote event information correctly. Test the system’s ability to handle the error when the required private keys information is not found. 
@@ -27,8 +27,18 @@ from selenium.webdriver.support.ui import Select
 
 driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
-# direct access the voting booth 
-driver.get("http://127.0.0.1:8000/harpocryption/voter/vote?auth=K7nZ8ZRS0KfhF7v3yAc9b0XSnyXNLh3hJQtLOF3LEYiU2Qhin4D5iumHIyZixCwY")
+# login to the system
+driver.get("http://127.0.0.1:8000/harpocryption/eventowner/login")
+
+# fill in the form data 
+driver.find_element(By.NAME, "email").send_keys("jamessmith@mail.com")
+driver.find_element(By.NAME, "password").send_keys("JamesSmith_1234")
+
+# submit the login form
+driver.find_element(By.ID, "form_submit_btn").click()
+
+# direct access the view final result page
+driver.get("http://127.0.0.1:8000/harpocryption/eventowner/event/finalresult/9")
 
 WebDriverWait(driver, timeout=100).until(lambda driver : driver.title == "Error")
 

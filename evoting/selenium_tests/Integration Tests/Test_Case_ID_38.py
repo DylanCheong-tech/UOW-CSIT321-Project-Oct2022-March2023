@@ -1,14 +1,12 @@
 # Test_Case_ID_38.py 
 
 """
-Title: Event Owner Accesses Vote Event Information in Homepage when private key file is missing 
+Title: Voter views vote event’s final result through an invalid link
 
 Descriptions:
-Test the system to be able to provide and display the vote event information correctly. Test the system’s ability to handle the error when the required private keys information is not found. 
+Test the system’s ability to identify validation of the voter authentication information before releasing out the final result information to the user. 
 
-The system should be able to catch the error and display the “Server Internal Error” to the end user instead of system halts. 
-
-Make sure the private keys file (.private) is removed when executing this test cases. 
+The system will check against the voter authentication information and the vote event status before providing the final result information to the user. 
 
 """
 import os 
@@ -28,19 +26,12 @@ from selenium.webdriver.support.ui import Select
 driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
 # login to the system
-driver.get("http://127.0.0.1:8000/harpocryption/eventowner/login")
-
-# fill in the form data 
-driver.find_element(By.NAME, "email").send_keys("jamessmith@mail.com")
-driver.find_element(By.NAME, "password").send_keys("JamesSmith_1234")
-
-# submit the login form
-driver.find_element(By.ID, "form_submit_btn").click()
-WebDriverWait(driver, timeout=100).until(lambda driver : driver.title == "Error")
+driver.get("http://127.0.0.1:8000/harpocryption/voter/vote?auth=7PM4qrm0HhMPXWLAvky594b96zuLNtxZ5h5eOP1ciD4eOfTuH2rl9DFYxHhAaVuX")
 
 error_message = driver.find_element(By.ID, "error_message").text
 
-assert error_message == "Private Key Information Lost !"
+assert driver.title == "Error"
+assert error_message == "Vote Event Has Not Started !"
 
 print("Integration Test 38 Passed !")
 

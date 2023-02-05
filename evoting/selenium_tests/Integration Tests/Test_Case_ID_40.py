@@ -1,7 +1,7 @@
 # Test_Case_ID_40.py 
 
 """
-Title: Event Owner View Vote Event when private key file is missing
+Title: Event Owner Updates Vote Event when private key file is missing 
 
 Descriptions:
 Test the system to be able to provide and display the vote event information correctly. Test the system’s ability to handle the error when the required private keys information is not found. 
@@ -37,8 +37,8 @@ driver.find_element(By.NAME, "password").send_keys("JamesSmith_1234")
 # submit the login form
 driver.find_element(By.ID, "form_submit_btn").click()
 
-# direct access the view vote event page
-driver.get("http://127.0.0.1:8000/harpocryption/eventowner/viewevent/5")
+# direct access the update page
+driver.get("http://127.0.0.1:8000/harpocryption/eventowner/updateevent/3")
 
 WebDriverWait(driver, timeout=100).until(lambda driver : driver.title == "Error")
 
