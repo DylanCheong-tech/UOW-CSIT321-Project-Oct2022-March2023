@@ -20,7 +20,7 @@ div#content_pane>div#right_pane div#content div#miscellaneous span#links {
     row-gap: 2vh;
     border-radius: 10px;
     background-color: #FFFFFF;
-    padding: 0 1.5vw 0 1.5vw;
+    padding: 0 1.5vw 0.5vw 1.5vw;
     margin-right: 2vw;
 }
 
