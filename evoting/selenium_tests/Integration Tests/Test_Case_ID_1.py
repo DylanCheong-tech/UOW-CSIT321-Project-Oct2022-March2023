@@ -24,7 +24,7 @@ from selenium.webdriver.support.ui import Select
 
 driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
-driver.get("http://127.0.0.1:8000/evoting/eventowner/createaccount")
+driver.get("http://127.0.0.1:8000/harpocryption/eventowner/createaccount")
 
 # fill in the form data 
 driver.find_element(By.NAME, "firstname").send_keys("James")
@@ -47,7 +47,7 @@ driver.find_element(By.ID, "form_submit_btn").click()
 
 # If success the application will redirect to the login page
 WebDriverWait(driver, timeout=100).until(lambda driver : driver.title != "Sign Up")
-assert driver.current_url == "http://127.0.0.1:8000/evoting/eventowner/login"
+assert driver.current_url == "http://127.0.0.1:8000/harpocryption/eventowner/login"
 
 print("Integration Test 1 Passed !")
 

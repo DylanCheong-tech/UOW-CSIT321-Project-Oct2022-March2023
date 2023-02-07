@@ -8,6 +8,7 @@ from django.views import View
 from ..models import VoteEvent
 from ..models import VoteOption
 from ..models import Voter
+from ..models import VotingPool
 
 # Forms imports 
 from ..forms.voter import VoteForm
@@ -17,6 +18,8 @@ from ..helpers.hasher import Hasher
 
 # Homomorphic Encryption Module 
 from ..homo_encryption import *
+
+from datetime import datetime 
 
 class VoterVoteForm(View):
 	def get(self, request):
@@ -54,8 +57,15 @@ class VoterVoteForm(View):
 				error_code = 403
 				raise Exception
 
+			# check if the vote event is started 
+			if datetime.now() < vote_event.get_start_datetime():
+				error_message = "Vote Event Has Not Started !"
+				error_summary_message = "Forbidden Request !"
+				error_code = 403
+				raise Exception
+
 			# check if the voter is casted the vote before 
-			if voter.castedVote != "NOT APPLICABLE":
+			if voter.voteStatus == "1":
 				error_message = "Voter has been voted, no access allowed !"
 				error_summary_message = "Forbidden Request Received"
 				error_code = 403
@@ -64,13 +74,18 @@ class VoterVoteForm(View):
 			vote_options = VoteOption.objects.filter(eventNo_id=vote_event_id)
 
 			# get the private keys to decrypt the option name
-			(private_key, _) = read_private_key(vote_event.createdBy_id, vote_event_id)
+			(private_key, salt) = read_private_key(vote_event.createdBy_id, vote_event_id)
+			if private_key is None:
+				error_code = 500
+				error_summary_message = "Internal Server Error"
+				error_message = "Private Key Information Lost !"
+				raise Exception
 
 			# organise the vote event information to be rendered on the page 
 			vote_event_info = {
-				"eventTitle" : decrypt_str(vote_event.eventTitle, private_key),
-				"eventQuestion" : decrypt_str(vote_event.eventQuestion, private_key),
-				"voteOptions" : [{"option" : decrypt_str(x.voteOption, private_key), "encoding" : x.voteEncoding} for x in vote_options]
+				"eventTitle" : decrypt_str(vote_event.eventTitle, private_key, salt),
+				"eventQuestion" : decrypt_str(vote_event.eventQuestion, private_key, salt),
+				"voteOptions" : [{"option" : decrypt_str(x.voteOption, private_key, salt), "encoding" : x.voteEncoding} for x in vote_options]
 			}
 
 			# organise the voter information to be rendered on the page 
@@ -130,14 +145,21 @@ class VoterVoteForm(View):
 					raise Exception
 
 				# check if the voter is casted the vote before 
-				if voter.castedVote != "NOT APPLICABLE":
+				if voter.voteStatus == "1":
 					error_message = "Voter Has Already Voted !"
 					error_summary_message = "Forbidden Request Received"
 					error_code = 403
 					raise Exception
 
 				# write the casted vote option to the system database 
-				voter.castedVote = data["voteOption"]
+				vote_record = VotingPool(
+					eventNo_id = vote_event_id,
+					castedVote = data["voteOption"]
+				)
+				vote_record.save()
+
+				# update the voter vote status 
+				voter.voteStatus = "1"
 				voter.save()
 
 				return render(request, "voter/vote_form.html", {"vote_status" : "success"})
@@ -206,15 +228,23 @@ class VoterViewFinalResult(View):
 			vote_options = VoteOption.objects.filter(eventNo_id=vote_event_id)
 
 			(private_key, salt) = read_private_key(event_owner_id, vote_event_id)
+			if private_key is None:
+				error_code = 500
+				error_summary_message = "Internal Server Error"
+				error_message = "Private Key Information Lost !"
+				raise Exception
 
 			# organise the vote event information to be rendered on the page 
 			final_result_info = {
-				"eventTitle" : decrypt_str(vote_event.eventTitle, private_key),
-				"eventQuestion" : decrypt_str(vote_event.eventQuestion, private_key),
-				"voteOptions" : [{"option" : decrypt_str(x.voteOption, private_key), "counts" : int(decrypt_int(int(x.voteTotalCount), private_key) / int(salt))} for x in vote_options],
+				"eventTitle" : decrypt_str(vote_event.eventTitle, private_key, salt),
+				"eventQuestion" : decrypt_str(vote_event.eventQuestion, private_key, salt),
+				"voteOptions" : [{"option" : decrypt_str(x.voteOption, private_key, salt), "counts" : int((decrypt_int(int(x.voteTotalCount), private_key) - salt) / int(salt))} for x in vote_options],
 			}
-			# get the majority vote option name
-			final_result_info["majorVoteOption"] = max(final_result_info["voteOptions"], key=lambda k : k["counts"], default="None")["option"]
+            
+            # compute the response rate 
+			total_vote_counts = sum([x["counts"] for x in final_result_info["voteOptions"]])
+			participated_voters = Voter.objects.filter(eventNo_id=int(vote_event_id))
+			final_result_info["response_rate"] = {"responded" : round(total_vote_counts / participated_voters.count() * 100), "total_voters" : participated_voters.count()}
 
 			return render(request, "voter/result_page.html", {"final_result_info": final_result_info})
 

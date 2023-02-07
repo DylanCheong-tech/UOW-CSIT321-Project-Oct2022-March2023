@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+# load the environment variables
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -53,7 +58,7 @@ MIDDLEWARE = [
 
 SESSION_EXPIRE_SECONDS = 10 * 60 # 10 minutes 
 SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
-SESSION_TIMEOUT_REDIRECT = '/evoting/eventowner/login'
+SESSION_TIMEOUT_REDIRECT = '/harpocryption/eventowner/login'
 
 ROOT_URLCONF = 'project.urls'
 
@@ -82,11 +87,11 @@ WSGI_APPLICATION = 'project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'evoting',
-        'USER': 'evoting_django',
-        'PASSWORD': 'django_password',
-        'HOST':'127.0.0.1',
-        'PORT':'3306',
+        'NAME': os.getenv("MYSQL_DATABASE_NAME"),
+        'USER': os.getenv("MYSQL_USER"),
+        'PASSWORD': os.getenv("MYSQL_PASSWORD"),
+        'HOST': os.getenv("MYSQL_HOST"),
+        'PORT': os.getenv("MYSQL_PORT"),
     }
 }
 

@@ -23,7 +23,7 @@ from selenium.webdriver.support.ui import Select
 
 driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
-driver.get("http://127.0.0.1:8000/evoting/eventowner/login")
+driver.get("http://127.0.0.1:8000/harpocryption/eventowner/login")
 
 # fill in the form data 
 driver.find_element(By.NAME, "email").send_keys("jamessmith@mail.com")

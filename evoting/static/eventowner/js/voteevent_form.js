@@ -17,6 +17,7 @@ function addOptions() {
 
     newRemoveButton = document.createElement("button");
     newRemoveButton.type = "button";
+    newRemoveButton.classList.add("button_2");
     newRemoveButton.innerHTML = "Remove";
     newRemoveButton.onclick = removeOptions.bind(event);
 
@@ -40,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // back to home page button
 function backToHomepage(){
-    window.location.href = "/evoting/eventowner/homepage"
+    window.location.href = "/harpocryption/eventowner/homepage"
 }
 
 // preprocess the form data before submit 

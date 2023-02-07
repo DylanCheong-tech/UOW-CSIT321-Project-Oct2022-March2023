@@ -11,6 +11,7 @@ Before executing this security test, the vote event test data is loaded into the
 
 """
 import os 
+from dotenv import load_dotenv
 import mysql.connector
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
@@ -25,10 +26,13 @@ from selenium.webdriver.common.by import By
 # UI Select Interaction
 from selenium.webdriver.support.ui import Select
 
+# load the environment variables
+load_dotenv()
+
 driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
 # access the login page
-driver.get("http://127.0.0.1:8000/evoting/eventowner/login")
+driver.get("http://127.0.0.1:8000/harpocryption/eventowner/login")
 
 driver.execute_script(
 	"""
@@ -36,7 +40,7 @@ driver.execute_script(
 
 	let genuine_form_csrf_token = document.querySelector("div#left_pane form>input[name=csrfmiddlewaretoken]")
 
-	form.action = "/evoting/eventowner/deleteevent/12";
+	form.action = "/harpocryption/eventowner/deleteevent/12";
 	form.method = "POST"
 	form.appendChild(genuine_form_csrf_token)
 
@@ -46,19 +50,19 @@ driver.execute_script(
 	""")
 
 # assert the redirection 
-assert driver.current_url == "http://127.0.0.1:8000/evoting/eventowner/login"
+assert driver.current_url == "http://127.0.0.1:8000/harpocryption/eventowner/login"
 
 # inspect the database see if the vote event is deleted
 mydb = mysql.connector.connect(
-  host="127.0.0.1",
-  user="evoting_django",
-  password="django_password",
-  database="evoting"
+  host=os.getenv("MYSQL_HOST"),
+  user=os.getenv("MYSQL_USER"),
+  password=os.getenv("MYSQL_PASSWORD"),
+  database=os.getenv("MYSQL_DATABASE_NAME")
 )
 
 cursor = mydb.cursor()
 
-cursor.execute("SELECT COUNT(*) FROM evoting_voteevent WHERE seqNo = 12")
+cursor.execute("SELECT COUNT(*) FROM evoting_voteevent WHERE eventNo = 12")
 
 result = cursor.fetchone()
 

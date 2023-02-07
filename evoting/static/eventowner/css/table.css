@@ -1,0 +1,9 @@
+/*datatables*/
+table.dataTable tbody th, table.dataTable tbody td {
+    padding: 0px;
+}
+
+div#votetable_filter {
+    padding-right: 16px;
+    margin-top: -45px;
+}

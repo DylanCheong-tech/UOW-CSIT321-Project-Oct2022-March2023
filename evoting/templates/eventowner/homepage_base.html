@@ -8,6 +8,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.png' %}"/>
     <title>{% block tab_title %}{% endblock %}</title>
     <script src="{% static 'eventowner/js/homepage_base.js' %}"></script>
 
@@ -21,20 +22,19 @@
     <div id="content_pane">
         <div id="left_pane">
             <span id="logo">
-                logo here
+                <img src="{% static 'eventowner/img/logo.png' %}" />
             </span>
             <span id="side_menu_bar">
-                <span class="menu_item" onclick="window.location.href='/evoting/eventowner/homepage'">Overview</span>
-                <span class="menu_item">Ongoing Vote Events</span>
-                <span class="menu_item" onclick="window.location.href='/evoting/eventowner/completedevent'">Completed Vote Events</span>
-                <span class="menu_item last_item">FAQ</span>
+                <span class="menu_item {% block active_overview %}{% endblock %}" onclick="window.location.href='/harpocryption/eventowner/homepage'">Overview</span>
+                <span class="menu_item {% block active_ongoing %}{% endblock %}" onclick="window.location.href='/harpocryption/eventowner/ongoingevent'">Ongoing Vote Events</span>
+                <span class="menu_item last_item {% block active_completed %}{% endblock %}" onclick="window.location.href='/harpocryption/eventowner/completedevent'">Completed Vote Events</span>
 
                 <span class="logout_section">
                     {% block email %}
                     {% endblock %}
-                    <form action="/evoting/eventowner/logout" method="POST">
+                    <form action="/harpocryption/eventowner/logout" method="POST">
                         {% csrf_token %}
-                        <button id="logout_btn" type="submit" onclick="logout()">Log out</button>
+                        <button class="button_1" id="logout_btn" type="submit" onclick="logout()">Log out</button>
                     </form>
                 </span>
             </span>
@@ -56,7 +56,7 @@
     </div>
     <span id="session_timeout_alert">
         <p>You session is going to expire. Please confirm your session by clicking "OK" button</p>
-        <button type="button" onclick="confirming_session()">OK</button>
+        <button class="button_3" type="button" onclick="confirming_session()">OK</button>
     </span>
 </body>
 

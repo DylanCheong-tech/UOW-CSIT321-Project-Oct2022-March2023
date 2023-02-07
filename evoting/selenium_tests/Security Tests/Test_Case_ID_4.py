@@ -25,7 +25,7 @@ from selenium.webdriver.support.ui import Select
 driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
 # login to the system
-driver.get("http://127.0.0.1:8000/evoting/eventowner/createaccount")
+driver.get("http://127.0.0.1:8000/harpocryption/eventowner/createaccount")
 
 # fill in the form data 
 driver.find_element(By.NAME, "firstname").send_keys("James")
@@ -47,7 +47,7 @@ WebDriverWait(driver, timeout=100).until(lambda driver : len(driver.find_element
 driver.find_element(By.ID, "form_submit_btn").click()
 
 # assert the redirection 
-assert driver.current_url == "http://127.0.0.1:8000/evoting/eventowner/login"
+assert driver.current_url == "http://127.0.0.1:8000/harpocryption/eventowner/login"
 
 print("Security Test 4 Passed !")
 

@@ -25,10 +25,10 @@ from selenium.webdriver.support.ui import Select
 driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
 # direct access the Vote Event Final Result Page
-driver.get("http://127.0.0.1:8000/evoting/eventowner/completedevent")
+driver.get("http://127.0.0.1:8000/harpocryption/eventowner/completedevent")
 
 # assert the redirection 
-assert driver.current_url == "http://127.0.0.1:8000/evoting/eventowner/login"
+assert driver.current_url == "http://127.0.0.1:8000/harpocryption/eventowner/login"
 
 print("Security Test 15 Passed !")
 

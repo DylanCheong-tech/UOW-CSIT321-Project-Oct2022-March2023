@@ -23,7 +23,7 @@ from selenium.webdriver.support.ui import Select
 
 driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
-driver.get("http://127.0.0.1:8000/evoting/eventowner/createaccount")
+driver.get("http://127.0.0.1:8000/harpocryption/eventowner/createaccount")
 
 # fill in the form data 
 driver.find_element(By.NAME, "firstname").send_keys("James")
@@ -47,7 +47,7 @@ driver.find_element(By.ID, "form_submit_btn").click()
 error_msg_ele = driver.find_element(By.CSS_SELECTOR, "p.error_msg")
 
 # Assert the Error Message
-assert error_msg_ele.get_attribute("innerHTML") == "User Account Existed !"
+assert error_msg_ele.get_attribute("innerHTML") == "User Account Already Exists !"
 
 print("Integration Test 2 Passed !")
 

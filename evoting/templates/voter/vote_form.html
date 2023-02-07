@@ -8,6 +8,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.png' %}"/>
     <title>Voting Booth</title>
 
     <script src="{% static 'voter/js/vote_form.js' %}"></script>
@@ -17,11 +18,12 @@
 </head>
 
 <body>
+    <img id="logo" src="{% static 'public/img/logo.png' %}" />
     {% if vote_status and vote_status == "success" %}
     <div id="vote_acknowledge_page">
         <h1>Vote Acknowledgement</h1>
         <p>We have received you casted vote option. Thank you !</p>
-        <button type="button" onclick="window.location.href = '/evoting'">Return Home</button>
+        <button type="button" onclick="window.location.href = '/harpocryption'">Return Home</button>
     </div>
     {% else %}
     <div id="vote_booth">
@@ -31,7 +33,7 @@
             <span>{{ voter_info.name }}</span>
         </div>
         <h1>{{ vote_event_info.eventTitle }}</h1>
-        <form action="/evoting/voter/vote" method="POST">
+        <form action="/harpocryption/voter/vote" method="POST">
             {% csrf_token %}
             <label>Vote Question</label>
             <span>{{ vote_event_info.eventQuestion }}</span>

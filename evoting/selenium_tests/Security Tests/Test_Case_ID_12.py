@@ -29,7 +29,7 @@ from selenium.webdriver.support.ui import Select
 driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
 # login to the system
-driver.get("http://127.0.0.1:8000/evoting/eventowner/login")
+driver.get("http://127.0.0.1:8000/harpocryption/eventowner/login")
 
 # fill in the form data 
 driver.find_element(By.NAME, "email").send_keys("jamessmith@mail.com")
@@ -39,10 +39,10 @@ driver.find_element(By.NAME, "password").send_keys("JamesSmith_1234")
 driver.find_element(By.ID, "form_submit_btn").click()
 WebDriverWait(driver, timeout=100).until(lambda driver : driver.title == "Overview")
 
-driver.get("http://127.0.0.1:8000/evoting/eventowner/viewevent/78")
+driver.get("http://127.0.0.1:8000/harpocryption/eventowner/viewevent/78")
 
 # assert the redirection 
-assert driver.current_url == "http://127.0.0.1:8000/evoting/eventowner/homepage"
+assert driver.current_url == "http://127.0.0.1:8000/harpocryption/eventowner/homepage"
 
 print("Security Test 12 Passed !")
 

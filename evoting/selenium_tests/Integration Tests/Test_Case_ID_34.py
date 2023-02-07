@@ -28,7 +28,7 @@ from selenium.webdriver.support.ui import Select
 driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
 # login to the system
-driver.get("http://127.0.0.1:8000/evoting/voter/vote?auth=ecBwSbLr1a2QSMqfTfbQ8PZEP0lVXf0bPOyI5RG3FD8gtXma3DLVbsUWRcZ91lwW")
+driver.get("http://127.0.0.1:8000/harpocryption/voter/vote?auth=go1l8r3D3Rtlo4A4dw9JBoX950RMLJOjbumDckNSj4PSCsY4kPQm7d8ThbYrwTUr")
 
 error_message = driver.find_element(By.ID, "error_message").text
 

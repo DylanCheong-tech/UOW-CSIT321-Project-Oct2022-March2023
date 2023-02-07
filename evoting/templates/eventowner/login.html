@@ -8,10 +8,11 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.png' %}"/>
     <title>Event Owner Login</title>
 
-    <!-- jsHashes library CDN -->
-    <script src="https://cdn.rawgit.com/h2non/jsHashes/master/hashes.js"></script>
+    <!-- jsHashes library source code -->
+    <script src="{% static 'eventowner/js/jsHashes.js' %}"></script>
 
     <script src="{% static 'eventowner/js/login.js' %}"></script>
 
@@ -23,7 +24,7 @@
         <div id="left_pane">
             <h1>Login</h1>
             <p class="{% if status %} error_msg {% endif %}">{{ status }}</p>
-            <form action="/evoting/eventowner/login" method="POST" onsubmit="submit_login()">
+            <form action="/harpocryption/eventowner/login" method="POST" onsubmit="submit_login()">
                 {% csrf_token %}
                 <span class="field">
                     <label>Email</label>
@@ -38,12 +39,12 @@
             </form>
 
             <span id="annotation">
-                Don't have an account ? <a href="/evoting/eventowner/createaccount">Sign Up</a>
+                Don't have an account ? <a href="/harpocryption/eventowner/createaccount">Sign Up</a>
             </span>
         </div>
 
         <div id="right_pane">
-            <img src="{% static 'eventowner/img/sample1.png' %}" />
+            <img src="{% static 'eventowner/img/rightpanel.png' %}" />
         </div>
     </div>
 </body>

@@ -55,7 +55,12 @@ class VoteEvent(models.Model):
         if start_datetime > end_datetime:
             return False
 
-        return True        
+        return True   
+
+    def get_start_datetime(self):
+        start_datetime = dateparse.parse_datetime(str(self.startDate) + " " + str(self.startTime))
+
+        return start_datetime
 
     def __str__(self):
         return self.eventNo
@@ -75,8 +80,15 @@ class Voter(models.Model):
     email = models.EmailField()
     eventNo = models.ForeignKey("VoteEvent", on_delete=models.CASCADE)
     token = models.CharField(max_length=64, default="NOT APPLICABLE")
-    castedVote = models.TextField(default="NOT APPLICABLE")
+    voteStatus = models.CharField(max_length=1, default="0")
 
     def __str__(self):
         return self.id
+
+
+class VotingPool(models.Model):
+    eventNo = models.ForeignKey("VoteEvent", on_delete=models.CASCADE)
+    castedVote = models.TextField(default="NOT APPLICABLE")
+
+
    

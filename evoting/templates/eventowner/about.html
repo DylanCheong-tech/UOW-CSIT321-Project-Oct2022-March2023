@@ -1,0 +1,39 @@
+{% extends "eventowner/homepage_base.html" %}
+{% load static %}
+
+{% block tab_title %} {{ title }} {% endblock %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block stylesheet_links %}
+<link rel="stylesheet" href="{% static 'eventowner/css/misc.css' %}" />
+{% endblock %}
+
+{% block email %}
+<span> {{UserDetails.email}}</span>
+{% endblock %}
+
+{% block introduction %}
+<span> Welcome, {{UserDetails.lastName}} {{UserDetails.firstName}}</span>
+{% endblock %}
+
+{% block content %}
+<div id="details_page">
+    <h2>HARPOCryption Team</h2>
+    <div id ="about_section">
+
+        <span class="row_flex_flow">
+            <div class="container">
+                <div class="details">Team HARPOCryption consists of 5 team members. The roles for the team comprise of Full-stack developer, Quality Assurance, System and Software analyst. The team is usually flexible at executing their roles and tasks. All of us are from University of Wollongong (SIM). Our project leader is Cheong Wai Hong.</div>
+                <ul>
+                    <li>Cheong Wai Hong (whcheong004@mymail.sim.edu.sg)</li>
+                    <li>Gee Wei Shuan, Colemann (wscgee001@mymail.sim.edu.sg)</li>
+                    <li>Hong Ter Yen (tyhong001@mymail.sim.edu.sg)</li>
+                    <li>Johan Bin Iskandar (johanbi001@mymail.sim.edu.sg)</li>
+                    <li>Kow Wei Ren (wrkow001@mymail.sim.edu.sg)</li>
+                </ul>
+            </div>
+        </span>
+    </div>
+</div>
+{% endblock %}
