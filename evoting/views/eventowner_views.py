@@ -792,3 +792,17 @@ class EventOwnerAbout(View):
 
         return render(request, "eventowner/about.html", {"title": "About us", 'UserDetails': current_user})
 
+class EventOwnerFaq(View):
+    def get(self, request):
+        # check authentication 
+        if not request.user.is_authenticated:
+            return redirect("/harpocryption/eventowner/login")
+        
+        #  get the current authenticated user
+        current_user = UserAccount.objects.get(email=request.user.username)
+
+        current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName}
+
+        return render(request, "eventowner/faq.html", {"title": "FAQ", 'UserDetails': current_user})
+
+

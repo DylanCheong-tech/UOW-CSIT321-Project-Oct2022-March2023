@@ -1,0 +1,90 @@
+{% extends "eventowner/homepage_base.html" %}
+{% load static %}
+
+{% block tab_title %} {{ title }} {% endblock %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block stylesheet_links %}
+<link rel="stylesheet" href="{% static 'eventowner/css/misc.css' %}" />
+{% endblock %}
+
+{% block email %}
+<span> {{UserDetails.email}}</span>
+{% endblock %}
+
+{% block introduction %}
+<span> Welcome, {{UserDetails.lastName}} {{UserDetails.firstName}}</span>
+{% endblock %}
+
+{% block content %}
+<div id="details_page">
+    <h2>Please go to <a>Support</a> if your question is not listed here</h2>
+    <div id ="faq_section">
+
+        <span class="row_flex_flow">
+            <div class="container">
+                <label>
+                    Can we upload the participant list later while creating a poll?
+                </label>
+                <div class="label_ans">No, you cannot. In the meantime, you can create the vote event and upload a temporary .csv file which can be modified later.</div>
+            </div>
+        </span>
+
+        <span class="row_flex_flow">
+            <div class="container">
+                <label>
+                    What is the format of .csv for participant list?
+                </label>
+                <div class="label_ans">Name (First Column), Email (Second Column). Number of rows will refer to number of invited voters. To get example template, you can download it at vote event creation section.</div>
+            </div>
+        </span>
+
+        <span class="row_flex_flow">
+            <div class="container">
+                <label>
+                    We cannot modify the contents after confirming the event
+                </label>
+                <div class="label_ans">Yes, you cannot modify the event details after confirming the event except the end date or time of the event.</div>
+            </div>
+        </span>
+
+        <span class="row_flex_flow">
+            <div class="container">
+                <label>
+                    What is the format of .csv for participant list?
+                </label>
+                <div class="label_ans">Name (First Column), Email (Second Column). Number of rows will refer to number of invited voters. To get example template, you can download it at vote event creation section.</div>
+            </div>
+        </span>
+
+        <span class="row_flex_flow">
+            <div class="container">
+                <label>
+                    Can we hide the results page from the voters?
+                </label>
+                <div class="label_ans">Yes, you can until you publish the event's final result.</div>
+            </div>
+        </span>
+
+        <span class="row_flex_flow">
+            <div class="container">
+                <label>
+                    Can we know voters' selection?
+                </label>
+                <div class="label_ans">No, the votes are not mapped to the voters at the end of vote event. Therefore, voters remain anonymous and you can only know the end result.</div>
+            </div>
+        </span>
+
+        <span class="row_flex_flow">
+            <div class="container">
+                <label>
+                    I forgot to invite one or more voter. What should I do?
+                </label>
+                <div class="label_ans">Reupload your .csv with the updated invited participants. However, if the event has started or been confirmed, you cannot longer invite new participants.</div>
+            </div>
+        </span>
+
+    </div>
+</div>
+{% endblock %}

@@ -5,10 +5,35 @@ div#details_page {
     padding: 3vh 2vw 3vh 2vw;
 }
 
-div#details_page div span div div.details {
+div#content div#details_page div span div div.details, div#content div#details_page div#faq_section span.row_flex_flow div.container div.label_ans {
     color: #767676;
 }
 
-div#details_page div span div ul li {
+div#content div#details_page div span div ul li {
     font-weight: bold;
+}
+
+div#content div#details_page div#faq_section{
+    margin-left: 20px;
+}
+
+div#content div#details_page div#faq_section span.row_flex_flow {
+    display: flex;
+    flex-flow: row;
+    column-gap: 15vw;
+    margin-bottom: 3vh;
+}
+
+div#content label {
+    margin-top: 1vh;   
+    font-weight: bold; 
+}
+
+div#content div#details_page div#faq_section span.row_flex_flow .container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: fit-content;
+    word-wrap: break-word;
 }
