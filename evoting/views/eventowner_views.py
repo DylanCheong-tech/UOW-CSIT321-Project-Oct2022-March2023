@@ -1,6 +1,7 @@
 # eventowner_views.py
 
 from threading import Timer 
+from datetime import datetime 
 import csv
 from ..helpers.tallyJobScheduler import JobScheduler
 
@@ -557,7 +558,7 @@ class EventOwnerConfirmVoteEvent(View):
             vote_event.save()
 
             # get the salt and public key values 
-            (_, salt) = read_private_key(current_user.id, vote_event.eventNo)
+            (private_key, salt) = read_private_key(current_user.id, vote_event.eventNo)
             if salt is None:
                 return render(request, "error_page.html", {"error_code" : 500, "error_summary_message" : "Internal Server Error", "error_message" : "Private Key Information Lost !"})
                 
@@ -575,7 +576,7 @@ class EventOwnerConfirmVoteEvent(View):
             # send out the invitation email to the voters
             host_origin = "http://" + request.get_host() + "/harpocryption/voter"
             event_owner_name = current_user.firstName + " " + current_user.lastName
-            vote_event_name = vote_event.eventTitle
+            vote_event_name = decrypt_str(vote_event.eventTitle, private_key, salt)
 
             # generate authentication token for each voter and save it into the database 
             vote_event_voters = Voter.objects.filter(eventNo=eventNo)
@@ -588,13 +589,19 @@ class EventOwnerConfirmVoteEvent(View):
 
                 # send out the invitation email 
                 emailSender = EmailSender(voter.email)
-                # emailSender.sendInvitation(host_origin, token, voter.name, event_owner_name, vote_event_name)
+                emailSender.sendInvitation(host_origin, token, voter.name, event_owner_name, vote_event_name)
+
+
+            # schedule the vote event tally task 
+            job_scheduler = JobScheduler()
+            schedule_time = job_scheduler.get_schedule_time(datetime.combine(vote_event.endDate, vote_event.endTime))
+            job_scheduler.schedule_event(current_user.id, vote_event.eventNo, schedule_time)
 
         except VoteEvent.DoesNotExist:
             print("Error On Confirming a Vote Event, eventNo = " + str(eventNo))
 
-        except Exception:
-            print("Vote Event is published or not applicable to be published.")
+        # except Exception:
+        #     print("Vote Event is published or not applicable to be published.")
 
         # redirect to the same page as a refresh 
         return redirect("/harpocryption/eventowner/homepage")
@@ -683,7 +690,7 @@ class EventOwnerPublishVoteEventFinalResult(View):
 
             # send out the invitation email to the voters
             host_origin = "http://" + request.get_host() + "/harpocryption/voter/finalresult"
-            vote_event_name = vote_event.eventTitle
+            vote_event_name = decrypt_str(vote_event.eventTitle, private_key, salt)
 
             # generate authentication token for each voter and save it into the database 
             vote_event_voters = Voter.objects.filter(eventNo=eventNo)
@@ -696,7 +703,8 @@ class EventOwnerPublishVoteEventFinalResult(View):
 
                 # send out the invitation email 
                 emailSender = EmailSender(voter.email)
-                # emailSender.sendFinalResult(host_origin, token, voter.name, vote_event_name)
+                emailSender.sendFinalResult(host_origin, token, voter.name, vote_event_name)
+
 
             # update the vote event status 
             vote_event.status = "RP";
