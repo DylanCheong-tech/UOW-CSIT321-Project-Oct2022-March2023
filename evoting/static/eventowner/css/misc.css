@@ -1,0 +1,14 @@
+/* misc.css */
+
+div#details_page {
+    background-color: #FFFFFF;
+    padding: 3vh 2vw 3vh 2vw;
+}
+
+div#details_page div span div div.details {
+    color: #767676;
+}
+
+div#details_page div span div ul li {
+    font-weight: bold;
+}
