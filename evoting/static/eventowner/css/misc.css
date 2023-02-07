@@ -5,19 +5,20 @@ div#details_page {
     padding: 3vh 2vw 3vh 2vw;
 }
 
-div#content div#details_page div span div div.details, div#content div#details_page div#faq_section span.row_flex_flow div.container div.label_ans {
+div#content div#details_page div span div div.details, div#content div#details_page div#details_section span.row_flex_flow div.container div.label_ans {
     color: #767676;
+    padding-top: 5px;
 }
 
 div#content div#details_page div span div ul li {
     font-weight: bold;
 }
 
-div#content div#details_page div#faq_section{
+div#content div#details_page div#details_section{
     margin-left: 20px;
 }
 
-div#content div#details_page div#faq_section span.row_flex_flow {
+div#content div#details_page div#details_section span.row_flex_flow {
     display: flex;
     flex-flow: row;
     column-gap: 15vw;
@@ -29,7 +30,7 @@ div#content label {
     font-weight: bold; 
 }
 
-div#content div#details_page div#faq_section span.row_flex_flow .container {
+div#content div#details_page div#details_section span.row_flex_flow .container {
     display: flex;
     flex-direction: column;
     align-items: flex-start;

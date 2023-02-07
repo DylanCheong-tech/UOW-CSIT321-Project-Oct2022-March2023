@@ -1,0 +1,35 @@
+{% extends "eventowner/homepage_base.html" %}
+{% load static %}
+
+{% block tab_title %} {{ title }} {% endblock %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block stylesheet_links %}
+<link rel="stylesheet" href="{% static 'eventowner/css/misc.css' %}" />
+{% endblock %}
+
+{% block email %}
+<span> {{UserDetails.email}}</span>
+{% endblock %}
+
+{% block introduction %}
+<span> Welcome, {{UserDetails.lastName}} {{UserDetails.firstName}}</span>
+{% endblock %}
+
+{% block content %}
+<div id="details_page">
+    <h2>HARPOCryption Team will help if available</h2>
+    <div id ="details_section">
+
+        <span class="row_flex_flow">
+            <div class="container">
+                <label>
+                    Please contact us at FYP22S402@gmail.com with your concerns.
+                </label>
+                <div class="label_ans">HARPOCryption does not offer any live supports. If haven't, please check <a href="/harpocryption/eventowner/faq">FAQ</a> page to see if your question is there.</div>
+            </div>
+        </span>
+    </div>
+</div>
+{% endblock %}
