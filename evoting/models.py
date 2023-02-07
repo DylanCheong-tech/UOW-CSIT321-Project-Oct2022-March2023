@@ -28,7 +28,7 @@ class OTPManagement(models.Model):
         return timezone.localtime() > timezone.localtime(self.expireAt)
 
     def check_otp_matching(self, input_otp):
-        return str(self.otp) == input_otp
+        return str(self.otp) == str(input_otp)
         
     def __str__(self):
         return self.email

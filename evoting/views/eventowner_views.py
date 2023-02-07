@@ -58,7 +58,7 @@ class EventOwnerCreateAccountView(View):
                 try:
                     # check otp value
                     otp_from_db = OTPManagement.objects.get(email=data['email'])
-                    if otp_from_db.is_expired() or otp_from_db.check_otp_matching(data['otp']):
+                    if otp_from_db.is_expired() or not(otp_from_db.check_otp_matching(data['otp'])):
                         error_message = "OTP Value Invalid!"
                         status_flag = False
 
@@ -285,7 +285,7 @@ class EventOwnerCreateNewVoteEvent(View):
                 emailList = []
                 for row in reader:
                     emailList.append(row)
-                
+                    
                 valid_email, invalid_email = VoterEmailChecker.checkEmails(emailList)
 
                 for x, y in valid_email.items():
@@ -469,7 +469,8 @@ class EventOwnerUpdateVoteEvent(View):
             # redirect to home page if success
             return redirect("/harpocryption/eventowner/homepage?update_status=success")
         else:
-            return render(request, "eventowner/voteevent_form.html", {"title" : "Update Vote Event", "form_action" : "/harpocryption/eventowner/updateevent/" + str(eventNo), "status": error_message, "form": form, "voteOptions" : options_list})  
+            current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName}
+            return render(request, "eventowner/voteevent_form.html", {"title" : "Update Vote Event", "form_action" : "/evoting/eventowner/updateevent/" + str(eventNo), "status": error_message, "form": form, "voteOptions" : options_list, "event_status" : vote_event_status, "UserDetails":current_user}) 
 
 class EventOwnerViewVoteEvent(View):
     def get(self, request, eventNo):
