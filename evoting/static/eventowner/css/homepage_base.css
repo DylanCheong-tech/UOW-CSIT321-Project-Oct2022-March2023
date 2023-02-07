@@ -37,11 +37,17 @@ div#content_pane>div#left_pane span#side_menu_bar * {
 div#content_pane>div#left_pane span#side_menu_bar span.menu_item {
     padding: 4vh 3vw 4vh 3vw;
     cursor: pointer;
+    opacity: 80%;
 }
 
 div#content_pane>div#left_pane span#side_menu_bar span.last_item {
     margin-bottom: auto;
 }
+
+div#content_pane>div#left_pane span#side_menu_bar span.active {
+    font-weight: 900;
+    opacity: 100%;
+  }
 
 div#content_pane>div#left_pane span#side_menu_bar span.logout_section {
     align-items: center;
