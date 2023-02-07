@@ -51,7 +51,7 @@ class EventOwnerCreateAccountView(View):
             # check if the account is registered here 
             count = UserAccount.objects.filter(email=data['email']).count()
             if (count > 0):
-                error_message = "User Account Existed !"
+                error_message = "User Account Already Exists !"
                 status_flag = False
             else: 
                 try:
