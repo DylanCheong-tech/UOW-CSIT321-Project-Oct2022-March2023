@@ -134,4 +134,7 @@ class JobScheduler:
 		return False
 
 # schedule the existing vote event when the system boots once
-(JobScheduler()).schedule_existing_event()
+try :
+	(JobScheduler()).schedule_existing_event()
+except Exception:
+	print("Something went wrong in Job Scheduler... Please try again later ...")
