@@ -21,5 +21,6 @@ urlpatterns = [
     path('ongoingevent', views.EventOwnerViewOnGoingVoteEvents.as_view()),
     path('about', views.EventOwnerAbout.as_view()),
     path('faq', views.EventOwnerFaq.as_view()),
-    path('support', views.EventOwnerSupport.as_view())
+    path('support', views.EventOwnerSupport.as_view()),
+    path('userguide', views.EventOwnerUserGuide.as_view())
 ]

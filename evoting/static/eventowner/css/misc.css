@@ -5,7 +5,7 @@ div#details_page {
     padding: 3vh 2vw 3vh 2vw;
 }
 
-div#content div#details_page div span div div.details, div#content div#details_page div#details_section span.row_flex_flow div.container div.label_ans {
+div#content div#details_page div span div .details, div#content div#details_page div#details_section span.row_flex_flow div.container div.label_ans {
     color: #767676;
     padding-top: 5px;
 }
