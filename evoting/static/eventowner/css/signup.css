@@ -3,6 +3,7 @@
 div#content_pane {
     display: flex;
     flex-flow: row;
+    height: 100vh;
 }
 
 div#content_pane>div {
@@ -164,4 +165,9 @@ span#message_box {
         opacity: 0;
         display: none;
     }
+}
+
+div#content_pane div#right_pane img {
+    width: 100%;
+    height: 98%;
 }
