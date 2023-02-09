@@ -400,6 +400,9 @@ class EventOwnerUpdateVoteEvent(View):
                     vote_event.startDate = data['startDate']
                     vote_event.startTime = data['startTime']
                     vote_event.eventQuestion = encrypt_str(data['eventQuestion'], public_key, salt)
+                    temp_status = "Creation"
+                else:
+                    temp_status = "Published"
 
                 """
                 Vote Event in PC or Published, PB can modify the end datetime 
@@ -409,7 +412,7 @@ class EventOwnerUpdateVoteEvent(View):
 
                 options_list = data['voteOption'].split("|")
 
-                if not vote_event.is_event_datetime_valid('Published'):
+                if not vote_event.is_event_datetime_valid(temp_status):
                     status_flag = False
                     error_message = "Date Time Settings Invalid !"
 
