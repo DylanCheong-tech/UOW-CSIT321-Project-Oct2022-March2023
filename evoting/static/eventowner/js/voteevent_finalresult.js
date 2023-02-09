@@ -84,7 +84,7 @@ function publishFinalResult(event) {
     event.preventDefault()
 
     document.getElementById("pop_out_message_box").style.display = "block";
-    document.getElementById("message_content").innerHTML = "You are going ot publish the vote event results. <br /> Confirm to proceed ?"
+    document.getElementById("message_content").innerHTML = "You are going to publish the vote event results. <br /> Confirm to proceed ?"
 
     document.getElementById("confirm_btn").addEventListener("click", () => {
         document.querySelector("div#publish_button_bar form").submit();

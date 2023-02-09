@@ -45,12 +45,16 @@ class VoteEvent(models.Model):
     createdBy = models.ForeignKey("UserAccount", on_delete=models.CASCADE)
     publicKey = models.TextField(default="NOT APPLICABLE")
 
-    def is_event_datetime_valid(self):
+    def is_event_datetime_valid(self, type):
         start_datetime = dateparse.parse_datetime(str(self.startDate) + " " + str(self.startTime))
         end_datetime = dateparse.parse_datetime(str(self.endDate) + " " + str(self.endTime))
 
-        if start_datetime < datetime.now():
-            return False
+        if type == "Creation":
+            if start_datetime < datetime.now():
+                return False
+        if type == "Published":
+            if end_datetime < datetime.now():
+                return False
 
         if start_datetime > end_datetime:
             return False
