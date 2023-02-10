@@ -195,7 +195,7 @@ class EventOwnerHomePage(View):
             event.eventQuestion = decrypt_str(event.eventQuestion, private_key, salt)
 
         VoteEventCount = VoteEventList.count()
-        OngoingEvent = VoteEvent.objects.filter(createdBy_id=current_user, status='PC').count()
+        OngoingEvent = VoteEvent.objects.filter(createdBy_id=current_user, status__in=('PC','PB')).count()
         CompletedEvent = VoteEventCount - OngoingEvent
         EventCount = [VoteEventCount, OngoingEvent, CompletedEvent]
         EventLabels = ["Total Vote Events : ","Ongoing Vote Events : ","Completed Vote Events : "]
@@ -251,7 +251,7 @@ class EventOwnerCreateNewVoteEvent(View):
 
             options_list = data['voteOption'].split("|")
 
-            if not new_vote_event.is_event_datetime_valid():
+            if not new_vote_event.is_event_datetime_valid('Creation'):
                 status_flag = False
                 error_message = "Date Time Settings Invalid !"
 
@@ -400,6 +400,9 @@ class EventOwnerUpdateVoteEvent(View):
                     vote_event.startDate = data['startDate']
                     vote_event.startTime = data['startTime']
                     vote_event.eventQuestion = encrypt_str(data['eventQuestion'], public_key, salt)
+                    temp_status = "Creation"
+                else:
+                    temp_status = "Published"
 
                 """
                 Vote Event in PC or Published, PB can modify the end datetime 
@@ -409,7 +412,7 @@ class EventOwnerUpdateVoteEvent(View):
 
                 options_list = data['voteOption'].split("|")
 
-                if not vote_event.is_event_datetime_valid():
+                if not vote_event.is_event_datetime_valid(temp_status):
                     status_flag = False
                     error_message = "Date Time Settings Invalid !"
 
@@ -470,7 +473,7 @@ class EventOwnerUpdateVoteEvent(View):
             return redirect("/harpocryption/eventowner/homepage?update_status=success")
         else:
             current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName}
-            return render(request, "eventowner/voteevent_form.html", {"title" : "Update Vote Event", "form_action" : "/evoting/eventowner/updateevent/" + str(eventNo), "status": error_message, "form": form, "voteOptions" : options_list, "event_status" : vote_event_status, "UserDetails":current_user}) 
+            return render(request, "eventowner/voteevent_form.html", {"title" : "Update Vote Event", "form_action" : "/harpocryption/eventowner/updateevent/" + str(eventNo), "status": error_message, "form": form, "voteOptions" : options_list, "event_status" : vote_event_status, "UserDetails":current_user}) 
 
 class EventOwnerViewVoteEvent(View):
     def get(self, request, eventNo):
@@ -575,7 +578,7 @@ class EventOwnerConfirmVoteEvent(View):
                 option.save()
 
             # send out the invitation email to the voters
-            host_origin = "http://" + request.get_host() + "/harpocryption/voter"
+            host_origin = "http://" + request.get_host() + "/harpocryption/voter/vote"
             event_owner_name = current_user.firstName + " " + current_user.lastName
             vote_event_name = decrypt_str(vote_event.eventTitle, private_key, salt)
 
@@ -688,6 +691,11 @@ class EventOwnerPublishVoteEventFinalResult(View):
             if vote_event.status != "FR":
                 error_message = "Final Result Is Not Ready !"
                 raise Exception
+            
+             # get the private key
+            (private_key, salt) = read_private_key(current_user.id, vote_event.eventNo)
+            if private_key is None:
+                return render(request, "error_page.html", {"error_code" : 500, "error_summary_message" : "Internal Server Error", "error_message" : "Private Key Information Lost !"})
 
             # send out the invitation email to the voters
             host_origin = "http://" + request.get_host() + "/harpocryption/voter/finalresult"
@@ -826,3 +834,16 @@ class EventOwnerSupport(View):
         current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName}
 
         return render(request, "eventowner/support.html", {"title": "Support", 'UserDetails': current_user})
+
+class EventOwnerUserGuide(View):
+    def get(self, request):
+        # check authentication 
+        if not request.user.is_authenticated:
+            return redirect("/harpocryption/eventowner/login")
+        
+        #  get the current authenticated user
+        current_user = UserAccount.objects.get(email=request.user.username)
+
+        current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName}
+
+        return render(request, "eventowner/guide.html", {"title": "User Guide", 'UserDetails': current_user})

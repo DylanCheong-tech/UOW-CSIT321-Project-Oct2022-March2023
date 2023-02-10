@@ -33,7 +33,7 @@ driver.get("http://127.0.0.1:8000/harpocryption/voter/vote?auth=go1l8r3D3Rtlo4A4
 error_message = driver.find_element(By.ID, "error_message").text
 
 assert driver.title == "Error"
-assert error_message == "Vote Event has been ended !"
+assert error_message == "Vote Event has already ended !"
 
 print("Integration Test 34 Passed !")
 
