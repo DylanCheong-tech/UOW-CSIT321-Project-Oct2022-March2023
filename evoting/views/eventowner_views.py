@@ -154,7 +154,7 @@ class EventOwnerLogin(View):
                         print("No User Account Existed !")
 
                 status_flag = False
-            print(self.user_login_failed_attempts)
+                print(self.user_login_failed_attempts)
         else:
             status_flag = False
 
@@ -539,7 +539,6 @@ class EventOwnerDeleteVoteEvent(View):
         # redirect to the same page as a refresh 
         return redirect("/harpocryption/eventowner/homepage")
 
-
 class EventOwnerConfirmVoteEvent(View):
     def post(self, request, eventNo):
         # check authentication 
@@ -550,57 +549,61 @@ class EventOwnerConfirmVoteEvent(View):
         current_user = UserAccount.objects.get(email=request.user.username)
 
         try :
-            # query the vote event to be deleted
+            # query the vote event to be confirmed
             vote_event = VoteEvent.objects.get(createdBy=current_user, eventNo=eventNo)
 
             # check if the vote event is in status of "Pending Confirmation"
             if (vote_event.status != "PC"):
                 raise Exception
 
-            # change the vote event status to "Published"
-            vote_event.status = "PB"
+            # change the vote event status to "Published" if start datetime is earlier than current datetime
+            if datetime.now() < vote_event.get_start_datetime():
+                vote_event.status = "PB"
+            else:
+                vote_event.status = "CF"
             vote_event.save()
 
             # get the salt and public key values 
-            (private_key, salt) = read_private_key(current_user.id, vote_event.eventNo)
-            if salt is None:
-                return render(request, "error_page.html", {"error_code" : 500, "error_summary_message" : "Internal Server Error", "error_message" : "Private Key Information Lost !"})
-                
-            public_key = vote_event.publicKey.split("//")
-            public_key = rsa.PublicKey(int(public_key[0]), int(public_key[1]))
+            if vote_event.status == 'PB':
+                (private_key, salt) = read_private_key(current_user.id, vote_event.eventNo)
+                if salt is None:
+                    return render(request, "error_page.html", {"error_code" : 500, "error_summary_message" : "Internal Server Error", "error_message" : "Private Key Information Lost !"})
+                    
+                public_key = vote_event.publicKey.split("//")
+                public_key = rsa.PublicKey(int(public_key[0]), int(public_key[1]))
 
-            # generates the encoding for each vote options 
-            vote_options = VoteOption.objects.filter(eventNo_id=vote_event.eventNo)
-            encoding_list = vote_option_encoding_generation(vote_options.count(), salt)
-            for index, option in zip(range(len(encoding_list)), vote_options):
-                # encrypt the encodings when storing into the database 
-                option.voteEncoding = str(encrypt_int(encoding_list[index], public_key))
-                option.save()
+                # generates the encoding for each vote options 
+                vote_options = VoteOption.objects.filter(eventNo_id=vote_event.eventNo)
+                encoding_list = vote_option_encoding_generation(vote_options.count(), salt)
+                for index, option in zip(range(len(encoding_list)), vote_options):
+                    # encrypt the encodings when storing into the database 
+                    option.voteEncoding = str(encrypt_int(encoding_list[index], public_key))
+                    option.save()
 
-            # send out the invitation email to the voters
-            host_origin = "http://" + request.get_host() + "/harpocryption/voter/vote"
-            event_owner_name = current_user.firstName + " " + current_user.lastName
-            vote_event_name = decrypt_str(vote_event.eventTitle, private_key, salt)
+                # send out the invitation email to the voters
+                host_origin = "http://" + request.get_host() + "/harpocryption/voter/vote"
+                event_owner_name = current_user.firstName + " " + current_user.lastName
+                vote_event_name = decrypt_str(vote_event.eventTitle, private_key, salt)
 
-            # generate authentication token for each voter and save it into the database 
-            vote_event_voters = Voter.objects.filter(eventNo=eventNo)
+                # generate authentication token for each voter and save it into the database 
+                vote_event_voters = Voter.objects.filter(eventNo=eventNo)
 
-            for voter in vote_event_voters:
-                token = VoterAuthentication.generateTokenString()
-                # hash the token and before storing into the database 
-                voter.token = Hasher(token).messageDigest()
-                voter.save()
+                for voter in vote_event_voters:
+                    token = VoterAuthentication.generateTokenString()
+                    # hash the token and before storing into the database 
+                    voter.token = Hasher(token).messageDigest()
+                    voter.save()
 
-                # send out the invitation email 
-                emailSender = EmailSender(voter.email)
-                emailSender.sendInvitation(host_origin, token, voter.name, event_owner_name, vote_event_name)
+                    # send out the invitation email 
+                    emailSender = EmailSender(voter.email)
+                    emailSender.sendInvitation(host_origin, token, voter.name, event_owner_name, vote_event_name)
 
 
-            # schedule the vote event tally task 
-            job_scheduler = JobScheduler()
-            schedule_time = job_scheduler.get_schedule_time(datetime.combine(vote_event.endDate, vote_event.endTime))
-            job_scheduler.schedule_event(current_user.id, vote_event.eventNo, schedule_time)
-
+                # schedule the vote event tally task 
+                job_scheduler = JobScheduler()
+                schedule_time = job_scheduler.get_schedule_time(datetime.combine(vote_event.endDate, vote_event.endTime))
+                job_scheduler.schedule_event(current_user.id, vote_event.eventNo, schedule_time)
+       
         except VoteEvent.DoesNotExist:
             print("Error On Confirming a Vote Event, eventNo = " + str(eventNo))
 
@@ -673,7 +676,6 @@ class EventOwnerViewVoteEventFinalResult(View):
             print(error_message)
             return redirect("/harpocryption/eventowner/viewevent/" + str(eventNo) + "?view_final=fail")
             
-
 class EventOwnerPublishVoteEventFinalResult(View):
     def post(self, request, eventNo):
         # check authentication 

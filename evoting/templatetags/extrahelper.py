@@ -22,3 +22,5 @@ def status_abbreviation(event):
         return "Final Result Ready"
     elif status == 'RP':
         return "Result Publish"
+    elif status == 'CF':
+        return "Confirmation Failed"
