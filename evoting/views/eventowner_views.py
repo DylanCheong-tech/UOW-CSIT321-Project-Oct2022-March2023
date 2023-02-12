@@ -743,7 +743,7 @@ class EventOwnerViewOnGoingVoteEvents(View):
         
         #  get the current authenticated user
         current_user = UserAccount.objects.get(email=request.user.username)
-        VoteEventList = VoteEvent.objects.filter(createdBy_id=current_user).filter(~Q(status="FR") & ~Q(status="RP")).order_by('eventNo')
+        VoteEventList = VoteEvent.objects.filter(createdBy_id=current_user).filter(~Q(status="FR") & ~Q(status="RP") & ~Q(status="CF")).order_by('eventNo')
         VoteEventCount = VoteEventList.count()
 
         # decrypt the event title and question 
@@ -775,7 +775,7 @@ class EventOwnerViewCompletedVoteEvents(View):
         
         #  get the current authenticated user
         current_user = UserAccount.objects.get(email=request.user.username)
-        VoteEventList = VoteEvent.objects.filter(createdBy_id=current_user).filter(Q(status="FR") | Q(status="RP")).order_by('eventNo')
+        VoteEventList = VoteEvent.objects.filter(createdBy_id=current_user).filter(Q(status="FR") | Q(status="RP") | Q(status="CF")).order_by('eventNo')
         VoteEventCount = VoteEventList.count()
 
         # decrypt the event title and question 
@@ -790,8 +790,9 @@ class EventOwnerViewCompletedVoteEvents(View):
 
         CompletedEvent = VoteEvent.objects.filter(createdBy_id=current_user, status='FR').count()
         PublishedEvent = VoteEvent.objects.filter(createdBy_id=current_user, status='RP').count()
-        EventCount = [VoteEventCount, CompletedEvent, PublishedEvent]
-        EventLabels = ["Total Completed/Published Events : ","Completed Vote Events : ","Published Vote Events : "]
+        FailedEvent = VoteEvent.objects.filter(createdBy_id=current_user, status='CF').count()
+        EventCount = [VoteEventCount, CompletedEvent, PublishedEvent, FailedEvent]
+        EventLabels = ["Total Completed/Published Events : ","Completed Vote Events : ","Published Vote Events : ","Failed Vote Events : "]
         EventDetails = zip(EventCount, EventLabels)
 
         current_user = {"email" : current_user.email, "firstName": current_user.firstName, "lastName": current_user.lastName}
