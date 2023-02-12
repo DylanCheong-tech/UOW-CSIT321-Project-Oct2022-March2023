@@ -52,7 +52,7 @@ class VoterVoteForm(View):
 			# check if the vote event is in the Published state
 			# voter will not be get access the PC event, in this state, no auth token will be generated for the voters 
 			if (vote_event.status != "PB"):
-				error_message = "Vote Event has been ended !"
+				error_message = "Vote Event has already ended !"
 				error_summary_message = "Forbidden Request !"
 				error_code = 403
 				raise Exception
@@ -66,7 +66,7 @@ class VoterVoteForm(View):
 
 			# check if the voter is casted the vote before 
 			if voter.voteStatus == "1":
-				error_message = "Voter has been voted, no access allowed !"
+				error_message = "Voter has already voted, no access allowed !"
 				error_summary_message = "Forbidden Request Received"
 				error_code = 403
 				raise Exception
@@ -99,7 +99,7 @@ class VoterVoteForm(View):
 
 		except Voter.DoesNotExist:
 			print("No Voter Information Founded !")
-			error_message = "Voter Information Not Founded !"
+			error_message = "Voter Information Not Found !"
 
 		except VoteEvent.DoesNotExist:
 			print("No Vote Event Information Founded !")
