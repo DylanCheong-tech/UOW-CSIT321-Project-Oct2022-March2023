@@ -131,7 +131,7 @@ class EventOwnerLogin(View):
 
         if form.is_valid():
             data = form.cleaned_data
-            user = auth.authenticate(username=data["email"], password=data["password"])
+            user = auth.authenticate(username=data["email"], password=Hasher(data['password']).messageDigest())
 
             if user is not None and user.is_active:
                 auth.login(request, user)

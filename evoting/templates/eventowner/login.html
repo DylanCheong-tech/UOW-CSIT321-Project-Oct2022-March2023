@@ -24,7 +24,7 @@
         <div id="left_pane">
             <h1>Login</h1>
             <p class="{% if status %} error_msg {% endif %}">{{ status }}</p>
-            <form action="/harpocryption/eventowner/login" method="POST" onsubmit="submit_login()">
+            <form action="/harpocryption/eventowner/login" method="POST">
                 {% csrf_token %}
                 <span class="field">
                     <label>Email</label>
