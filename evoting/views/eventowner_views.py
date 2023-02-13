@@ -386,7 +386,7 @@ class EventOwnerUpdateVoteEvent(View):
             public_key = vote_event.publicKey.split("//")
             public_key = rsa.PublicKey(int(public_key[0]), int(public_key[1]))
             # get the salt 
-            (_, salt) = read_private_key(current_user.id, eventNo)
+            (private_key, salt) = read_private_key(current_user.id, eventNo)
             if salt is None:
                 return render(request, "error_page.html", {"error_code" : 500, "error_summary_message" : "Internal Server Error", "error_message" : "Private Key Information Lost !"})
 
@@ -460,6 +460,27 @@ class EventOwnerUpdateVoteEvent(View):
                                     eventNo_id = vote_event.eventNo
                                 )
                                 voter_email.save()
+                        
+                        # if new participants are added, invite the new participants again (since the vote event has been published)
+                        if vote_event_status == "PB":
+                            # send out the another invitation email to the new voters if there are any (existing voter not required)
+                            host_origin = "http://" + request.get_host() + "/harpocryption/voter/vote"
+                            event_owner_name = current_user.firstName + " " + current_user.lastName
+                            vote_event_name = decrypt_str(vote_event.eventTitle, private_key, salt)
+
+                            # generate authentication token for new voters
+                            vote_event_voters = Voter.objects.filter(Q(eventNo=eventNo) & Q(token='NOT APPLICABLE'))
+
+                            for voter in vote_event_voters:
+                                token = VoterAuthentication.generateTokenString()
+                                # hash the token and before storing into the database 
+                                voter.token = Hasher(token).messageDigest()
+                                voter.save()
+
+                                # send out the invitation email 
+                                emailSender = EmailSender(voter.email)
+                                emailSender.sendInvitation(host_origin, token, voter.name, event_owner_name, vote_event_name)
+
             else:
                 error_message = "Vote Event Not Modifiable !"
                 status_flag = False
