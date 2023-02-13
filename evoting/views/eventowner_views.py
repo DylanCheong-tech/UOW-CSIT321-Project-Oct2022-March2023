@@ -439,6 +439,13 @@ class EventOwnerUpdateVoteEvent(View):
                                 )
                                 vote_option.save()
 
+                    elif vote_event_status == "PB":
+                        # Recreate job schedule as end datetime might be modified
+                        job_scheduler = JobScheduler()
+                        if (job_scheduler.cancel_scheduled_event(vote_event.eventNo)):
+                            schedule_time = job_scheduler.get_schedule_time(datetime.combine(vote_event.endDate, vote_event.endTime))
+                            job_scheduler.schedule_event(current_user.id, vote_event.eventNo, schedule_time)
+
                     if data['voterEmail'] is not None:
                         decoded_file = data['voterEmail'].read().decode('utf-8').splitlines()
                         reader = csv.reader(decoded_file)
@@ -549,6 +556,11 @@ class EventOwnerDeleteVoteEvent(View):
         try :
             # query the vote event to be deleted
             vote_event = VoteEvent.objects.get(createdBy=current_user, eventNo=eventNo)
+
+            # cancel job for vote tallying
+            if vote_event.status == 'PB':
+                job_scheduler = JobScheduler()
+                job_scheduler.cancel_scheduled_event(vote_event.eventNo)
 
             vote_event.delete()
 
