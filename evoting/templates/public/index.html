@@ -19,8 +19,8 @@
 <body>
     <div id="content_pane">
         <div id="header">
-            <span><img src="{% static 'public/img/logo.png' %}" /></span>
-            <span class="menu_items">About</span>
+            <span><a href="{% url 'main_page' %}"><img src="{% static 'public/img/logo.png' %}" /></a></span>
+            <span class="menu_items" onclick="window.location.href = '/about'">About</span>
             <span class="menu_items" onclick="window.location.href = '/harpocryption/eventowner/createaccount'">Get Started</span>
             <span class="menu_items" onclick="window.location.href = '/harpocryption/eventowner/login'">Login</span>
         </div>
@@ -33,7 +33,7 @@
                     participants to vote.
                     Online voting has never been so easy without us !
                 </p>
-                <button type="button" onclick="window.location.href = '/harpocryption/eventowner/createaccount'">GET STARTED</button>
+                <button id="start_button" type="button" onclick="window.location.href = '/harpocryption/eventowner/createaccount'">GET STARTED</button>
             </div>
             <img src="{% static 'public/img/landingpic.png' %}" />
         </div>

@@ -1,4 +1,4 @@
-/* index.css */
+/* index.css combine with about.html*/
 
 div#content_pane {
     display: flex;
@@ -48,6 +48,14 @@ div#content_pane div#banner div#banner_left {
     text-align: justify;
 }
 
+div#content_pane div#banner div#banner_left button#start_button {
+    background-color: #3F54BE;
+    padding: 1.2vh 2.5vw 1.2vh 2.5vw;
+    color: white;
+    border: none;
+    border-radius: 10px;
+}
+
 div#content_pane div#banner img {
     width: 100%;
     align-self: center;
@@ -73,4 +81,47 @@ div#content_pane div#main_content_pane>div>span {
 div#content_pane footer {
     margin-top: auto;
     text-align: right;
+}
+
+/* for about*/
+
+div#main_page {
+    background-color: #EFEFEF;
+    padding-top: 20px;
+}
+
+div#details_page {
+    margin: auto;
+    width: 70%;
+    background-color: #FFFFFF;
+    padding: 3vh 2vw 3vh 2vw;
+}
+
+div#content_pane div#main_page div#details_page div span div .details, div#content_pane div#main_page div#details_page div#overview_section span.row_flex_flow .container .label_ans  {
+    color: #767676;
+}
+
+div#content_pane div#main_page div#details_page div span div ul li {
+    font-weight: bold;
+}
+
+div#content_pane div#main_page div#details_page div#overview_section span.row_flex_flow {
+    display: flex;
+    flex-flow: row;
+    column-gap: 15vw;
+    margin-bottom: 3vh;
+}
+
+div#content_pane label {
+    margin-top: 1vh;   
+    font-weight: bold; 
+}
+
+div#content_pane div#main_page div#details_page div#overview_section span.row_flex_flow .container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: fit-content;
+    word-wrap: break-word;
 }
