@@ -78,6 +78,7 @@ class JobScheduler:
 		if (event is not None):
 			event.cancel()
 			del job_tracker[str(event_id)]
+			print("Tally Schedule cancelled")
 			return True
 		return False
 

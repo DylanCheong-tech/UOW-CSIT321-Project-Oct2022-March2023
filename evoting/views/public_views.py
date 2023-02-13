@@ -9,3 +9,8 @@ class MainPublicPage(View):
 
 		return render(request, "public/index.html", {})
 
+class AboutPublicPage(View):
+	def get(self, request):
+
+		return render(request, "public/about.html", {})
+

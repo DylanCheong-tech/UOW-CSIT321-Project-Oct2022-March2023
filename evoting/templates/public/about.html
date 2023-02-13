@@ -1,0 +1,80 @@
+<!-- about.html -->
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.png' %}"/>
+    <title>HARPOCryption</title>
+
+    <link rel="stylesheet" href="{% static 'public/css/index.css' %}" />
+</head>
+
+
+<body>
+    <div id="content_pane">
+        <div id="header">
+            <span><a href="{% url 'main_page' %}"><img src="{% static 'public/img/logo.png' %}" /></a></span>
+            <span class="menu_items">About</span>
+            <span class="menu_items" onclick="window.location.href = '/harpocryption/eventowner/createaccount'">Get Started</span>
+            <span class="menu_items" onclick="window.location.href = '/harpocryption/eventowner/login'">Login</span>
+        </div>
+        <div id = "main_page">
+            <div id="details_page">
+                <h3>About HARPOCryption</h3>
+                <div id ="about_section">
+            
+                    <span class="row_flex_flow">
+                        <div class="container">
+                            <div class="details">A voting web application that provides platform for users for the purpose of confidentiality, integrity and availability by performing homomorphic encryption process on encrypted votes and provide secure routes and anonymity to the voters. This web app is developed by:</div>
+                            <ul>
+                                <li>Cheong Wai Hong (whcheong004@mymail.sim.edu.sg) [LEADER]</li>
+                                <li>Gee Wei Shuan, Colemann (wscgee001@mymail.sim.edu.sg)</li>
+                                <li>Hong Ter Yen (tyhong001@mymail.sim.edu.sg)</li>
+                                <li>Johan Bin Iskandar (johanbi001@mymail.sim.edu.sg)</li>
+                                <li>Kow Wei Ren (wrkow001@mymail.sim.edu.sg)</li>
+                            </ul>
+                        </div>
+                    </span>
+                </div>
+                
+                <h3>Overview of HARPOCryption system</h3>
+                <div id ="overview_section"> 
+                    <span class="row_flex_flow">
+                        <div class="container">
+                            <label>
+                                As a administrator (vote event owner), </label>
+                            <div class="label_ans">To create a vote event or election, an administrator needs an account. To register for an account, please click 'Get Started'. Login with your account and create your first vote event there. Any helps regarding about administrator's functionalities, please refer to User Guide in the administrator portal. You have the most power regarding about the vote event, please use it wisely.</div>
+                        </div>
+                    </span>
+                    <span class="row_flex_flow">
+                        <div class="container">
+                            <label>
+                                As a voter, </label>
+                            <div class="label_ans">To vote, you need to have the authorisation token. You will receive the token via email if you are invited to an vote event. The unique authorisation token is created by our system. In order to have maximum security as a voter, please avoid sharing your authorisation token or link in the email.<br>
+
+                                Once you submit your vote, you cannot longer vote. This is to prevent double voting. Vote booth link with authorisation token example: 'harpocryption/voter/vote?auth={token}'. <br>
+                                
+                                To check final results of the vote event, please wait for the administrator's decision to release the results. After the result is released, you can use your new authorisation token via email to view the result booth. Example of the link with the authorisation token: 'harpocryption/voter/finalresult?auth={token}.
+                                </div>
+                        </div>
+                    </span>
+                    <span class="row_flex_flow">
+                        <div class="container">
+                            <label>
+                                Please contact us at FYP22S402@gmail.com if there are any questions. You also can download our detailed <a href="{% static "userguide.pdf" %}" download>user guide</a> here.
+                            </label>
+                        </div>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            harpocryption &copy; copyright
+        </footer>
+    </div>
+</body>
