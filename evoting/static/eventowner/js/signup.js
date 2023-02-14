@@ -86,3 +86,14 @@ function checkPassword(event) {
         document.getElementById("special_char_indicator").style.backgroundColor = off_indicator_color_stying
 
 }
+
+// for captcha
+function checkForm(){
+    if(!document.getElementById("g-recaptcha-response").value){
+        alert("Please tick the captcha box!");
+        return false;
+    }else{
+        document.getElementById("form_submit_btn").type = "submit";         
+        return true;
+    }
+}
