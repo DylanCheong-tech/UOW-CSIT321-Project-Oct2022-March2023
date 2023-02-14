@@ -3,6 +3,7 @@
 from threading import Timer 
 from datetime import datetime 
 import csv
+import requests
 from ..helpers.tallyJobScheduler import JobScheduler
 
 from django.shortcuts import render, redirect
@@ -11,6 +12,7 @@ from django.views import View
 from django.contrib import auth
 from django.forms.models import model_to_dict
 from django.db.models import Q
+from django.conf import settings
 
 # Form imports
 from ..forms.eventowner import SignupForm
@@ -45,51 +47,66 @@ class EventOwnerCreateAccountView(View):
 
         error_message = "Field Values Invalid !"
         status_flag = True
-        if form.is_valid():
-            # access the form data
-            data = form.cleaned_data
 
-            # check if the account is registered here 
-            count = UserAccount.objects.filter(email=data['email']).count()
-            if (count > 0):
-                error_message = "User Account Already Exists !"
-                status_flag = False
-            else: 
-                try:
-                    # check otp value
-                    otp_from_db = OTPManagement.objects.get(email=data['email'])
-                    if otp_from_db.is_expired() or not(otp_from_db.check_otp_matching(data['otp'])):
-                        error_message = "OTP Value Invalid!"
-                        status_flag = False
+        ''' Begin reCAPTCHA validation '''
+        recaptcha_response = request.POST.get('g-recaptcha-response')
+        url = 'https://www.google.com/recaptcha/api/siteverify'
+        captcha = {
+            'secret': settings.RECAPTCHA_KEY,
+            'response': recaptcha_response
+        }
+        r = requests.post(url, data=captcha)
+        result = r.json()
+        ''' End reCAPTCHA validation '''
+        if result['success']:
+            if form.is_valid():
+                # access the form data
+                data = form.cleaned_data
 
-                    elif(data['password'] != data['repeat_password']):
-                        error_message = "Passwords Do Not Match !"
-                        status_flag = False
-
-                    elif not PasswordChecker.validate_password(data['password']):
-                        error_message = "Password Format Invalid !"
-                        status_flag = False
-
-                    else:
-                        new_account = UserAccount(
-                            email=data['email'],
-                            password=Hasher(data['password']).messageDigest(),
-                            firstName=data['firstname'],
-                            lastName=data['lastname'],
-                            gender=data['gender'].upper(),
-                        )
-
-                        new_account.save()
-                        user = auth.models.User(username=data['email'])
-                        user.set_password(Hasher(data['password']).messageDigest())
-                        user.save()
-
-                except OTPManagement.DoesNotExist:
-                    error_message = "No OTP Generated !"
+                # check if the account is registered here 
+                count = UserAccount.objects.filter(email=data['email']).count()
+                if (count > 0):
+                    error_message = "User Account Already Exists !"
                     status_flag = False
+                else: 
+                    try:
+                        # check otp value
+                        otp_from_db = OTPManagement.objects.get(email=data['email'])
+                        if otp_from_db.is_expired() or not(otp_from_db.check_otp_matching(data['otp'])):
+                            error_message = "OTP Value Invalid!"
+                            status_flag = False
 
+                        elif(data['password'] != data['repeat_password']):
+                            error_message = "Passwords Do Not Match !"
+                            status_flag = False
+
+                        elif not PasswordChecker.validate_password(data['password']):
+                            error_message = "Password Format Invalid !"
+                            status_flag = False
+
+                        else:
+                            new_account = UserAccount(
+                                email=data['email'],
+                                password=Hasher(data['password']).messageDigest(),
+                                firstName=data['firstname'],
+                                lastName=data['lastname'],
+                                gender=data['gender'].upper(),
+                            )
+
+                            new_account.save()
+                            user = auth.models.User(username=data['email'])
+                            user.set_password(Hasher(data['password']).messageDigest())
+                            user.save()
+
+                    except OTPManagement.DoesNotExist:
+                        error_message = "No OTP Generated !"
+                        status_flag = False
+
+            else:
+                status_flag = False
         else:
             status_flag = False
+            error_message = "Captcha Failed, Try again!"
 
         if status_flag:
             # redirect to login page if success

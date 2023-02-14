@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" type="image/png" href="{% static 'favicon.png' %}"/>
     <title>Sign Up</title>
-
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script src="{% static 'eventowner/js/signup.js' %}"></script>
     <link rel="stylesheet" href="{% static 'eventowner/css/signup.css' %}" />
 </head>
@@ -77,7 +77,8 @@
                     <input type="text" name="otp" value="{{form.otp.value}}" required />
                 </span>
 
-                <button id="form_submit_btn" type="submit">Sign Up</button>
+                <div class="g-recaptcha" data-sitekey="6LfWcHwkAAAAAJx_EVAWxO-9l0KAKTEkeTNBrkI5" style="grid-column:span 2"></div> 
+                <button id="form_submit_btn" type="button" onclick="checkForm()">Sign Up</button>
             </form>
 
             <span id="annotation">

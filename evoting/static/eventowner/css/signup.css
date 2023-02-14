@@ -115,7 +115,7 @@ div#content_pane div#left_pane form span.field input:focus, div#content_pane div
     outline: none;
 }
 
-div#content_pane div#left_pane form button[type=submit] {
+div#content_pane div#left_pane form button#form_submit_btn {
     grid-column: span 2;
     cursor: pointer;
     background-color: #3F54BE;
@@ -127,7 +127,6 @@ div#content_pane div#left_pane form button[type=submit] {
 
 div#content_pane div#left_pane span#annotation {
     font-size: .9em;
-    margin-top: 10vh;
     width: 80%;
 }
 
