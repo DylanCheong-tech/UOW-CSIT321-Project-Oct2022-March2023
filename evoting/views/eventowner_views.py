@@ -657,8 +657,8 @@ class EventOwnerConfirmVoteEvent(View):
         except VoteEvent.DoesNotExist:
             print("Error On Confirming a Vote Event, eventNo = " + str(eventNo))
 
-        # except Exception:
-        #     print("Vote Event is published or not applicable to be published.")
+        except Exception:
+            print("Vote Event is published or not applicable to be published.")
 
         # redirect to the same page as a refresh 
         return redirect("/harpocryption/eventowner/homepage")
@@ -762,7 +762,7 @@ class EventOwnerPublishVoteEventFinalResult(View):
                 voter.token = Hasher(token).messageDigest()
                 voter.save()
 
-                # send out the invitation email 
+                # send out the final result access link email 
                 emailSender = EmailSender(voter.email)
                 emailSender.sendFinalResult(host_origin, token, voter.name, vote_event_name)
 

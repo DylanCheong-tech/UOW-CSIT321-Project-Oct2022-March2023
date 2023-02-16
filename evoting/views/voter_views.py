@@ -139,7 +139,7 @@ class VoterVoteForm(View):
 				# check if the vote event is in the Published state
 				# voter will not be get access the PC event, in this state, no auth token will be generated for the voters 
 				if (vote_event.status != "PB"):
-					error_message = "Invitation Link Expired !"
+					error_message = "Vote Event has already ended !"
 					error_summary_message = "Forbidden Request Received"
 					error_code = 403
 					raise Exception
