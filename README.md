@@ -35,10 +35,24 @@ To be able run the e-voting web application, you will only need a browser as a c
 
 
 # Usage 
-> To be completed … 
+To install all the dependencies: 
+
+``` pip install -r requirement.txt ```
+
+To make the system migrations for the system database:
+
+``` python manage.py makemigrations ```
+
+``` python manage.py migrate ```
+
+To run the web server:
+
+``` python manage.py runserver 127.0.0.1:8800 ```
 
 # Support 
-> To be completed… 
+System installation guide and user manual can be found in our project documentation. 
+
+https://drive.google.com/drive/folders/1bgBoo6SaiKi-WcKG2fXVLagw7ceFmGqJ?usp=share_link 
 
 # Authors and Acknowledgement 
 The software project team is formed by 5 students with different majors in their studies. 
